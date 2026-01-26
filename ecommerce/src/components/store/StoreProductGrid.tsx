@@ -20,17 +20,17 @@ interface Product {
 
 interface StoreProductGridProps {
   products?: Product[];
+  categories?: { id: number; name: string }[];
   showTitle?: boolean;
   showFooter?: boolean;
 }
 
 export default function StoreProductGrid({
   products = [],
+  categories = [],
   showTitle = true,
   showFooter = true,
 }: StoreProductGridProps) {
-  const categories = ["Chaussures", "Vêtements", "Accessoires", "Bijoux"];
-
   const displayProducts = products;
 
   const colors = [
@@ -41,7 +41,7 @@ export default function StoreProductGrid({
   ];
 
   return (
-    <section className="py-12 md:py-20 px-4 md:px-6 bg-white">
+    <section className="py-12 md:py-20 px-4 md:px-6 bg-background">
       <div className="max-w-[1400px] mx-auto">
         {showTitle && (
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -58,12 +58,13 @@ export default function StoreProductGrid({
             {}
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
-                <button
-                  key={cat}
+                <Link
+                  key={cat.id}
+                  href={`/shop?category=${cat.name}`}
                   className="px-5 py-2 rounded-full border border-gray-100 text-xs font-bold uppercase tracking-wider text-gray-400 hover:border-black hover:text-black transition-all duration-300"
                 >
-                  {cat}
-                </button>
+                  {cat.name}
+                </Link>
               ))}
             </div>
           </div>

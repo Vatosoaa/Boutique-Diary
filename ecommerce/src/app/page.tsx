@@ -1,4 +1,4 @@
-import MeherHero from "@/components/store/MeherHero";
+import DiaryHero from "@/components/store/DiaryHero";
 import PromoSection from "@/components/store/PromoSection";
 import CollectionScroll from "@/components/store/CollectionScroll";
 import FeaturesSection from "@/components/store/FeaturesSection";
@@ -12,38 +12,28 @@ import {
   getFeaturedProducts,
   getTopSellingProducts,
   getPromotionalProducts,
-  getCategoryProductsMap,
   getStoreStats,
   getTestimonials,
+  getCategories,
 } from "@/lib/store-data";
-import CategoryTabsSection from "@/components/store/CategoryTabsSection";
 
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts(12);
   const topSellingProducts = await getTopSellingProducts(4);
   const promotionalProducts = await getPromotionalProducts(3);
-  const categoryProducts = await getCategoryProductsMap([
-    "Shoes",
-    "Clothing",
-    "Accessories",
-    "Jewellery",
-  ]);
+  const categories = await getCategories();
   const { customerCount, recentCustomers } = await getStoreStats();
   const testimonials = await getTestimonials(6);
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 overflow-x-hidden">
-      <MeherHero
+    <div className="min-h-screen bg-background font-sans text-gray-900 overflow-x-hidden">
+      <DiaryHero
         customerCount={customerCount}
         recentCustomers={recentCustomers}
       />
 
       <ScrollReveal animation="fade-up" delay={200}>
         <PromoSection products={promotionalProducts} />
-      </ScrollReveal>
-
-      <ScrollReveal animation="fade-up" threshold={0.1}>
-        <CategoryTabsSection productsMap={categoryProducts} />
       </ScrollReveal>
 
       <ScrollReveal animation="fade-left">
@@ -70,7 +60,7 @@ export default async function Home() {
         stagger={100}
         selector=".product-card-reveal"
       >
-        <StoreProductGrid products={featuredProducts} />
+        <StoreProductGrid products={featuredProducts} categories={categories} />
       </ScrollReveal>
 
       <ClientTestimonials testimonials={testimonials} />

@@ -16,17 +16,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  UploadCloud,
   X,
   Image as ImageIcon,
-  MoreVertical,
   Star,
-  Check,
-  Package,
   Wand2,
   Plus,
   Upload,
-  Tag,
+  Sparkles,
+  Loader2,
+  Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { generateRandomReference } from "@/lib/stringUtils";
@@ -52,10 +50,11 @@ export function ProductImageUploader({
   const [urlInput, setUrlInput] = useState("");
   const { rules } = usePromotionRules();
   const activeRules = rules.filter((r) => r.isActive);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || files.length === 0) return;
+    if (!files) return;
 
     const images = formData.images || [];
     const remainingSlots = 6 - images.length;
@@ -188,6 +187,75 @@ export function ProductImageUploader({
     }
   };
 
+  const handleGenerateAiImage = async () => {
+    if (!formData.name) {
+      toast.error("Le nom du produit est requis pour générer une image");
+      return;
+    }
+
+    const images = formData.images || [];
+    if (images.length >= 6) {
+      toast.error("Maximum 6 images autorisées");
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    const loadingToast = toast.loading("L'IA imagine votre produit...");
+
+    try {
+      const response = await fetch("/api/admin/products/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      // Check if we actually got an image URL
+      if (!data.imageUrl) {
+        toast.warning(data.warning || "L'image n'a pas pu être générée.");
+      } else {
+        // Add the generated image
+        setFormData((prev) => ({
+          ...prev,
+          images: [
+            ...(prev.images || []),
+            {
+              url: data.imageUrl,
+              color: null,
+              sizes: [],
+              reference: generateRandomReference(),
+              stock: 0,
+              price: null,
+            },
+          ],
+        }));
+      }
+
+      // Copy prompt to clipboard automatically or show it
+      if (data.prompt) {
+        navigator.clipboard.writeText(data.prompt).catch(() => {});
+        toast.info(
+          "Prompt copié ! Utilisez-le dans Midjourney ou autre si besoin.",
+          {
+            duration: 8000,
+            icon: <Copy className="w-4 h-4" />,
+          },
+        );
+      }
+
+      toast.success("Image générée (Placeholder + Prompt) !");
+      toast.dismiss(loadingToast);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur génération image");
+      toast.dismiss(loadingToast);
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
   const handleRemoveImage = (index: number) => {
     const images = formData.images || [];
     setFormData((prev) => ({
@@ -268,7 +336,7 @@ export function ProductImageUploader({
   return (
     <div className="space-y-6">
       <div className="group relative overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 p-6 backdrop-blur-xl transition-all hover:shadow-2xl hover:shadow-primary/5">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
         <h3 className="relative mb-6 flex items-center gap-2 text-lg font-semibold tracking-tight">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/20">
@@ -305,6 +373,23 @@ export function ProductImageUploader({
               className="h-10 w-10 border-black/5 bg-black/5 hover:bg-primary/10 hover:text-primary dark:border-white/10 dark:bg-white/5"
             >
               <Plus className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={handleGenerateAiImage}
+              disabled={
+                isGeneratingImage || images.length >= 6 || !formData.name
+              }
+              className="h-10 w-10 border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-600 dark:border-purple-900 dark:bg-purple-900/20 dark:text-purple-400"
+              title="Générer une image avec l'IA"
+            >
+              {isGeneratingImage ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Sparkles className="w-4 h-4" />
+              )}
             </Button>
             <label
               className={`inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-dashed border-primary/30 bg-primary/5 text-primary transition-colors hover:bg-primary/10 ${
@@ -406,7 +491,7 @@ export function ProductImageUploader({
       {}
       {currentImageAsProductImage && (
         <div className="group relative overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 p-6 backdrop-blur-xl transition-all hover:shadow-2xl hover:shadow-primary/5">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
           <h4 className="relative mb-6 flex items-center gap-2 text-sm font-semibold tracking-tight">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/20">
@@ -518,6 +603,7 @@ export function ProductImageUploader({
                   <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs">
                     <Checkbox
                       checked={
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         (currentImageAsProductImage as any).isBestSeller ||
                         false
                       }
@@ -605,7 +691,9 @@ export function ProductImageUploader({
                           <div className="flex items-center gap-2">
                             <span
                               className="h-3 w-3 rounded-full border shadow-sm"
-                              style={{ background: COLOR_MAP[color] || color }}
+                              style={{
+                                background: COLOR_MAP[color] || color,
+                              }}
                             />
                             {color}
                           </div>

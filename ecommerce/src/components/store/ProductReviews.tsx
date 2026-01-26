@@ -17,14 +17,34 @@ interface ProductReviewsProps {
   initialReviewCount: number;
 }
 
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  photo?: string | null;
+}
+
+interface InternalReview {
+  id: number;
+  rating: number;
+  comment: string;
+  isVerified: boolean;
+  createdAt: string;
+  user: {
+    username: string;
+    photo?: string | null;
+  };
+  reactions?: { id: number; type: string; userId: string }[];
+}
+
 export default function ProductReviews({
   productId,
   initialRating,
   initialReviewCount,
 }: ProductReviewsProps) {
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<InternalReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState("Récents");
   const DISPLAY_LIMIT = 3;
@@ -32,6 +52,7 @@ export default function ProductReviews({
   useEffect(() => {
     fetchReviews();
     fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
 
   async function fetchUser() {
@@ -43,8 +64,7 @@ export default function ProductReviews({
       } else {
         setUser(null);
       }
-    } catch (error) {
-      console.error("Failed to fetch user", error);
+    } catch {
       setUser(null);
     }
   }
@@ -59,8 +79,8 @@ export default function ProductReviews({
         const data = await response.json();
         setReviews(data);
       }
-    } catch (error) {
-      console.error("Failed to fetch reviews", error);
+    } catch {
+      // Silently handle failure for guest or network issues
     } finally {
       setIsLoading(false);
     }
@@ -85,11 +105,14 @@ export default function ProductReviews({
     }
   }
 
-  const distribution = reviews.reduce((acc: any, review: any) => {
-    const r = Math.round(review.rating);
-    acc[r] = (acc[r] || 0) + 1;
-    return acc;
-  }, {});
+  const distribution = reviews.reduce(
+    (acc: Record<number, number>, review: InternalReview) => {
+      const r = Math.round(review.rating);
+      acc[r] = (acc[r] || 0) + 1;
+      return acc;
+    },
+    {},
+  );
 
   const sortedReviews = useMemo(() => {
     const sorted = [...reviews];
@@ -110,10 +133,10 @@ export default function ProductReviews({
   }, [reviews, activeFilter]);
 
   return (
-    <section className="bg-white py-16 px-4 md:px-6 border-t border-gray-100">
+    <section className="bg-background py-16 px-4 md:px-6 border-t border-border">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-24">
         {}
-        <div className="flex flex-col gap-12 sticky top-24 self-start">
+        <div className="flex flex-col gap-12 static lg:sticky lg:top-24 lg:self-start">
           <ReviewSummary
             rating={initialRating}
             reviewCount={initialReviewCount}
@@ -127,7 +150,7 @@ export default function ProductReviews({
               <div className="flex flex-col gap-4">
                 <Button
                   asChild
-                  className="w-full bg-black text-white hover:bg-gray-800 rounded-xl py-6 font-bold text-lg"
+                  className="w-full bg-primary text-primary-foreground hover:opacity-90 rounded-xl py-6 font-bold text-lg"
                 >
                   <Link href="/login">Se connecter pour donner un avis</Link>
                 </Button>
@@ -142,19 +165,19 @@ export default function ProductReviews({
         {}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-foreground">
               {reviews.length} Avis vérifiés
             </h3>
-            <div className="flex gap-2">
-              {["Récents", "Meilleures notes", "Utiles"].map((filter) => (
+            <div className="flex gap-2 flex-wrap">
+              {["Récents", "Meilleures notes", "Utiles"].map(filter => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
                   className={cn(
                     "px-4 py-2 rounded-full text-xs font-bold border transition-all",
                     filter === activeFilter
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-gray-500 border-gray-100 hover:border-gray-300",
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-transparent text-muted-foreground border-border hover:border-primary/50",
                   )}
                 >
                   {filter}
@@ -182,7 +205,7 @@ export default function ProductReviews({
                         0,
                         isExpanded ? sortedReviews.length : DISPLAY_LIMIT,
                       )
-                      .map((review) => (
+                      .map(review => (
                         <ReviewItem
                           key={review.id}
                           review={review}
@@ -199,15 +222,15 @@ export default function ProductReviews({
                       variant="outline"
                       className="group flex items-center gap-2 px-8 py-6 border-2 border-gray-100 hover:border-black hover:bg-black hover:text-white rounded-2xl font-bold transition-all duration-300"
                     >
-                      Voir plus d'avis
+                      Voir plus d&apos;avis
                       <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
                     </Button>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-[32px] p-20 text-center flex flex-col items-center gap-4">
-                <div className="bg-white p-4 rounded-2xl shadow-sm">
+              <div className="bg-secondary/5 rounded-[32px] p-20 text-center flex flex-col items-center gap-4">
+                <div className="bg-card p-4 rounded-2xl shadow-sm">
                   ⭐⭐⭐⭐⭐
                 </div>
                 <p className="text-gray-500 font-bold">
