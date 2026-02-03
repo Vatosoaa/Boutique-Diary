@@ -17,7 +17,7 @@ import {
 import { InvoiceGeneratorService, InvoiceData } from "@/utils/pdf-invoice";
 import { toast } from "sonner";
 import anime from "animejs";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/utils";
 
 export default function CheckoutSuccessPage() {
   const searchParams = useSearchParams();
@@ -154,7 +154,7 @@ export default function CheckoutSuccessPage() {
               </div>
 
               <div className="space-y-6">
-                {order?.items.map(item => (
+                {order?.items.map((item) => (
                   <div key={item.id} className="flex gap-4 group">
                     <div className="w-20 h-24 bg-muted/30 rounded-2xl overflow-hidden shrink-0 border border-border group-hover:border-primary/20 transition-colors">
                       {item.productImage ? (

@@ -10,12 +10,11 @@ export function formatPrice(price: number | string | null | undefined): string {
   const numPrice = typeof price === "string" ? parseFloat(price) : price;
   if (isNaN(numPrice)) return "0 Ar";
 
-  return new Intl.NumberFormat("fr-MG", {
-    style: "currency",
-    currency: "MGA",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })
-    .format(numPrice)
-    .replace("MGA", "Ar");
+  return (
+    new Intl.NumberFormat("fr-FR", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(numPrice) + " Ar"
+  );
 }

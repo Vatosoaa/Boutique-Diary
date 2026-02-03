@@ -19,17 +19,7 @@ const greatVibes = Great_Vibes({
   display: "swap",
 });
 
-interface BannerData {
-  id: number;
-  title: string;
-  subtitle?: string | null;
-  description?: string | null;
-  buttonText?: string | null;
-  buttonLink?: string | null;
-  imageUrl: string;
-  order: number;
-  isActive: boolean;
-}
+import { Banner } from "@/types/banner";
 
 interface DiaryHeroProps {
   customerCount?: number;
@@ -41,7 +31,7 @@ interface DiaryHeroProps {
   previewMode?: boolean;
 }
 
-const defaultBanner: BannerData = {
+const defaultBanner: Banner = {
   id: 0,
   title: "SUPER",
   subtitle: "Sale",
@@ -51,11 +41,13 @@ const defaultBanner: BannerData = {
   imageUrl: "/hero-model.png",
   order: 1,
   isActive: true,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [banners, setBanners] = useState<BannerData[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,7 +58,7 @@ export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
         const response = await fetch("/api/banners");
         if (response.ok) {
           const data = await response.json();
-          const activeBanners = data.filter((b: BannerData) => b.isActive);
+          const activeBanners = data.filter((b: Banner) => b.isActive);
           setBanners(activeBanners);
         }
       } catch (error) {

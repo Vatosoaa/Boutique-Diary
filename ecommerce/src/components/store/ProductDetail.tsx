@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { COLOR_MAP } from "@/lib/constants";
 import { useCartStore } from "@/lib/cart-store";
 import anime from "animejs";
@@ -167,12 +167,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   // Filter variations by current color
   const colorVariations = useMemo(() => {
     if (!currentImage?.color) return [];
-    return product.variations.filter(v => v.color === currentImage.color);
+    return product.variations.filter((v) => v.color === currentImage.color);
   }, [product.variations, currentImage.color]);
 
   const displayPrice = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find(v => v.size === selectedSize);
+      const variant = colorVariations.find((v) => v.size === selectedSize);
       return variant
         ? Number(variant.price)
         : (currentImage?.price ?? product?.price);
@@ -182,7 +182,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const displayOldPrice = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find(v => v.size === selectedSize);
+      const variant = colorVariations.find((v) => v.size === selectedSize);
       return variant
         ? variant.oldPrice
           ? Number(variant.oldPrice)
@@ -201,7 +201,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const currentRef = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find(v => v.size === selectedSize);
+      const variant = colorVariations.find((v) => v.size === selectedSize);
       return variant?.sku ?? currentImage?.reference ?? product?.reference;
     }
     return currentImage?.reference ?? product?.reference;
@@ -214,7 +214,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const availableSizes = useMemo(() => {
     if (colorVariations.length > 0) {
-      return colorVariations.map(v => v.size).filter(Boolean) as string[];
+      return colorVariations.map((v) => v.size).filter(Boolean) as string[];
     }
     return currentImage?.sizes && currentImage.sizes.length > 0
       ? currentImage.sizes
@@ -224,7 +224,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const displayStock = useMemo(() => {
     // 1. If we have a specific size selected, get that variant's stock
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find(v => v.size === selectedSize);
+      const variant = colorVariations.find((v) => v.size === selectedSize);
       return variant ? variant.stock : 0;
     }
 
@@ -262,15 +262,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     });
   }, []);
 
-  const addItem = useCartStore(state => state.addItem);
-  const cartItems = useCartStore(state => state.items);
+  const addItem = useCartStore((state) => state.addItem);
+  const cartItems = useCartStore((state) => state.items);
 
   // Optimistic stock calculation: subtract quantity already in cart
   const reactiveStock = useMemo(() => {
     const targetColor = currentImage?.color || null;
     const targetSize = selectedSize || null;
 
-    const itemsMatchingSelection = cartItems.filter(item => {
+    const itemsMatchingSelection = cartItems.filter((item) => {
       if (item.productId !== product.id) return false;
 
       const itemColor = item.color || null;
@@ -298,7 +298,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           product.stock;
 
     const inCartTotal = cartItems
-      .filter(item => item.productId === product.id)
+      .filter((item) => item.productId === product.id)
       .reduce((acc, item) => acc + item.quantity, 0);
 
     return Math.max(0, physicalTotal - inCartTotal);
@@ -394,8 +394,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const blogPosts: BlogPost[] = product.blogPosts || [];
   const currentBlogPost =
-    blogPosts.find(bp => bp.productImageId === currentImage?.id) ||
-    blogPosts.find(bp => !bp.productImageId);
+    blogPosts.find((bp) => bp.productImageId === currentImage?.id) ||
+    blogPosts.find((bp) => !bp.productImageId);
 
   return (
     <section className="py-3 md:py-5 px-3 md:px-5">
@@ -546,11 +546,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             <div className="flex flex-wrap items-center gap-4 py-3 border-y border-border/40">
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                  ${displayPrice?.toFixed(2)}
+                  {formatPrice(displayPrice)}
                 </span>
                 {hasDiscount && (
                   <span className="text-sm text-muted-foreground/60 line-through">
-                    ${displayOldPrice?.toFixed(2)}
+                    {formatPrice(displayOldPrice)}
                   </span>
                 )}
               </div>
@@ -617,7 +617,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     uniqueColors.map((color: string) => {
                       const isSelected = currentImage?.color === color;
                       const index = images.findIndex(
-                        img => img.color === color,
+                        (img) => img.color === color,
                       );
                       return (
                         <button
@@ -810,7 +810,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       Livraison
                     </span>
                     <span className="text-[8px] font-medium text-muted-foreground">
-                      Gratuite $200+
+                      Gratuite dès 200 000 Ar
                     </span>
                   </div>
                 </div>

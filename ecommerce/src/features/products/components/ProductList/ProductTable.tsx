@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Product } from "@/types/admin";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/utils";
 import {
   Table,
   TableBody,

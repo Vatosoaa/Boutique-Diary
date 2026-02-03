@@ -28,7 +28,7 @@ const ClientNavbar = () => {
       <header className="sticky top-0 z-50 dark:bg-gray-900/50 border-b border-border">
         {}
         <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-medium">
-          🚚 Livraison gratuite à partir de 50€ d&apos;achat
+          🚚 Livraison gratuite à partir de 200 000 Ar d&apos;achat
         </div>
 
         {}

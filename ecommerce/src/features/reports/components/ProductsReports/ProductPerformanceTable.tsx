@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+import { formatPrice } from "@/lib/utils";
+
 interface ProductPerformanceTableProps {
   products: TopProduct[];
 }
@@ -40,11 +42,7 @@ export function ProductPerformanceTable({
                 {product.totalSold}
               </TableCell>
               <TableCell className="text-right text-gray-500">
-                {new Intl.NumberFormat("fr-FR", {
-                  style: "currency",
-                  currency: "MGA",
-                  maximumFractionDigits: 0,
-                }).format(product.revenue)}
+                {formatPrice(product.revenue)}
               </TableCell>
               <TableCell className="text-right">
                 <Badge

@@ -1,7 +1,7 @@
 "use client";
 
 import { Product } from "@/types/admin";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/utils";
 import {
   Maximize2,
   X,

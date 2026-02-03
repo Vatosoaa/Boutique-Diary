@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 
 export default function StoreHero() {
   return (
@@ -31,9 +31,11 @@ export default function StoreHero() {
             </h1>
             <div className="flex items-center gap-4 mb-4">
               <span className="text-gray-400 line-through text-lg">
-                $129.00
+                {formatPrice(500000)}
               </span>
-              <span className="text-3xl font-bold text-black">$122.00</span>
+              <span className="text-3xl font-bold text-black">
+                {formatPrice(450000)}
+              </span>
               <span className="bg-black text-white text-xs px-2 py-1 rounded">
                 5% Disc
               </span>

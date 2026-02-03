@@ -140,7 +140,7 @@ export default function CustomerSidebar({
 
         {}
         <nav className="space-y-1">
-          {navItems.map(item => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link

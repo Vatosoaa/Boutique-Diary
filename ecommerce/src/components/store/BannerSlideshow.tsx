@@ -4,20 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-interface BannerSlide {
-  id: number;
-  title: string;
-  subtitle?: string | null;
-  description?: string | null;
-  buttonText?: string | null;
-  buttonLink?: string | null;
-  imageUrl: string;
-  order: number;
-  isActive: boolean;
-}
+import { Banner } from "@/types/banner";
 
 export default function BannerSlideshow() {
-  const [banners, setBanners] = useState<BannerSlide[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,7 +17,7 @@ export default function BannerSlideshow() {
         const response = await fetch("/api/banners");
         if (response.ok) {
           const data = await response.json();
-          const activeBanners = data.filter((b: BannerSlide) => b.isActive);
+          const activeBanners = data.filter((b: Banner) => b.isActive);
           setBanners(activeBanners);
         }
       } catch (error) {

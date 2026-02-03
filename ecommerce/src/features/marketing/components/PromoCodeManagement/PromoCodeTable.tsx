@@ -2,7 +2,7 @@
 
 import React from "react";
 import { PromoCode, DiscountType } from "../../types";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import {
   Table,
@@ -127,7 +127,7 @@ export function PromoCodeTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(code => (
+          {data.map((code) => (
             <TableRow
               key={code.id}
               className="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"

@@ -253,7 +253,7 @@ export function CustomPromoForm({
                       min={discountType === "PERCENTAGE" ? 2 : 2000}
                       max={discountType === "PERCENTAGE" ? 20 : 100000}
                       value={discountValue}
-                      onChange={e => {
+                      onChange={(e) => {
                         const val = Number(e.target.value);
                         // Immediate senior clamping for UX
                         if (discountType === "PERCENTAGE" && val > 20) {
@@ -302,7 +302,7 @@ export function CustomPromoForm({
                   </label>
                   <select
                     value={duration}
-                    onChange={e => setDuration(e.target.value)}
+                    onChange={(e) => setDuration(e.target.value)}
                     className="w-full px-4 py-3 bg-secondary/5 rounded-2xl border border-border focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-medium appearance-none cursor-pointer"
                   >
                     <option value="1_WEEK">1 Semaine</option>
@@ -321,7 +321,7 @@ export function CustomPromoForm({
                     name="startDate"
                     type="date"
                     value={startDate}
-                    onChange={e => setStartDate(e.target.value)}
+                    onChange={(e) => setStartDate(e.target.value)}
                     className="w-full px-4 py-3 bg-secondary/5 rounded-2xl border border-border focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-medium"
                   />
                 </div>
@@ -374,7 +374,7 @@ export function CustomPromoForm({
                       <input
                         type="number"
                         value={manualPrice}
-                        onChange={e => setManualPrice(Number(e.target.value))}
+                        onChange={(e) => setManualPrice(Number(e.target.value))}
                         className="w-full px-6 py-4 bg-background rounded-2xl border-2 border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-black text-2xl text-primary"
                       />
                       <span className="absolute right-6 top-4.5 font-black text-2xl text-primary/40">

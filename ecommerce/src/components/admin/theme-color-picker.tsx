@@ -54,7 +54,7 @@ export function ThemeColorPicker({
         <input
           type="text"
           value={colorValue}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           className="flex-1 h-8 rounded-lg border border-border bg-background px-3 py-1 text-xs shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-mono transition-all"
           placeholder="#rrggbbaa"
         />

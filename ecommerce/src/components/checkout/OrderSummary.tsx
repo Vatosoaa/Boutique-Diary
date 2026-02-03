@@ -8,15 +8,15 @@ interface OrderSummaryProps {
 }
 
 export default function OrderSummary({ appliedPromo }: OrderSummaryProps) {
-  const items = useCartStore(state => state.items);
-  const getSubtotal = useCartStore(state => state.getSubtotal);
+  const items = useCartStore((state) => state.items);
+  const getSubtotal = useCartStore((state) => state.getSubtotal);
 
   const subtotal = getSubtotal();
   const delivery = 0;
 
   // 1. Calculate Per-Item Discount
   let totalDiscount = 0;
-  const itemDiscounts = items.map(item => {
+  const itemDiscounts = items.map((item) => {
     const itemTotal = item.price * item.quantity;
     let discount = 0;
 

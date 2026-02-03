@@ -52,6 +52,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatPrice } from "@/lib/utils";
 
 export interface Order {
   id: string;
@@ -118,14 +119,6 @@ const statusConfig = {
     variant: "destructive" as const,
     icon: XCircle,
   },
-};
-
-const formatPrice = (amount: number) => {
-  return new Intl.NumberFormat("fr-MG", {
-    style: "currency",
-    currency: "MGA",
-    maximumFractionDigits: 0,
-  }).format(amount);
 };
 
 type TabValue = "all" | "completed" | "pending" | "cancelled";

@@ -84,7 +84,7 @@ export function usePromoCodes() {
 
       if (!res.ok) throw new Error("Erreur de suppression");
 
-      setPromoCodes(prev => prev.filter(code => code.id !== id));
+      setPromoCodes((prev) => prev.filter((code) => code.id !== id));
       toast.success("Code promo supprimé");
       return true;
     } catch (err: unknown) {

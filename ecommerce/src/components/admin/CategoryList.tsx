@@ -16,7 +16,7 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/utils";
 import {
   Popover,
   PopoverContent,

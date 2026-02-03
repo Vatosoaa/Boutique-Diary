@@ -167,7 +167,7 @@ export default function CustomerOrders() {
             <Loader2 className="w-8 h-8 animate-spin" />
           </div>
         ) : orders.length > 0 ? (
-          orders.map(order => (
+          orders.map((order) => (
             <div
               key={order.id}
               className="dark:border-gray-700/50 border border-border rounded-xl overflow-hidden"
@@ -283,7 +283,7 @@ export default function CustomerOrders() {
 
       <AlertDialog
         open={!!actionOrder}
-        onOpenChange={open => !open && setActionOrder(null)}
+        onOpenChange={(open) => !open && setActionOrder(null)}
       >
         <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-border">
           <AlertDialogHeader>

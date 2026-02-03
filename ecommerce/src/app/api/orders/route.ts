@@ -123,19 +123,19 @@ export async function POST(request: NextRequest) {
       attempts++;
     }
 
-    const order = await prisma.$transaction(async tx => {
+    const order = await prisma.$transaction(async (tx) => {
       const newOrder = await tx.order.create({
         data: {
           reference,
           total: finalTotal,
           status: "PENDING",
-          customerId,
+          customer: customerId ? { connect: { id: customerId } } : undefined,
           promoCode: body.promoCode || null,
           discount: discountAmount,
           items: {
-            create: body.items.map(item => ({
+            create: body.items.map((item) => ({
               productId: item.productId,
-              productImageId: item.productImageId,
+              productImageId: item.productImageId || null,
               quantity: item.quantity,
               price: item.price,
             })),
@@ -189,6 +189,10 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Order creation error:", error);
+    console.error(
+      "Full error details:",
+      JSON.stringify(error, Object.getOwnPropertyNames(error)),
+    );
     return NextResponse.json(
       { error: "Erreur lors de la création de la commande" },
       { status: 500 },

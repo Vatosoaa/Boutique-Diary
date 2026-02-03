@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/cart-store";
 import {
   Minus,
@@ -391,7 +391,9 @@ export default function ProductDetailClient({
               <span className="text-3xl font-bold text-foreground">
                 {formatPrice(currentPrice)}
               </span>
-              <span className="text-sm text-muted-foreground">ou 99€/mois</span>
+              <span className="text-sm text-muted-foreground">
+                ou 400 000 Ar/mois
+              </span>
             </div>
 
             {}

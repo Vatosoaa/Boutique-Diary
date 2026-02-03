@@ -47,7 +47,7 @@ export class MarketingService {
     // 3. Batch update product prices
     // We use a transaction to ensure consistency
     await prisma.$transaction(
-      products.map(product => {
+      products.map((product) => {
         // We use the original price if it was already in promotion or if we have an oldPrice
         // To avoid compounded discounts if the code is updated/renewed
         const basePrice = product.oldPrice || product.price;
@@ -86,7 +86,7 @@ export class MarketingService {
     if (products.length === 0) return;
 
     await prisma.$transaction(
-      products.map(product => {
+      products.map((product) => {
         return prisma.product.update({
           where: { id: product.id },
           data: {

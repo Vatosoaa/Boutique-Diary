@@ -103,7 +103,7 @@ export default function PaymentMethods({
               <input
                 type="text"
                 value={mvolaName}
-                onChange={e => onMvolaNameChange(e.target.value)}
+                onChange={(e) => onMvolaNameChange(e.target.value)}
                 placeholder="Ex: RAKOTO Jean"
                 className="w-full px-4 py-3 rounded-xl border border-border bg-card focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/50 text-foreground"
               />
@@ -115,7 +115,7 @@ export default function PaymentMethods({
               <input
                 type="tel"
                 value={mvolaPhone}
-                onChange={e => onMvolaPhoneChange(e.target.value)}
+                onChange={(e) => onMvolaPhoneChange(e.target.value)}
                 placeholder="Ex: 034 12 345 67"
                 className="w-full px-4 py-3 rounded-xl border border-border bg-card focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/50 text-foreground"
               />

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { COLOR_MAP } from "@/lib/constants";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/utils";
 import { DollarSign, Edit, Package, Share2, Star, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -274,7 +274,14 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                         return (
                           <div
                             key={color}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${isActive ? "border-black dark:border-white bg-gray-50 dark:bg-gray-700" : "border-gray-200 dark:border-gray-700"}`}
+                            onClick={() => {
+                              const imgIndex = product.images.findIndex(
+                                (img) => img.color === color,
+                              );
+                              if (imgIndex !== -1)
+                                setSelectedImageIndex(imgIndex);
+                            }}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-all hover:scale-105 ${isActive ? "border-black dark:border-white bg-gray-50 dark:bg-gray-700 ring-1 ring-black/5" : "border-gray-200 dark:border-gray-700 hover:border-gray-300"}`}
                           >
                             <span
                               className="w-3 h-3 rounded-full border border-gray-200"

@@ -29,14 +29,15 @@ const defaultData = [
   { name: "Sep", value: 200 },
 ];
 
-const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
+const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
+  const chartData = data && data.length > 0 ? data : defaultData;
   return (
-    <Card className="border-none shadow-sm h-full bg-gray-100 dark:bg-gray-900">
+    <Card className="border-none shadow-sm h-full bg-[#1e293b] text-white">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
+        <CardTitle className="text-xl font-bold text-white">
           Performance des ventes
         </CardTitle>
-        <button className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-600 rounded-lg text-sm font-medium hover:bg-pink-100 transition-colors">
+        <button className="flex items-center gap-2 px-3 py-1.5 bg-pink-100 text-pink-600 rounded-lg text-sm font-medium hover:bg-pink-200 transition-colors dark:bg-pink-900/30 dark:text-pink-400">
           <Calendar className="w-4 h-4" />
           Cette semaine
         </button>
@@ -45,7 +46,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
         <div className="h-[250px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={data}
+              data={chartData}
               margin={{
                 top: 10,
                 right: 0,
@@ -55,42 +56,48 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
             >
               <defs>
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#db2777" stopOpacity={0.1} />
-                  <stop offset="95%" stopColor="#db2777" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 vertical={false}
                 strokeDasharray="3 3"
-                stroke="#f0f0f0"
+                stroke="#334155"
               />
               <XAxis
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#9ca3af", fontSize: 12 }}
+                tick={{ fill: "#94a3b8", fontSize: 12 }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#9ca3af", fontSize: 12 }}
-                tickFormatter={(value) => `$${value}`}
+                tick={{ fill: "#94a3b8", fontSize: 12 }}
+                tickFormatter={(value) =>
+                  value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
+                }
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#fff",
+                  backgroundColor: "#1e293b",
                   borderRadius: "8px",
-                  border: "none",
+                  border: "1px solid #334155",
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                  color: "#fff",
                 }}
-                itemStyle={{ color: "#db2777" }}
-                formatter={(value: number) => [`$${value}`, "Ventes"]}
+                itemStyle={{ color: "#ec4899" }}
+                formatter={(value: number) => [
+                  `${value.toLocaleString()} Ar`,
+                  "Ventes",
+                ]}
               />
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#db2777"
+                stroke="#ec4899"
                 strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorValue)"

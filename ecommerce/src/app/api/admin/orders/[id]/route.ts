@@ -85,7 +85,7 @@ export async function GET(
             address: displayAddress,
           }
         : { name: "Invité", email: "", address: displayAddress },
-      items: order.items.map(item => ({
+      items: order.items.map((item) => ({
         id: item.id,
         productId: item.productId,
         productName: item.product.name,
@@ -130,7 +130,7 @@ export async function PATCH(
 
     console.log(`[OrderPATCH] Updating order ${id} to status: ${status}`);
 
-    const updatedOrder = await prisma.$transaction(async tx => {
+    const updatedOrder = await prisma.$transaction(async (tx) => {
       const order = await tx.order.update({
         where: { id },
         data: { status },

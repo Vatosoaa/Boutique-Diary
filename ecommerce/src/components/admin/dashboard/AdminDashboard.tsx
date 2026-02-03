@@ -15,6 +15,7 @@ import {
   TrendingUp,
   MessageSquare,
 } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 interface AdminDashboardProps {
   user: {
@@ -33,6 +34,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     totalOrders: 0,
     categoryDistribution: [],
     totalReviews: 0,
+    salesPerformance: [],
   });
   const [loading, setLoading] = useState(true);
 
@@ -53,14 +55,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
     fetchStats();
   }, []);
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-MG", {
-      style: "currency",
-      currency: "MGA",
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   return (
     <div className="min-h-screen font-sans">
@@ -86,7 +80,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               Valeur du Stock
             </p>
             <h3 className="text-xl sm:text-3xl font-bold mt-1 break-all">
-              {loading ? "..." : formatCurrency(stats.totalStockValue)}
+              {loading ? "..." : formatPrice(stats.totalStockValue)}
             </h3>
           </div>
         </div>
@@ -132,7 +126,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div className="lg:col-span-2">
-          <RevenueChart />
+          <RevenueChart data={stats.salesPerformance} />
         </div>
         <div className="lg:col-span-1">
           <ProductDistributionChart data={stats.categoryDistribution} />

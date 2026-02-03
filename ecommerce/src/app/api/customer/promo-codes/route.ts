@@ -46,7 +46,7 @@ export async function GET() {
 
     return NextResponse.json({
       points: dbUser?.points || 0,
-      available: shopCodes.map(promo => ({
+      available: shopCodes.map((promo) => ({
         id: promo.id,
         code: promo.code,
         type: promo.type,
@@ -59,7 +59,7 @@ export async function GET() {
             ? `${promo.value}% de réduction sur votre commande`
             : `${promo.value.toLocaleString("fr-FR")} Ar de réduction`,
       })),
-      owned: myCodes.map(promo => ({
+      owned: myCodes.map((promo) => ({
         id: promo.id,
         code: promo.code,
         type: promo.type,

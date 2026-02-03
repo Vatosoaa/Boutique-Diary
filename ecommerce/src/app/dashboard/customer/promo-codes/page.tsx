@@ -232,7 +232,7 @@ export default function PromoCodesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-            {availableCodes.map(item => {
+            {availableCodes.map((item) => {
               const canBuy = item.purchasePrice && points >= item.purchasePrice;
               return (
                 <div

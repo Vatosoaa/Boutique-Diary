@@ -103,9 +103,9 @@ export default function StoreNavbar({
     }
   };
 
-  const isCartOpen = useCartStore(state => state.isOpen);
-  const setOpen = useCartStore(state => state.setOpen);
-  const itemCount = useCartStore(state => state.getItemCount());
+  const isCartOpen = useCartStore((state) => state.isOpen);
+  const setOpen = useCartStore((state) => state.setOpen);
+  const itemCount = useCartStore((state) => state.getItemCount());
 
   const pathname = usePathname();
 
@@ -244,7 +244,7 @@ export default function StoreNavbar({
                         </li>
 
                         <div className="grid grid-cols-2 gap-4">
-                          {collections.map(item => (
+                          {collections.map((item) => (
                             <li key={item.title}>
                               <NavigationMenuLink asChild>
                                 <Link
@@ -274,7 +274,7 @@ export default function StoreNavbar({
 
                         <div className="col-span-1 lg:col-start-2 pt-4 mt-2 border-t border-border">
                           <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                            {categoriesList.map(item => (
+                            {categoriesList.map((item) => (
                               <li key={item.name} className="list-none">
                                 <NavigationMenuLink asChild>
                                   <Link
@@ -508,7 +508,7 @@ export default function StoreNavbar({
                 Boutique
               </Link>
               <div className="grid grid-cols-2 gap-2 pl-4">
-                {collections.map(item => (
+                {collections.map((item) => (
                   <Link
                     key={item.title}
                     href={item.href}

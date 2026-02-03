@@ -92,7 +92,7 @@ export default async function CustomerDashboard() {
 
       {}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map(stat => (
+        {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
@@ -134,7 +134,7 @@ export default async function CustomerDashboard() {
 
         <div className="space-y-3">
           {recentOrders.length > 0 ? (
-            recentOrders.map(order => (
+            recentOrders.map((order) => (
               <div
                 key={order.id}
                 className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-accent transition-colors"

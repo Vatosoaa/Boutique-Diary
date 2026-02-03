@@ -169,7 +169,7 @@ export default function ProductReviews({
               {reviews.length} Avis vérifiés
             </h3>
             <div className="flex gap-2 flex-wrap">
-              {["Récents", "Meilleures notes", "Utiles"].map(filter => (
+              {["Récents", "Meilleures notes", "Utiles"].map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
@@ -205,7 +205,7 @@ export default function ProductReviews({
                         0,
                         isExpanded ? sortedReviews.length : DISPLAY_LIMIT,
                       )
-                      .map(review => (
+                      .map((review) => (
                         <ReviewItem
                           key={review.id}
                           review={review}

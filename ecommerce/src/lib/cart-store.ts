@@ -112,10 +112,5 @@ export const useCartStore = create<CartState>()(
   ),
 );
 
-export const formatPrice = (amount: number) => {
-  return new Intl.NumberFormat("fr-MG", {
-    style: "currency",
-    currency: "MGA",
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
+// Re-export formatPrice from utils for backward compatibility
+export { formatPrice } from "@/lib/utils";

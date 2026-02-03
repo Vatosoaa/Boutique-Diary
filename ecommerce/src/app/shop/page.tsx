@@ -18,7 +18,7 @@ export default async function ShopPage({
   const stats = await getStoreStats();
 
   const currentCategory = categoryId
-    ? categories.find(c => c.id === categoryId)
+    ? categories.find((c) => c.id === categoryId)
     : null;
 
   return (

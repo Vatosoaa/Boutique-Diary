@@ -16,6 +16,7 @@ export async function GET() {
       totalOrders,
       categoryStats,
       totalReviews,
+      orders,
     ] = await Promise.all([
       prisma.product.count(),
       prisma.product.aggregate({
@@ -39,6 +40,17 @@ export async function GET() {
         },
       }),
       prisma.review.count(),
+      prisma.order.findMany({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().getFullYear(), 0, 1),
+          },
+        },
+        select: {
+          createdAt: true,
+          total: true,
+        },
+      }),
     ]);
 
     const categories = await prisma.category.findMany({
@@ -82,6 +94,30 @@ export async function GET() {
       (p) => !p.stock || p.stock === 0,
     ).length;
 
+    // Process orders for sales performance
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const salesPerformance = monthNames.map((name, index) => {
+      const monthOrders = orders.filter(
+        (o) => new Date(o.createdAt).getMonth() === index,
+      );
+      const value = monthOrders.reduce((sum, o) => sum + o.total, 0);
+      return { name, value };
+    });
+
     return NextResponse.json(
       {
         totalProducts,
@@ -91,6 +127,7 @@ export async function GET() {
         totalOrders,
         categoryDistribution,
         totalReviews,
+        salesPerformance,
       },
       { status: 200 },
     );

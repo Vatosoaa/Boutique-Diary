@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { cn, formatPrice } from "@/lib/utils";
 
 interface Product {
   id: number;
@@ -110,7 +111,9 @@ export default function CollectionScroll({
                     </span>
                   </div>
                 </div>
-                <span className="font-bold text-sm">${item.price}</span>
+                <span className="font-bold text-sm">
+                  {formatPrice(item.price)}
+                </span>
               </div>
             </Link>
           ))}

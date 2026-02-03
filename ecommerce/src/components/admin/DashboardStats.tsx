@@ -9,6 +9,7 @@ import {
   TrendingDown,
 } from "lucide-react";
 import { Product } from "@/types/admin";
+import { formatPrice } from "@/lib/utils";
 
 interface DashboardStatsProps {
   products: Product[];
@@ -28,11 +29,7 @@ export function DashboardStats({ products }: DashboardStatsProps) {
   const stats = [
     {
       label: "Valeur du Stock",
-      value: new Intl.NumberFormat("fr-FR", {
-        style: "currency",
-        currency: "MGA",
-        maximumFractionDigits: 0,
-      }).format(totalValue),
+      value: formatPrice(totalValue),
       subValue: "Valeur totale estimée",
       change: null,
       trend: "neutral",

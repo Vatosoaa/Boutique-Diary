@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Eye, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { formatPrice } from "@/lib/cart-store";
+import { formatPrice } from "@/lib/utils";
 import { useState } from "react";
 import { toast } from "sonner";
 
