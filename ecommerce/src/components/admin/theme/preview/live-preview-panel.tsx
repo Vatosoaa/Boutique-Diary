@@ -3,7 +3,6 @@
 import {
   StoreTheme,
   HeaderConfig,
-  HeroConfig,
   SectionsConfig,
 } from "@/lib/theme/theme-config";
 import { SectionsPreview } from "./sections-preview";
@@ -132,10 +131,7 @@ export function LivePreviewPanel({
                 activeSection === "hero" && "ring-2 ring-primary ring-offset-1",
               )}
             >
-              <DiaryHero
-                heroConfig={currentValues.heroConfig as HeroConfig | undefined}
-                previewMode
-              />
+              <DiaryHero previewMode />
             </div>
 
             {/* Sections */}
