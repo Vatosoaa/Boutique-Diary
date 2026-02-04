@@ -232,12 +232,18 @@ export default function StoreNavbar({
                               className="flex h-full w-full select-none flex-col justify-end rounded-[32px] bg-muted/40 p-8 no-underline outline-none focus:shadow-md border border-border transition-all hover:bg-muted animate-in fade-in zoom-in-95 duration-500"
                               href="/produits"
                             >
-                              <div className="mb-4 text-2xl font-black tracking-tighter uppercase leading-tight text-foreground">
-                                Catalogue <br /> Complet
+                              <div className="relative w-48 h-48 mb-6 transition-transform duration-300 group-hover:scale-110 mx-auto">
+                                <img
+                                  src="/assets/menu/cart-3d.png"
+                                  alt="Top Vente Panier"
+                                  className="w-full h-full object-contain drop-shadow-xl"
+                                />
                               </div>
-                              <p className="text-sm leading-relaxed text-muted-foreground font-medium">
-                                Explorez l&apos;intégralité de nos collections
-                                écologiques et durables.
+                              <div className="mb-2 text-2xl font-black tracking-tighter uppercase leading-tight text-foreground text-center">
+                                TOP VENTE
+                              </div>
+                              <p className="text-sm leading-relaxed text-muted-foreground font-medium text-center">
+                                Découvers nos meilleures offres
                               </p>
                             </Link>
                           </NavigationMenuLink>

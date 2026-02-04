@@ -45,7 +45,10 @@ const defaultBanner: Banner = {
   updatedAt: new Date(),
 };
 
-export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
+export default function DiaryHero({
+  previewMode = false,
+  customerCount = 150,
+}: DiaryHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -119,7 +122,7 @@ export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
       className={`relative w-full overflow-hidden ${playfair.className}`}
       style={{
         backgroundColor: colors.background,
-        padding: "40px 5%", // Reduced padding to bring focus to center
+        padding: "60px 5%", // Increased padding to prevent badge clipping
       }}
     >
       <div className="max-w-[1400px] mx-auto min-h-[500px] flex items-center">
@@ -139,15 +142,15 @@ export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
             <div className="hero-animate opacity-0 relative">
               {/* Box Border - Removed for cleaner look in this version or made subtle */}
 
-              {/* NEW COLLECTION Badge */}
+              {/* NEW COLLECTION Badge (Mapped to Title) */}
               <div
                 className="inline-block px-4 py-1 mb-2 text-[10px] font-bold tracking-[0.2em] transform -skew-x-12"
                 style={{ backgroundColor: colors.beige, color: "#3a2012" }}
               >
-                NEW COLLECTION
+                {currentBanner.title}
               </div>
 
-              {/* SUPER (Serif) */}
+              {/* SUPER (Serif - Mapped to Subtitle) */}
               <h1 className="leading-[0.85] relative">
                 <span
                   className="block font-black tracking-tighter uppercase"
@@ -156,10 +159,10 @@ export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
                     color: colors.beige,
                   }}
                 >
-                  Super
+                  {currentBanner.subtitle}
                 </span>
 
-                {/* Sale (Script) */}
+                {/* Sale (Script - Mapped to Description) */}
                 <span
                   className={`block text-white relative z-10 ${greatVibes.className}`}
                   style={{
@@ -170,7 +173,7 @@ export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
                     textShadow: "0 5px 15px rgba(0,0,0,0.2)",
                   }}
                 >
-                  Sale
+                  {currentBanner.description}
                 </span>
               </h1>
             </div>
@@ -221,7 +224,7 @@ export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
                 </div>
                 <div className="text-center">
                   <span className="block text-2xl font-black text-[#1F4D42]">
-                    11+
+                    {customerCount}+
                   </span>
                   <span className="text-[10px] font-bold text-[#4A5D55] uppercase tracking-widest">
                     Clients satisfaits
@@ -246,7 +249,7 @@ export default function DiaryHero({ previewMode = false }: DiaryHeroProps) {
                     src={currentBanner.imageUrl}
                     alt={currentBanner.title}
                     fill
-                    className="object-cover" // object-cover to Fill the blob
+                    className="object-contain p-4" // object-contain to show full image, p-4 to prevent blob clipping
                     priority
                   />
                 )}
