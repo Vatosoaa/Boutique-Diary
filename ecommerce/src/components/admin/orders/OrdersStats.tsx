@@ -30,7 +30,7 @@ interface OrdersStatsProps {
 export function OrdersStats({ stats, loading }: OrdersStatsProps) {
   const statCards = [
     {
-      label: "Total Orders Today",
+      label: "Commandes du jour",
       value: stats.totalOrdersToday,
       trend: stats.todayTrend,
       icon: ShoppingCart,
@@ -39,7 +39,7 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
       chartColor: "#3b82f6",
     },
     {
-      label: "Order Completed",
+      label: "Terminées",
       value: stats.completedOrders,
       trend: stats.completedTrend,
       icon: CheckCircle,
@@ -48,7 +48,7 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
       chartColor: "#10b981",
     },
     {
-      label: "Pending Orders",
+      label: "En attente",
       value: stats.pendingOrders,
       trend: stats.pendingTrend,
       icon: Clock,
@@ -57,7 +57,7 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
       chartColor: "#f59e0b",
     },
     {
-      label: "Cancel Orders",
+      label: "Annulées",
       value: stats.cancelledOrders,
       trend: stats.cancelledTrend,
       icon: XCircle,
@@ -129,7 +129,7 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
                     </div>
                   </div>
                   <div className="text-[12px] text-gray-500 dark:text-gray-400 font-medium">
-                    Last Month
+                    Ce mois-ci
                   </div>
                 </div>
 

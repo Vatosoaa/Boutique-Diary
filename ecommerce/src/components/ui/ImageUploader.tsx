@@ -122,7 +122,12 @@ export function ImageUploader({
   if (value) {
     return (
       <div
-        className={cn("relative group", aspectClasses[aspectRatio], className)}
+        className={cn(
+          "relative group",
+          aspectClasses[aspectRatio],
+          aspectRatio === "auto" && "min-h-40",
+          className,
+        )}
       >
         <Image
           src={value}

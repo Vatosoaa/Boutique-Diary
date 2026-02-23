@@ -94,13 +94,14 @@ export default function DiaryHero({
   useEffect(() => {
     if (previewMode || !containerRef.current) return;
 
+    // Scroll-left lateral staggered entrance
     anime({
       targets: containerRef.current.querySelectorAll(".hero-animate"),
-      translateY: [30, 0],
+      translateX: [300, 0], // Stronger lateral movement for scroll effect
       opacity: [0, 1],
-      delay: anime.stagger(100),
-      easing: "easeOutQuad",
-      duration: 800,
+      delay: anime.stagger(120, { start: 100 }),
+      easing: "easeOutExpo",
+      duration: 1500, // Slightly longer for smoother scroll feel
     });
   }, [previewMode, currentIndex, isLoading]);
 
@@ -203,7 +204,7 @@ export default function DiaryHero({
             {/* Main Image Container (Combined Blob & Image) */}
             <div className="hero-animate opacity-0 relative w-[450px] h-[450px] z-10 flex items-center justify-center">
               {/* Clients Satisfaits Badge (Top Right of Image) */}
-              <div className="absolute -top-12 -right-12 z-30 flex flex-col items-center animate-bounce-slow">
+              <div className="absolute -top-12 -right-12 z-30 flex flex-col items-center animate-float-gentle">
                 <div className="flex -space-x-4 mb-2">
                   {[1, 2, 3, 4].map((i) => (
                     <div
@@ -233,9 +234,8 @@ export default function DiaryHero({
               </div>{" "}
               {/* The Organic Blob Shape Container */}
               <div
-                className="absolute inset-0 shadow-2xl transition-transform duration-500 hover:scale-105"
+                className="absolute inset-0 shadow-2xl transition-all duration-1000 animate-morph"
                 style={{
-                  borderRadius: "44% 56% 63% 37% / 46% 59% 41% 54%", // More organic shape
                   backgroundColor: colors.darkGreen, // The Dark Green Blob Background
                   overflow: "hidden",
                   transform: "rotate(-3deg)", // Slight tilt for dynamic feel
@@ -245,17 +245,23 @@ export default function DiaryHero({
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
 
                 {!isLoading && (
-                  <Image
-                    src={currentBanner.imageUrl}
-                    alt={currentBanner.title}
-                    fill
-                    className="object-contain p-4" // object-contain to show full image, p-4 to prevent blob clipping
-                    priority
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      key={currentIndex}
+                      src={currentBanner.imageUrl}
+                      alt={currentBanner.title}
+                      fill
+                      className="object-contain p-4 animate-in fade-in slide-in-from-right-20 zoom-in-95 duration-1000 ease-out transition-all"
+                      priority
+                    />
+                  </div>
                 )}
               </div>
               {/* 50% DISCOUNT Badge (Floating on top left edge of the blob) */}
-              <div className="absolute bottom-12 -left-4 z-20">
+              <div
+                className="absolute bottom-12 -left-4 z-20 animate-float-gentle"
+                style={{ animationDelay: "1s" }}
+              >
                 <div className="relative w-28 h-28 transform hover:scale-110 transition-transform duration-300">
                   <div className="absolute inset-0 bg-[#EACFA8] rounded-full shadow-xl animate-spin-slow-custom">
                     <div className="absolute inset-1 border border-dashed border-[#1F4D42] rounded-full opacity-60"></div>
@@ -272,10 +278,11 @@ export default function DiaryHero({
 
             {/* Navigation Arrows */}
             {banners.length > 1 && (
-              <div className="absolute -bottom-10 right-10 flex gap-3 z-20">
+              <div className="absolute -bottom-10 right-10 flex gap-3 z-30">
                 <button
                   onClick={goToPrev}
-                  className="w-12 h-12 rounded-full border border-[#EACFA8]/50 text-[#EACFA8] flex items-center justify-center hover:bg-[#EACFA8] hover:text-[#1F4D42] transition-colors"
+                  className="w-12 h-12 rounded-full border border-[#1F4D42]/20 bg-white/60 backdrop-blur-sm text-[#1F4D42] flex items-center justify-center hover:bg-white hover:shadow-lg transition-all active:scale-95"
+                  aria-label="Précédent"
                 >
                   <svg
                     width="24"
@@ -283,14 +290,15 @@ export default function DiaryHero({
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
                   >
                     <path d="M15 18l-6-6 6-6" />
                   </svg>
                 </button>
                 <button
                   onClick={goToNext}
-                  className="w-12 h-12 rounded-full border border-[#EACFA8]/50 text-[#EACFA8] flex items-center justify-center hover:bg-[#EACFA8] hover:text-[#1F4D42] transition-colors"
+                  className="w-12 h-12 rounded-full border border-[#1F4D42]/20 bg-white/60 backdrop-blur-sm text-[#1F4D42] flex items-center justify-center hover:bg-white hover:shadow-lg transition-all active:scale-95"
+                  aria-label="Suivant"
                 >
                   <svg
                     width="24"
@@ -298,7 +306,7 @@ export default function DiaryHero({
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
                   >
                     <path d="M9 18l6-6-6-6" />
                   </svg>

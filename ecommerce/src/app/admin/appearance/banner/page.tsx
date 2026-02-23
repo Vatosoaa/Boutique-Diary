@@ -58,7 +58,7 @@ export default function BannerPage() {
       <div className="mt-6">
         {showForm ? (
           <BannerForm
-            banner={selectedBanner}
+            initialData={selectedBanner}
             onSuccess={handleSuccess}
             onCancel={handleCancel}
           />

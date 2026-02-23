@@ -122,6 +122,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply dark:bg-gray-900/50 text-foreground;
   }
@@ -170,6 +171,7 @@
     transform: translateX(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -187,15 +189,11 @@
     font-size: 16px !important;
     font-weight: 600 !important;
     color: #ffffff !important;
-    background: var(
-      --store-primary-gradient,
-      linear-gradient(
-        135deg,
-        var(--store-primary) 0%,
-        var(--store-secondary) 50%,
-        var(--store-primary) 100%
-      )
-    ) !important;
+    background: var(--store-primary-gradient,
+        linear-gradient(135deg,
+          var(--store-primary) 0%,
+          var(--store-secondary) 50%,
+          var(--store-primary) 100%)) !important;
     border: none !important;
     border-radius: 50px !important;
     cursor: pointer !important;
@@ -228,16 +226,14 @@
   left: -3px;
   right: -3px;
   bottom: -3px;
-  background: linear-gradient(
-    45deg,
-    #00d4ff,
-    #6366f1,
-    #a855f7,
-    #ec4899,
-    #f97316,
-    #eab308,
-    #00d4ff
-  );
+  background: linear-gradient(45deg,
+      #00d4ff,
+      #6366f1,
+      #a855f7,
+      #ec4899,
+      #f97316,
+      #eab308,
+      #00d4ff);
   background-size: 400% 400%;
   border-radius: 53px;
   z-index: -2;
@@ -253,15 +249,11 @@
   left: 2px;
   right: 2px;
   bottom: 2px;
-  background: var(
-    --store-primary-gradient,
-    linear-gradient(
-      135deg,
-      var(--store-primary) 0%,
-      var(--store-secondary) 50%,
-      var(--store-primary) 100%
-    )
-  );
+  background: var(--store-primary-gradient,
+      linear-gradient(135deg,
+        var(--store-primary) 0%,
+        var(--store-secondary) 50%,
+        var(--store-primary) 100%));
   border-radius: 48px;
   z-index: -1;
 }
@@ -313,32 +305,39 @@
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
 }
 
 @keyframes spark-move {
+
   0%,
   100% {
     top: 50%;
     left: -5%;
     opacity: 0;
   }
+
   10% {
     opacity: 1;
   }
+
   50% {
     top: 20%;
     left: 50%;
     opacity: 1;
   }
+
   90% {
     opacity: 1;
   }
+
   100% {
     top: 50%;
     left: 105%;
@@ -380,12 +379,14 @@
 }
 
 @keyframes pulse-glow {
+
   0%,
   100% {
     opacity: 0.5;
     transform: scale(1);
     filter: blur(10px);
   }
+
   50% {
     opacity: 0.8;
     transform: scale(1.1);
@@ -487,14 +488,10 @@
 
 .hero-heading-gradient {
   display: block;
-  background: var(
-    --store-primary-gradient,
-    linear-gradient(
-      135deg,
-      var(--store-primary) 0%,
-      var(--store-secondary) 100%
-    )
-  );
+  background: var(--store-primary-gradient,
+      linear-gradient(135deg,
+        var(--store-primary) 0%,
+        var(--store-secondary) 100%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1022,6 +1019,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1032,6 +1030,7 @@
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1043,6 +1042,7 @@
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1054,6 +1054,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1065,6 +1066,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -1105,7 +1107,8 @@
   text-transform: uppercase !important;
   font-weight: 700 !important;
   letter-spacing: 1px !important;
-  border-radius: 0 !important; /* Sharp edges */
+  border-radius: 0 !important;
+  /* Sharp edges */
   padding: 16px 32px !important;
   transition: all 0.3s ease !important;
 }
@@ -1145,7 +1148,8 @@
 }
 
 .bsite-title {
-  font-family: "Inter", sans-serif; /* Or a more geometric font if available */
+  font-family: "Inter", sans-serif;
+  /* Or a more geometric font if available */
   font-weight: 900;
   letter-spacing: -1px;
 }
@@ -1183,4 +1187,93 @@
 .bsite-checkbox-label {
   color: #888;
   font-size: 0.9rem;
+}
+
+/* Infinite Banner Animations */
+@keyframes morphing {
+  0% {
+    border-radius: 44% 56% 63% 37% / 46% 59% 41% 54%;
+  }
+
+  25% {
+    border-radius: 60% 40% 50% 50% / 40% 60% 40% 60%;
+  }
+
+  50% {
+    border-radius: 40% 60% 30% 70% / 70% 30% 70% 30%;
+  }
+
+  75% {
+    border-radius: 55% 45% 65% 35% / 35% 65% 35% 65%;
+  }
+
+  100% {
+    border-radius: 44% 56% 63% 37% / 46% 59% 41% 54%;
+  }
+}
+
+.animate-morph {
+  animation: morphing 15s ease-in-out infinite;
+}
+
+@keyframes float-gentle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+@keyframes spin-slow-custom {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow-custom {
+  animation: spin-slow-custom 8s linear infinite;
+}
+
+.cross-fade-enter {
+  opacity: 0;
+}
+
+.cross-fade-enter-active {
+  opacity: 1;
+  transition: opacity 800ms ease-in-out;
+}
+
+.cross-fade-exit {
+  opacity: 1;
+}
+
+.cross-fade-exit-active {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+.zoom-in-95 {
+  animation: zoom-in-95 1000ms ease-out forwards;
+}
+
+@keyframes zoom-in-95 {
+  from {
+    transform: scale(0.95);
+  }
+
+  to {
+    transform: scale(1);
+  }
 }

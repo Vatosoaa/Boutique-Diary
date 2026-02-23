@@ -110,20 +110,22 @@ export default function BannerList({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="flex flex-row gap-4 overflow-x-auto pb-4">
       {banners.map((banner) => (
         <div
           key={banner.id}
           className={`bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden transition-all ${
             !banner.isActive ? "opacity-60" : ""
           }`}
+          style={{ width: "250px", flexShrink: 0 }}
         >
           {}
-          <div className="relative h-48 bg-gray-100">
+          <div className="relative w-full h-[250px] bg-gray-100 overflow-hidden">
             <Image
               src={banner.imageUrl}
               alt={banner.title}
               fill
+              sizes="250px"
               className="object-cover"
             />
             <div className="absolute top-2 left-2 flex gap-2">

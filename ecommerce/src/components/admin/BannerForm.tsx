@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Banner } from "@/types/banner";
-import { X, Save, Image as ImageIcon } from "lucide-react";
+import { X, Save } from "lucide-react";
+import { ImageUploader } from "@/components/ui/ImageUploader";
 
 interface BannerFormProps {
   initialData?: Banner | null;
@@ -176,33 +177,22 @@ export default function BannerForm({
           </div>
         </div>
 
-        {/* Image URL */}
+        {/* Image Upload */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            URL de l'image *
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Image de la bannière *
           </label>
-          <div className="relative">
-            <ImageIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              required
-              value={formData.imageUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.target.value })
+          <div className="relative" style={{ width: "200px", height: "200px" }}>
+            <ImageUploader
+              value={formData.imageUrl || undefined}
+              onChange={(url: string | null) =>
+                setFormData({ ...formData, imageUrl: url || "" })
               }
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
-              placeholder="https://..."
+              aspectRatio="square"
+              maxSize={10}
+              showUrlInput={false}
             />
           </div>
-          {formData.imageUrl && (
-            <div className="mt-2 relative h-32 w-full rounded-lg overflow-hidden border border-gray-200">
-              <img
-                src={formData.imageUrl}
-                alt="Aperçu"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
         </div>
 
         {/* Order & Active */}

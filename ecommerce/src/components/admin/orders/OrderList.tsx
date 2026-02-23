@@ -238,9 +238,9 @@ export function OrderList({
 
   const tabs: { value: TabValue; label: string; count: number }[] = [
     { value: "all", label: "Total", count: counts.total },
-    { value: "completed", label: "Completed", count: counts.completed },
-    { value: "pending", label: "Pending", count: counts.pending },
-    { value: "cancelled", label: "Cancelled", count: counts.cancelled },
+    { value: "completed", label: "Terminées", count: counts.completed },
+    { value: "pending", label: "En attente", count: counts.pending },
+    { value: "cancelled", label: "Annulées", count: counts.cancelled },
   ];
 
   return (
@@ -362,10 +362,10 @@ export function OrderList({
                   Client
                 </TableHead>
                 <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
-                  Montant
+                  Date
                 </TableHead>
                 <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
-                  Date
+                  Montant
                 </TableHead>
                 <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
                   Statut
@@ -454,10 +454,11 @@ export function OrderList({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={status.variant} className="gap-1.5">
-                          <StatusIcon className="w-3 h-3" />
-                          {status.label}
-                        </Badge>
+                        <span className="text-muted-foreground">
+                          {format(order.createdAt, "dd MMM yyyy", {
+                            locale: fr,
+                          })}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <span className="font-semibold text-foreground">
@@ -465,11 +466,10 @@ export function OrderList({
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className="text-muted-foreground">
-                          {format(order.createdAt, "dd MMM yyyy", {
-                            locale: fr,
-                          })}
-                        </span>
+                        <Badge variant={status.variant} className="gap-1.5">
+                          <StatusIcon className="w-3 h-3" />
+                          {status.label}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
