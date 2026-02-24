@@ -83,11 +83,10 @@ export class InvoiceGeneratorService {
   // --- Helpers ---
 
   private static formatMoney(amount: number): string {
-    return new Intl.NumberFormat("fr-MG", {
-      style: "currency",
-      currency: "MGA",
-      maximumFractionDigits: 0,
-    }).format(amount);
+    // Simple formatter to avoid any encoding/font issues in jsPDF
+    const val = Math.round(amount);
+    const formatted = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return `${formatted} Ar`;
   }
 
   // Helper pour charger une image en base64 depuis une URL
@@ -100,7 +99,7 @@ export class InvoiceGeneratorService {
         reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(blob);
       });
-    } catch (error) {
+    } catch {
       console.warn("Impossible de charger l'image produit:", url);
       return null;
     }
@@ -260,8 +259,8 @@ export class InvoiceGeneratorService {
     doc.setTextColor(STYLE.colors.white);
 
     doc.text("PRODUIT", STYLE.layout.marginX + 4, yPos - 2);
-    doc.text("QTE", pageWidth - 80, yPos - 2);
-    doc.text("PRIX", pageWidth - 55, yPos - 2);
+    doc.text("QTE", pageWidth - 100, yPos - 2, { align: "center" });
+    doc.text("PRIX", pageWidth - 65, yPos - 2, { align: "right" });
     doc.text("TOTAL", rightX - 4, yPos - 2, { align: "right" });
 
     yPos += 5;
@@ -290,7 +289,7 @@ export class InvoiceGeneratorService {
               10,
               10,
             );
-          } catch (e) {
+          } catch {
             // Fallback si format non supporté
           }
         }
@@ -313,8 +312,12 @@ export class InvoiceGeneratorService {
         doc.setFontSize(9);
       }
 
-      doc.text(`${item.quantity}`, pageWidth - 77, yPos + 3);
-      doc.text(this.formatMoney(item.price), pageWidth - 55, yPos + 3);
+      doc.text(`${item.quantity}`, pageWidth - 100, yPos + 3, {
+        align: "center",
+      });
+      doc.text(this.formatMoney(item.price), pageWidth - 65, yPos + 3, {
+        align: "right",
+      });
 
       doc.setFont(STYLE.fonts.main, "bold");
       doc.text(

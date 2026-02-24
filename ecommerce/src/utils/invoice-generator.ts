@@ -28,12 +28,12 @@ export const generateInvoice = (order: OrderDetails) => {
   const orderDate = new Date(order.createdAt);
   const formattedDate = format(orderDate, "dd MMMM yyyy", { locale: fr });
 
-  const formatMoney = (amount: number) =>
-    new Intl.NumberFormat("fr-MG", {
-      style: "currency",
-      currency: "MGA",
-      maximumFractionDigits: 0,
-    }).format(amount);
+  const formatMoney = (amount: number) => {
+    const formatted = Math.round(amount)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return `${formatted} Ar`;
+  };
 
   const htmlContent = `
     <!DOCTYPE html>

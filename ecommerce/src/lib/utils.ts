@@ -10,11 +10,8 @@ export function formatPrice(price: number | string | null | undefined): string {
   const numPrice = typeof price === "string" ? parseFloat(price) : price;
   if (isNaN(numPrice)) return "0 Ar";
 
-  return (
-    new Intl.NumberFormat("fr-FR", {
-      style: "decimal",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(numPrice) + " Ar"
-  );
+  const formatted = Math.round(numPrice)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `${formatted} Ar`;
 }
