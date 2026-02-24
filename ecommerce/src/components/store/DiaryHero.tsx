@@ -407,7 +407,7 @@ export default function DiaryHero({
         <div className="absolute top-7 left-12 z-20 flex items-center gap-2 pointer-events-auto">
           <div
             className="w-8 h-8 flex items-center justify-center rounded-sm"
-            style={{ backgroundColor: "#d4a373" }}
+            style={{ backgroundColor: "var(--store-primary)" }}
           >
             <span className="text-white text-xs font-black">D</span>
           </div>
@@ -419,7 +419,7 @@ export default function DiaryHero({
         {/* Decorative circle */}
         <div
           className="absolute -top-16 right-[42%] w-32 h-32 rounded-full opacity-10"
-          style={{ backgroundColor: "#d4a373" }}
+          style={{ backgroundColor: "var(--store-primary)" }}
         />
 
         {/* ─── RIGHT BACKGROUND (Cream Ellipse + Floating) ─── */}
@@ -560,8 +560,8 @@ export default function DiaryHero({
             <div
               className="rounded-2xl px-4 py-3 flex flex-col items-center gap-2 shadow-lg border"
               style={{
-                backgroundColor: "#ffffff",
-                borderColor: "rgba(212,163,115,0.25)",
+                backgroundColor: "var(--background)",
+                borderColor: "rgba(var(--store-primary-rgb), 0.25)",
                 minWidth: "130px",
               }}
             >
@@ -590,13 +590,13 @@ export default function DiaryHero({
               <div className="text-center">
                 <span
                   className="block text-lg font-black leading-none"
-                  style={{ color: "#4a3728" }}
+                  style={{ color: "var(--store-primary)" }}
                 >
                   {customerCount}+
                 </span>
                 <span
                   className="block text-[9px] font-semibold uppercase tracking-widest mt-0.5"
-                  style={{ color: "#4a3728", opacity: 0.55 }}
+                  style={{ color: "var(--store-primary)", opacity: 0.55 }}
                 >
                   Clients satisfaits
                 </span>
@@ -611,7 +611,7 @@ export default function DiaryHero({
           style={{
             width: "110px",
             height: "110px",
-            backgroundColor: "#d4a373",
+            backgroundColor: "var(--store-primary)",
             borderRadius: "50%",
             border: "8px solid rgba(255,255,255,0.2)",
             color: "#fff",
@@ -629,7 +629,7 @@ export default function DiaryHero({
           <div className="absolute bottom-10 right-48 z-40 flex gap-2">
             <button
               onClick={goToPrev}
-              className="w-8 h-8 rounded-full border border-[#d4a373] text-[#d4a373] flex items-center justify-center hover:bg-[#d4a373] hover:text-white transition-all duration-300 active:scale-90"
+              className="w-8 h-8 rounded-full border border-[var(--store-primary)] text-[var(--store-primary)] flex items-center justify-center hover:bg-[var(--store-primary)] hover:text-white transition-all duration-300 active:scale-90"
               aria-label="Précédent"
             >
               <svg
@@ -645,7 +645,7 @@ export default function DiaryHero({
             </button>
             <button
               onClick={goToNext}
-              className="w-8 h-8 rounded-full border border-[#d4a373] text-[#d4a373] flex items-center justify-center hover:bg-[#d4a373] hover:text-white transition-all duration-300 active:scale-90"
+              className="w-8 h-8 rounded-full border border-[var(--store-primary)] text-[var(--store-primary)] flex items-center justify-center hover:bg-[var(--store-primary)] hover:text-white transition-all duration-300 active:scale-90"
               aria-label="Suivant"
             >
               <svg
