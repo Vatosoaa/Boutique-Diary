@@ -25,7 +25,7 @@ interface OrdersResponse {
   orders: Array<{
     id: string;
     reference: string;
-    customer: { name: string; email: string };
+    customer: { name: string; email: string; avatar?: string };
     status:
       | "PENDING"
       | "PROCESSING"
@@ -85,6 +85,7 @@ export default function OrdersPage() {
         customer: {
           name: order.customer.name,
           email: order.customer.email,
+          avatar: order.customer.avatar,
         },
         status: order.status,
         total: order.total,

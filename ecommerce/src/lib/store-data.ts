@@ -303,6 +303,7 @@ export async function getTestimonials(limit = 6) {
         user: {
           select: {
             username: true,
+            photo: true,
           },
         },
       },
@@ -315,6 +316,7 @@ export async function getTestimonials(limit = 6) {
     return reviews.map((review) => ({
       id: review.id,
       name: review.user.username,
+      avatar: review.user.photo,
       date: new Date(review.createdAt).toLocaleDateString("fr-FR", {
         day: "numeric",
         month: "long",

@@ -339,7 +339,10 @@ function DotsPattern() {
   );
 }
 
-export default function DiaryHero({ customerCount = 150 }: DiaryHeroProps) {
+export default function DiaryHero({
+  customerCount = 150,
+  recentCustomers = [],
+}: DiaryHeroProps) {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -563,13 +566,20 @@ export default function DiaryHero({ customerCount = 150 }: DiaryHeroProps) {
               }}
             >
               <div className="flex -space-x-3">
-                {[26, 27, 28, 29].map((i) => (
+                {(recentCustomers.length > 0
+                  ? recentCustomers.slice(0, 4)
+                  : [26, 27, 28, 29]
+                ).map((c, i) => (
                   <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-white overflow-hidden relative shadow"
+                    key={typeof c === "object" ? c.id : i}
+                    className="w-8 h-8 rounded-full border-2 border-white overflow-hidden relative shadow bg-gray-100"
                   >
                     <Image
-                      src={`https://i.pravatar.cc/150?img=${i}`}
+                      src={
+                        typeof c === "object" && c.photo
+                          ? c.photo
+                          : `https://i.pravatar.cc/150?img=${typeof c === "object" ? 20 + i : c}`
+                      }
                       alt="client"
                       fill
                       className="object-cover"

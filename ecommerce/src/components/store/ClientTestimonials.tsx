@@ -1,7 +1,8 @@
 "use client";
 
-import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Quote, User } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import anime from "animejs";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ interface Testimonial {
   rating: number;
   title: string;
   review: string;
+  avatar?: string | null;
 }
 
 interface ClientTestimonialsProps {
@@ -105,12 +107,19 @@ export default function ClientTestimonials({
 
                   <div className="flex justify-between items-start mb-8">
                     <div className="flex gap-4">
-                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-border shadow-inner">
-                        <img
-                          src={`https://i.pravatar.cc/150?u=${item.id}`}
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-border shadow-inner bg-secondary/30 flex items-center justify-center">
+                        {item.avatar ? (
+                          <Image
+                            src={item.avatar}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">
+                            <User className="w-6 h-6" />
+                          </div>
+                        )}
                       </div>
                       <div>
                         <h4 className="font-black text-[15px] text-foreground uppercase tracking-tight">
@@ -140,7 +149,7 @@ export default function ClientTestimonials({
                     {item.title}
                   </h3>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed font-medium line-clamp-4 italic">
-                    "{item.review}"
+                    &quot;{item.review}&quot;
                   </p>
                 </div>
               ))}

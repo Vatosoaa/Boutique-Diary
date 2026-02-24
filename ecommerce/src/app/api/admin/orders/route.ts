@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
               id: true,
               username: true,
               email: true,
+              photo: true,
             },
           },
           transactions: {
@@ -91,10 +92,12 @@ export async function GET(request: NextRequest) {
     const formattedOrders = orders.map((order) => {
       let customerName = "Invité";
       let customerEmail = "";
+      let customerAvatar = "";
 
       if (order.customer) {
         customerName = order.customer.username;
         customerEmail = order.customer.email;
+        customerAvatar = order.customer.photo || "";
       } else if (order.transactions && order.transactions.length > 0) {
         const metadata = order.transactions[0].metadata as any;
         if (metadata) {
@@ -111,6 +114,7 @@ export async function GET(request: NextRequest) {
         customer: {
           name: customerName,
           email: customerEmail,
+          avatar: customerAvatar,
         },
         status: order.status,
         total: order.total,

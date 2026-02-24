@@ -10,7 +10,11 @@ export default function FeaturesSection({
   recentCustomers = [],
 }: {
   customerCount?: number;
-  recentCustomers?: any[];
+  recentCustomers?: {
+    id: string | number;
+    username: string;
+    photo?: string | null;
+  }[];
 }) {
   const [openIndex, setOpenIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
@@ -19,8 +23,8 @@ export default function FeaturesSection({
 
   const displayAvatars =
     recentCustomers.length > 0
-      ? recentCustomers.map((c) => ({
-          url: `https://i.pravatar.cc/150?u=${c.id}`,
+      ? recentCustomers.slice(0, 4).map((c) => ({
+          url: c.photo || `https://i.pravatar.cc/150?u=${c.id}`,
           name: c.username,
         }))
       : [
@@ -110,8 +114,8 @@ export default function FeaturesSection({
             Pourquoi Nous Choisir
           </h2>
           <p className="text-base text-gray-500 mb-8 leading-relaxed max-w-lg">
-            Nous sommes fiers d'offrir des produits qui répondent aux normes de
-            qualité les plus élevées. Chaque article est soigneusement
+            Nous sommes fiers d&apos;offrir des produits qui répondent aux
+            normes de qualité les plus élevées. Chaque article est soigneusement
             sélectionné, testé et conçu pour assurer durabilité et satisfaction
             client.
           </p>

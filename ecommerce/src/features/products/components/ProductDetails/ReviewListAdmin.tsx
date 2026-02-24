@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useEffect, useState, useCallback } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Star, Trash2 } from "lucide-react";
 import { format } from "date-fns";
@@ -11,6 +11,36 @@ import { cn } from "@/lib/utils";
 
 interface ReviewListAdminProps {
   productId: number;
+}
+
+interface User {
+  id: string | number;
+  username: string;
+  photo?: string | null;
+}
+
+interface Reply {
+  id: number;
+  content: string;
+  createdAt: string;
+  admin?: { name: string };
+  user?: User;
+}
+
+interface Reaction {
+  id: number;
+  type: string;
+}
+
+interface Review {
+  id: number;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  user: User;
+  reactions?: Reaction[];
+  replies?: Reply[];
+  tags?: string[];
 }
 
 const ReviewItemBase = ({
@@ -24,12 +54,27 @@ const ReviewItemBase = ({
   setReplyContent,
   isSubmittingReply,
   index = 0,
-}: any) => (
+}: {
+  review: Review;
+  handleDelete: (id: number) => void;
+  handleReaction: (id: number, type: string) => void;
+  handleReply: (id: number) => void;
+  replyingTo: number | null;
+  setReplyingTo: (id: number | null) => void;
+  replyContent: string;
+  setReplyContent: (content: string) => void;
+  isSubmittingReply: boolean;
+  index: number;
+}) => (
   <div
     style={{ animationDelay: `${index * 100}ms` }}
     className="py-8 flex gap-6 border-b border-gray-50/50 dark:border-gray-800 last:border-0 hover:bg-gray-50/20 dark:hover:bg-white/[0.02] transition-colors duration-300 px-4 -mx-4 rounded-3xl animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both"
   >
     <Avatar className="w-12 h-12 border border-gray-100 dark:border-gray-800 shadow-sm flex-shrink-0">
+      <AvatarImage
+        src={review.user.photo || undefined}
+        alt={review.user.username}
+      />
       <AvatarFallback className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-bold uppercase text-base">
         {review.user.username.substring(0, 2)}
       </AvatarFallback>
@@ -86,11 +131,9 @@ const ReviewItemBase = ({
         </Button>
         <div className="flex gap-2">
           {["LIKE", "LOVE"].map((type) => {
-            const hasReacted = review.reactions?.some(
-              (r: any) => r.type === type,
-            );
+            const hasReacted = review.reactions?.some((r) => r.type === type);
             const count =
-              review.reactions?.filter((r: any) => r.type === type).length || 0;
+              review.reactions?.filter((r) => r.type === type).length || 0;
             return (
               <button
                 key={type}
@@ -141,7 +184,7 @@ const ReviewItemBase = ({
 
       {review.replies && review.replies.length > 0 && (
         <div className="mt-6 space-y-4 bg-gray-50/80 dark:bg-gray-900/50 p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
-          {review.replies.map((reply: any) => (
+          {review.replies.map((reply) => (
             <div key={reply.id} className="flex gap-4">
               <div className="w-10 h-10 rounded-2xl bg-black dark:bg-white flex items-center justify-center flex-shrink-0 text-[11px] font-black text-white dark:text-black shadow-xl shadow-black/20 dark:shadow-white/5">
                 {reply.admin?.name?.substring(0, 2).toUpperCase() || "EQ"}
@@ -181,7 +224,7 @@ const ReviewItemBase = ({
 );
 
 export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState("");
@@ -189,13 +232,8 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
   const [showAll, setShowAll] = useState(false);
 
   const LIMIT = 4;
-  const displayedReviews = showAll ? reviews : reviews.slice(0, LIMIT);
 
-  useEffect(() => {
-    fetchReviews();
-  }, [productId]);
-
-  async function fetchReviews() {
+  const fetchReviews = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/products/${productId}/reviews`);
@@ -208,7 +246,11 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [productId]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   async function handleReply(reviewId: number) {
     if (!replyContent.trim()) return;
@@ -228,7 +270,7 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
       } else {
         toast.error("Échec de l'envoi");
       }
-    } catch (error) {
+    } catch {
       toast.error("Erreur de connexion");
     } finally {
       setIsSubmittingReply(false);
@@ -264,7 +306,7 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
       } else {
         toast.error("Échec de la suppression");
       }
-    } catch (error) {
+    } catch {
       toast.error("Erreur de connexion");
     }
   }

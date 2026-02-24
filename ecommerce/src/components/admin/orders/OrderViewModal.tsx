@@ -37,7 +37,7 @@ import { toast } from "sonner";
 export interface OrderDetails {
   id: string;
   reference: string;
-  customer: { name: string; email: string; address?: string };
+  customer: { name: string; email: string; avatar?: string; address?: string };
   status:
     | "PENDING"
     | "PROCESSING"
@@ -290,6 +290,36 @@ export function OrderFloatingPanel({
                 Client
               </h3>
               <div className="grid gap-4 bg-background/40 p-4 rounded-2xl border border-border/30">
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/20 bg-secondary/30">
+                    {order.customer.avatar ? (
+                      <Image
+                        src={order.customer.avatar}
+                        alt={order.customer.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary text-sm font-bold">
+                        {order.customer.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                          .slice(0, 2)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-foreground">
+                      {order.customer.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      Client
+                    </span>
+                  </div>
+                </div>
+                <Separator className="bg-border/40" />
                 <InfoRow
                   icon={Calendar}
                   label="Date"

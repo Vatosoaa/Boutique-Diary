@@ -18,6 +18,7 @@ export async function GET(
             id: true,
             username: true,
             email: true,
+            photo: true,
             addresses: {
               take: 1,
               orderBy: { createdAt: "desc" },
@@ -82,9 +83,10 @@ export async function GET(
             id: order.customer.id,
             name: order.customer.username,
             email: order.customer.email,
+            avatar: order.customer.photo,
             address: displayAddress,
           }
-        : { name: "Invité", email: "", address: displayAddress },
+        : { name: "Invité", email: "", avatar: null, address: displayAddress },
       items: order.items.map((item) => ({
         id: item.id,
         productId: item.productId,
