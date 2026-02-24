@@ -10,6 +10,7 @@ import {
   Loader2,
   FileText,
 } from "lucide-react";
+import Image from "next/image";
 import { InvoiceGeneratorService, InvoiceData } from "@/utils/pdf-invoice";
 import { toast } from "sonner";
 import {
@@ -73,12 +74,12 @@ export default function CustomerOrders() {
     }
   };
 
-  const formatMoney = (amount: number) =>
-    new Intl.NumberFormat("fr-MG", {
-      style: "currency",
-      currency: "MGA",
-      maximumFractionDigits: 0,
-    }).format(amount);
+  const formatMoney = (amount: number) => {
+    const formatted = Math.round(amount)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return `${formatted} Ar`;
+  };
 
   const handleStatusUpdate = async () => {
     if (!actionOrder || !actionType) return;
@@ -198,14 +199,28 @@ export default function CustomerOrders() {
                 {order.items.map((item, i: number) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
-                        <Package size={20} className="text-muted-foreground" />
+                      <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center overflow-hidden relative border border-border">
+                        {item.productImage ? (
+                          <div className="relative w-full h-full">
+                            <Image
+                              src={item.productImage}
+                              alt={item.productName}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <Package
+                            size={20}
+                            className="text-muted-foreground"
+                          />
+                        )}
                       </div>
                       <div>
-                        <p className="font-medium text-foreground">
+                        <p className="font-medium text-foreground text-sm">
                           {item.productName || "Produit inconnu"}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
                           Quantité: {item.quantity}
                         </p>
                       </div>

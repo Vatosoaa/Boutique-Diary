@@ -17,7 +17,10 @@ export async function GET() {
             product: {
               select: {
                 name: true,
-                images: true,
+                images: {
+                  take: 1,
+                  select: { url: true },
+                },
               },
             },
           },
@@ -26,7 +29,21 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(orders);
+    // On formate les données pour qu'elles correspondent à l'interface InvoiceData attendue par le front
+    const formattedOrders = orders.map((order) => ({
+      ...order,
+      createdAt: order.createdAt.toISOString(),
+      items: order.items.map((item) => ({
+        id: item.id,
+        productName: item.product.name,
+        productImage: item.product.images[0]?.url || null,
+        quantity: item.quantity,
+        price: Number(item.price),
+      })),
+      total: Number(order.total),
+    }));
+
+    return NextResponse.json(formattedOrders);
   } catch (error) {
     console.error("Orders GET error:", error);
     return NextResponse.json(
