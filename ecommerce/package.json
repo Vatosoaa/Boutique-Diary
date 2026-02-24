@@ -94,5 +94,8 @@
     "overrides": {
       "baseline-browser-mapping": "latest"
     }
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       buttonText,
       buttonLink,
       imageUrl,
+      bgColor,
       order,
       isActive,
     } = body;
@@ -53,6 +54,7 @@ export async function POST(request: NextRequest) {
         buttonText: buttonText || null,
         buttonLink: buttonLink || null,
         imageUrl,
+        bgColor: bgColor || null,
         order: order ? parseInt(String(order), 10) : count + 1,
         isActive: isActive ?? true,
       },

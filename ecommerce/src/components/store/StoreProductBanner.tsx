@@ -14,7 +14,7 @@ interface StoreProductBannerProps {
   badge: string;
   customerCount: number;
   recentCustomers?: Customer[];
-  variant?: "indigo" | "rose" | "amber" | "cyan" | "emerald";
+  variant?: "indigo" | "rose" | "amber" | "cyan" | "emerald" | "theme";
   enableTypewriter?: boolean;
 }
 
@@ -52,6 +52,11 @@ export default function StoreProductBanner({
       bg: "bg-emerald-950",
       blobs: ["bg-emerald-600", "bg-teal-600", "bg-lime-500"],
       textGradient: "from-emerald-100 via-teal-100 to-lime-100",
+    },
+    theme: {
+      bg: "bg-background",
+      blobs: ["bg-store-primary", "bg-store-secondary", "bg-store-accent"],
+      textGradient: "from-store-primary via-store-secondary to-store-accent",
     },
   };
 
@@ -124,7 +129,7 @@ export default function StoreProductBanner({
             <span>{badge}</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.85] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-both">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black text-foreground tracking-tighter leading-[0.85] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-both">
             {title.split(" ").map((word, i) => (
               <span key={i} className="inline-block mr-4 last:mr-0">
                 {word === "Produits" ||
@@ -134,7 +139,9 @@ export default function StoreProductBanner({
                   <span
                     className={cn(
                       "bg-gradient-to-r bg-clip-text text-transparent italic",
-                      currentVariant.textGradient,
+                      variant === "theme"
+                        ? "from-store-primary via-store-secondary to-store-accent"
+                        : currentVariant.textGradient,
                     )}
                   >
                     {word}
@@ -146,7 +153,7 @@ export default function StoreProductBanner({
             ))}
           </h1>
 
-          <p className="text-sm md:text-lg lg:text-xl text-white/60 font-medium max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500 fill-mode-both group-hover:text-white/80 transition-colors">
+          <p className="text-sm md:text-lg lg:text-xl text-foreground/60 font-medium max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500 fill-mode-both group-hover:text-foreground/80 transition-colors">
             {enableTypewriter ? (
               <StoreTypewriter text={subtitle} delay={1000} speed={40} />
             ) : (

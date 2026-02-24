@@ -49,7 +49,7 @@ export default function BannerSlideshow() {
   if (isLoading) {
     return (
       <div className="w-full h-[300px] md:h-[400px] bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-store-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -82,7 +82,7 @@ export default function BannerSlideshow() {
               {currentBanner.subtitle}
             </span>
           )}
-          <h3 className="text-xl md:text-2xl font-bold mt-1">
+          <h3 className="text-xl md:text-2xl font-heading font-bold mt-1">
             {currentBanner.title}
           </h3>
           {currentBanner.description && (
@@ -93,7 +93,7 @@ export default function BannerSlideshow() {
           {currentBanner.buttonText && currentBanner.buttonLink && (
             <a
               href={currentBanner.buttonLink}
-              className="inline-block mt-4 px-6 py-2 bg-white text-gray-900 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors"
+              className="inline-block mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:opacity-90 transition-all shadow-md"
             >
               {currentBanner.buttonText}
             </a>

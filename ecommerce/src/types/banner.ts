@@ -6,6 +6,7 @@ export interface Banner {
   buttonText: string | null;
   buttonLink: string | null;
   imageUrl: string;
+  bgColor: string | null;
   order: number;
   isActive: boolean;
   createdAt: Date;
@@ -19,6 +20,7 @@ export interface BannerFormData {
   buttonText: string;
   buttonLink: string;
   imageUrl: string;
+  bgColor: string;
   order: number;
   isActive: boolean;
 }

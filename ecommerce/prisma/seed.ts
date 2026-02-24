@@ -22,35 +22,23 @@ const prisma = new PrismaClient({ adapter });
 
 const PRODUCTS_DIR = path.join(process.cwd(), "public/uploads/products");
 
-// Estimation des prix en MGA par catégorie
+// Estimation des prix en MGA par catégorie (Abordable Ar)
 const PRICE_RANGES: Record<string, { min: number; max: number }> = {
-  cartable: { min: 45000, max: 120000 },
-  chaussure: { min: 80000, max: 250000 },
-  "combi-short": { min: 35000, max: 80000 },
-  "crop-coton": { min: 15000, max: 35000 },
-  "crop-stylé": { min: 20000, max: 45000 },
-  "crop-top": { min: 15000, max: 40000 },
-  patalon: { min: 50000, max: 110000 },
-  robe: { min: 40000, max: 90000 },
-  "robe-luxe": { min: 120000, max: 350000 },
-  "robe-maxi": { min: 85000, max: 180000 },
-  "robe-été": { min: 35000, max: 75000 },
-  sandale: { min: 25000, max: 60000 },
-  short: { min: 20000, max: 50000 },
-  "veste-enfant": { min: 45000, max: 95000 },
-  default: { min: 30000, max: 80000 },
+  Femmes: { min: 25000, max: 95000 },
+  Hommes: { min: 30000, max: 110000 },
+  Enfants: { min: 15000, max: 65000 },
+  Accessoires: { min: 5000, max: 55000 },
+  default: { min: 20000, max: 80000 },
 };
 
 const BRANDS = [
+  "Boutique Diary",
   "Zara",
   "H&M",
   "Shein",
   "Mango",
-  "Bershka",
-  "Stradivarius",
   "Nike",
   "Adidas",
-  "Puma",
   "Local",
 ];
 
@@ -60,46 +48,13 @@ const COLORS = [
   "Rouge",
   "Bleu",
   "Vert",
-  "Jaune",
   "Rose",
   "Beige",
-  "Gris",
   "Gris",
   "Marron",
 ];
 
-const PROMO_CATEGORIES = [
-  "4 pcs beaut_ _ponge",
-  "Make Up Artist Essentials",
-  "Pinceaux de maquillage",
-  "_eyeshadow pallette _makeup",
-  "bracelet",
-  "ceinture",
-  "ceinture2",
-  "chaussure tennis",
-  "colier 4 pc",
-  "fer lisseur",
-  "lunnete",
-  "montre",
-  "rouge levre",
-  "rouge levre1",
-  "vernis",
-  "vernis (2)",
-  "vernis (3)",
-];
-
-const SIZES = ["XS", "S", "M", "L", "XL"];
-
-const REVIEW_COMMENTS = [
-  "Super qualité, je recommande !",
-  "Taille très bien.",
-  "La couleur est magnifique.",
-  "Un peu long à la livraison, mais ça vaut le coup.",
-  "Excellent rapport qualité-prix.",
-  "Très confortable.",
-  "Je l'adore !",
-  "Conforme à la description.",
-];
+const SIZES = ["S", "M", "L", "XL", "Unique"];
 
 const CUSTOMER_NAMES = [
   "Rasoa Kely",
@@ -123,35 +78,50 @@ const randomInt = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 const randomSubset = <T>(arr: T[], min = 1, max = 3): T[] => {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, randomInt(min, max));
+  return shuffled.slice(0, Math.min(arr.length, randomInt(min, max)));
 };
 
 function generateReference(brand: string, id: number): string {
-  return `${brand.substring(0, 3).toUpperCase()}-${id.toString().padStart(4, "0")}`;
+  const b = brand.replace(/\s/g, "").substring(0, 3).toUpperCase();
+  return `${b}-${id.toString().padStart(4, "0")}`;
 }
 
 async function getCategoriesAndImages() {
   const categories = [];
   try {
-    const items = await readdir(PRODUCTS_DIR, { withFileTypes: true });
+    const mainCats = await readdir(PRODUCTS_DIR, { withFileTypes: true });
 
-    for (const item of items) {
-      if (item.isDirectory()) {
-        const catName = item.name;
-        const catPath = path.join(PRODUCTS_DIR, catName);
-        const files = await readdir(catPath);
-        const images = files
-          .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
-          .map((f) => `/uploads/products/${catName}/${f}`);
+    for (const mainCat of mainCats) {
+      if (mainCat.isDirectory()) {
+        const catName = mainCat.name;
+        const mainCatPath = path.join(PRODUCTS_DIR, catName);
+        const subDirs = await readdir(mainCatPath, { withFileTypes: true });
 
-        if (images.length > 0) {
+        const products = [];
+        for (const subDir of subDirs) {
+          if (subDir.isDirectory()) {
+            const subDirName = subDir.name;
+            const subDirPath = path.join(mainCatPath, subDirName);
+            const files = await readdir(subDirPath);
+            const images = files
+              .filter((f) => /\.(jpg|jpeg|png|webp|jfif)$/i.test(f))
+              .map((f) => `/uploads/products/${catName}/${subDirName}/${f}`);
+
+            if (images.length > 0) {
+              products.push({
+                name: subDirName,
+                images,
+                isPromotion: catName === "Promotions",
+              });
+            }
+          }
+        }
+
+        if (products.length > 0) {
           categories.push({
-            name:
-              catName.charAt(0).toUpperCase() +
-              catName.slice(1).replace("-", " "),
-            slug: catName,
-            folder: catName,
-            images,
+            name: catName,
+            slug: catName.toLowerCase(),
+            products,
           });
         }
       }
@@ -167,7 +137,7 @@ async function getCategoriesAndImages() {
 // ===========================================
 
 async function main() {
-  console.log("🚀 Starting seeding (Multi-Image Mode)...");
+  console.log("🚀 Starting seeding with your custom images...");
 
   // Clean DB
   console.log("Cleaning database...");
@@ -178,6 +148,7 @@ async function main() {
   await prisma.cart.deleteMany();
   await prisma.stockMovement.deleteMany();
   await prisma.productImage.deleteMany();
+  await prisma.productVariation.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
   await prisma.user.deleteMany({
@@ -187,6 +158,9 @@ async function main() {
   const catData = await getCategoriesAndImages();
   if (catData.length === 0) {
     console.error("❌ No images found in public/uploads/products/");
+    console.log(
+      "Make sure folders Femmes, Hommes, Enfants, Accessoires exist.",
+    );
     return;
   }
 
@@ -194,7 +168,6 @@ async function main() {
   const hashedPassword = await bcrypt.hash("admin123", 10);
   const clientPassword = await bcrypt.hash("client123", 10);
 
-  // Upsert Admin
   const admin = await prisma.admin.upsert({
     where: { email: "admin@boutique.com" },
     update: {},
@@ -208,7 +181,6 @@ async function main() {
   });
   console.log("👤 Admin created/updated.");
 
-  // Create Users
   const users = [];
   for (const name of CUSTOMER_NAMES) {
     const email = `${name.toLowerCase().replace(/\s/g, ".")}@gmail.com`;
@@ -232,57 +204,50 @@ async function main() {
   const allProducts = [];
 
   for (const cat of catData) {
-    // Create/Update Category
+    // Skip logical grouping folder "Promotions" for DB category creation
+    // If it's promotions, we will attach products to "Accessoires" instead
+    let categoryName = cat.name;
+    if (categoryName === "Promotions") categoryName = "Accessoires";
+
     const category = await prisma.category.upsert({
-      where: { slug: cat.slug },
+      where: { slug: categoryName.toLowerCase() },
       update: {},
       create: {
-        name: cat.name,
-        slug: cat.slug,
-        description: `Collection ${cat.name}`,
+        name: categoryName,
+        slug: categoryName.toLowerCase(),
+        description: `Collection ${categoryName}`,
       },
     });
 
-    const priceRange = PRICE_RANGES[cat.folder] || PRICE_RANGES.default;
+    const priceRange = PRICE_RANGES[categoryName] || PRICE_RANGES.default;
 
-    // Group images into random chunks of 4-6
-    const shuffledImages = cat.images.sort(() => 0.5 - Math.random());
-    const imageChunks = [];
-    let i = 0;
-    while (i < shuffledImages.length) {
-      const chunkSize = randomInt(4, 6);
-      imageChunks.push(shuffledImages.slice(i, i + chunkSize));
-      i += chunkSize;
-    }
-
-    // Create a product for EACH chunk
-    for (const chunk of imageChunks) {
-      if (chunk.length === 0) continue;
-
-      const isPromo = PROMO_CATEGORIES.includes(cat.folder);
-
+    for (const prod of cat.products) {
+      const isPromo = prod.isPromotion;
       const brand = random(BRANDS);
-      // Logic for Promo vs Normal
-      let price;
-      if (isPromo) {
-        price = randomInt(5000, 25000); // Cheap for promo
-      } else {
-        price = randomInt(priceRange.min, priceRange.max);
-      }
+
+      let price = randomInt(priceRange.min, priceRange.max);
+      if (isPromo) price = Math.floor(price * 0.7); // 30% discount
+
       const finalPrice = Math.ceil(price / 100) * 100;
+      const oldPrice = isPromo ? Math.ceil(finalPrice / 0.7 / 100) * 100 : null;
 
-      // Assign 2-3 random colors to this product
-      const productColors = randomSubset(COLORS, 2, 4);
+      const productColors = randomSubset(COLORS, 2, 5);
+      const productSizes = randomSubset(SIZES, 2, 4);
 
-      const pName = `${cat.name} ${brand} ${random(["Collection", "Style", "Mode"])}`;
+      // Unique reference
       const mainRef = generateReference(brand, productCount);
 
-      const imagesData = chunk.map((imgPath, idx) => {
+      const pName = prod.name
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+
+      // Images mapping
+      const imagesData = prod.images.map((imgPath: string, idx: number) => {
         const color = productColors[idx % productColors.length];
         return {
           url: imgPath,
-          reference: `${mainRef}-${idx + 1}`,
-          stock: isPromo ? randomInt(50, 150) : randomInt(2, 20), // High stock for promo
+          reference: `${mainRef}-IMG${idx + 1}`,
+          stock: randomInt(10, 100),
           price: finalPrice,
           color: color,
         };
@@ -291,22 +256,24 @@ async function main() {
       const product = await prisma.product.create({
         data: {
           name: pName,
-          description: isPromo
-            ? `🔥 PROMOTION SPÉCIALE ! Profitez de ce superbe ${pName} à prix cassé. Stock important disponible !`
-            : `Superbe ${pName}. Disponible en plusieurs couleurs.`,
+          description: `Découvrez notre ${pName} de la marque ${brand}. Nouveau style disponible en plusieurs coloris.`,
           price: finalPrice,
+          oldPrice: oldPrice,
           brand,
           reference: mainRef,
           status: "PUBLISHED",
           categoryId: category.id,
-          stock: imagesData.reduce((acc, img) => acc + img.stock, 0),
+          stock: imagesData.reduce(
+            (acc: number, img: any) => acc + img.stock,
+            0,
+          ),
           colors: productColors,
-          sizes: randomSubset(SIZES, 3, 5),
-          isNew: Math.random() > 0.6,
-          isPromotion: isPromo ? true : Math.random() > 0.8, // Force true if promo category
-          isBestSeller: Math.random() > 0.8,
-          rating: parseFloat((3.5 + Math.random() * 1.5).toFixed(1)),
-          reviewCount: randomInt(0, 50),
+          sizes: productSizes,
+          isNew: !isPromo && Math.random() > 0.5,
+          isPromotion: isPromo,
+          isBestSeller: Math.random() > 0.7,
+          rating: parseFloat((4.0 + Math.random()).toFixed(1)),
+          reviewCount: randomInt(5, 45),
           images: {
             create: imagesData,
           },
@@ -317,9 +284,7 @@ async function main() {
     }
   }
 
-  console.log(
-    `📦 Created ${productCount} products across ${catData.length} categories.`,
-  );
+  console.log(`📦 Created ${productCount} products.`);
 
   // Create Stock Movements
   for (const prod of allProducts) {
@@ -330,15 +295,41 @@ async function main() {
         quantity: prod.stock,
         previousStock: 0,
         newStock: prod.stock,
-        reason: "Stock initial",
+        reason: "Import initial des stocks",
         createdBy: admin.email,
       },
     });
   }
 
+  // Create Fake Reviews (Testimonials)
+  console.log("⭐ Creating testimonials (reviews)...");
+  const reviewComments = [
+    "La qualité est incroyable, je ne m'attendais pas à ça pour le prix !",
+    "Service client au top et livraison rapide à Tana.",
+    "Boutique très sérieuse, les habits sont magnifiques.",
+    "J'adore ma nouvelle robe, elle taille parfaitement.",
+    "Vraiment satisfaite de mes achats, je reviendrai bientôt !",
+    "Les accessoires sont trop mignons, merci Diary !",
+  ];
+
+  for (let i = 0; i < reviewComments.length; i++) {
+    const user = users[i % users.length];
+    const product = allProducts[randomInt(0, allProducts.length - 1)];
+
+    await prisma.review.create({
+      data: {
+        rating: randomInt(4, 5),
+        comment: reviewComments[i],
+        isVerified: true,
+        productId: product.id,
+        userId: user.id,
+      },
+    });
+  }
+
   // Create Fake Orders
-  console.log("🛒 Creating fake orders...");
-  for (let i = 0; i < 50; i++) {
+  console.log("🛒 Creating 30 fresh orders...");
+  for (let i = 0; i < 30; i++) {
     const user = random(users);
     const numItems = randomInt(1, 3);
     const orderItems = [];
@@ -355,23 +346,14 @@ async function main() {
       total += prod.price * qty;
     }
 
-    const monthOffset = randomInt(0, 11);
     const orderDate = new Date();
-    orderDate.setMonth(orderDate.getMonth() - monthOffset);
-    orderDate.setDate(randomInt(1, 28));
+    orderDate.setDate(orderDate.getDate() - randomInt(0, 30));
 
     await prisma.order.create({
       data: {
-        reference: `CMD-${orderDate.getFullYear()}${(orderDate.getMonth() + 1).toString().padStart(2, "0")}-${randomInt(1000, 9999)}`,
+        reference: `CMD-${orderDate.getTime().toString().slice(-6)}-${randomInt(100, 999)}`,
         total,
-        status: random([
-          "PENDING",
-          "PROCESSING",
-          "SHIPPED",
-          "DELIVERED",
-          "COMPLETED",
-          "CANCELLED",
-        ]),
+        status: random(["PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED"]),
         customerId: user.id,
         createdAt: orderDate,
         updatedAt: orderDate,
@@ -382,7 +364,7 @@ async function main() {
           create: {
             amount: total,
             currency: "MGA",
-            provider: random(["mvola", "stripe", "cash"]),
+            provider: random(["MVola", "Orange Money", "Cash"]),
             status: "SUCCESS",
           },
         },
@@ -390,14 +372,13 @@ async function main() {
     });
   }
 
-  console.log("✅ Seeding completed!");
+  console.log("✅ Seeding completed successfully!");
 }
 
 main()
   .catch((e) => {
     console.error("❌ Seeding failed:");
-    console.error(JSON.stringify(e, null, 2));
-    if (e.message) console.error(e.message);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

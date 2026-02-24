@@ -268,6 +268,7 @@ export async function DELETE(
     const permanent = searchParams.get("permanent");
 
     if (permanent === "true") {
+      console.log(`Permanently deleting product ${id}`);
       await prisma.product.delete({
         where: { id },
       });

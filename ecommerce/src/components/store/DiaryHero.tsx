@@ -4,15 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useCallback } from "react";
 import anime from "animejs";
-import { Playfair_Display, Great_Vibes } from "next/font/google";
+import { Great_Vibes } from "next/font/google";
 
 // Load fonts locally for this component to ensure perfect style match
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "700", "900"],
-  display: "swap",
-});
-
+// Use theme variables for fonts
+const playfair = { className: "font-heading" };
 const greatVibes = Great_Vibes({
   subsets: ["latin"],
   weight: "400",
@@ -39,6 +35,7 @@ const defaultBanner: Banner = {
   buttonText: "SHOP NOW",
   buttonLink: "/shop",
   imageUrl: "/hero-model.png",
+  bgColor: null,
   order: 1,
   isActive: true,
   createdAt: new Date(),
@@ -108,13 +105,13 @@ export default function DiaryHero({
   const currentBanner =
     banners.length > 0 ? banners[currentIndex] : defaultBanner;
 
-  // Colors inspired by the new Sage Green mockup
+  // Use theme variables mapped to the Sage Green concept
   const colors = {
-    background: "#C9E4CA", // Sage Mint Green
-    darkGreen: "#1F4D42", // Deep Teal/Green for Blob
-    beige: "#d76e1990", // Beige for Text/Buttons
-    white: "#ffffff",
-    textDark: "#4A5D55", // Darker green/grey for small text
+    background: currentBanner.bgColor || "var(--hero-bg)",
+    darkGreen: "var(--store-primary)", // Deep color for Blob
+    beige: "var(--store-secondary)", // Secondary color for Text/Buttons
+    white: "var(--white, #ffffff)",
+    textDark: "var(--text-main)",
   };
 
   return (
@@ -146,7 +143,10 @@ export default function DiaryHero({
               {/* NEW COLLECTION Badge (Mapped to Title) */}
               <div
                 className="inline-block px-4 py-1 mb-2 text-[10px] font-bold tracking-[0.2em] transform -skew-x-12"
-                style={{ backgroundColor: colors.beige, color: "#3a2012" }}
+                style={{
+                  backgroundColor: "var(--store-accent)",
+                  color: "var(--white, #ffffff)",
+                }}
               >
                 {currentBanner.title}
               </div>
@@ -190,7 +190,7 @@ export default function DiaryHero({
                   <span className="absolute inset-0 w-full h-full bg-white/20 group-hover:scale-[1.5] group-hover:rotate-45 transition-transform duration-500 ease-out origin-center scale-0 rounded-full" />
                   <span
                     className="relative text-xs font-black tracking-[0.25em] uppercase"
-                    style={{ color: "#3a2012" }}
+                    style={{ color: "var(--white, #ffffff)" }}
                   >
                     {currentBanner.buttonText}
                   </span>
@@ -227,7 +227,7 @@ export default function DiaryHero({
                   <span className="block text-2xl font-black text-[#1F4D42]">
                     {customerCount}+
                   </span>
-                  <span className="text-[10px] font-bold text-[#4A5D55] uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-current opacity-70 uppercase tracking-widest">
                     Clients satisfaits
                   </span>
                 </div>
@@ -266,7 +266,7 @@ export default function DiaryHero({
                   <div className="absolute inset-0 bg-[#EACFA8] rounded-full shadow-xl animate-spin-slow-custom">
                     <div className="absolute inset-1 border border-dashed border-[#1F4D42] rounded-full opacity-60"></div>
                   </div>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-[#1F4D42] leading-none transform -rotate-12">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white leading-none transform -rotate-12">
                     <span className="text-3xl font-black">50%</span>
                     <span className="text-[10px] font-bold uppercase tracking-wider">
                       Discount

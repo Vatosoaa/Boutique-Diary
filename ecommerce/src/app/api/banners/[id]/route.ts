@@ -42,6 +42,7 @@ export async function PUT(
       buttonText,
       buttonLink,
       imageUrl,
+      bgColor,
       order,
       isActive,
     } = body;
@@ -55,6 +56,7 @@ export async function PUT(
         buttonText,
         buttonLink,
         imageUrl,
+        bgColor,
         order: order !== undefined ? parseInt(String(order), 10) : undefined,
         isActive,
       },

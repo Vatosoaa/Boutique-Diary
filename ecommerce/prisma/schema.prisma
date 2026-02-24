@@ -91,7 +91,7 @@ model CartItem {
   price     Float
   createdAt DateTime @default(now())
   cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([cartId])
   @@index([productId])
@@ -168,6 +168,7 @@ model Banner {
   buttonText  String?  @db.VarChar(50)
   buttonLink  String?  @db.VarChar(255)
   imageUrl    String
+  bgColor     String?  @db.VarChar(10)
   order       Int      @default(1)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -237,7 +238,7 @@ model OrderItem {
   price          Float
   productImageId Int?
   order          Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product        Product       @relation(fields: [productId], references: [id])
+  product        Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   productImage   ProductImage? @relation(fields: [productImageId], references: [id])
 
   @@index([orderId])

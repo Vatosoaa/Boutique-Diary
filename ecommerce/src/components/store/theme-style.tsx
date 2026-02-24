@@ -139,6 +139,7 @@ export function ThemeStyle({ theme }: { theme: StoreTheme }) {
           
           /* Derived Colors */
           --ring: ${theme.primaryColor};
+          --hero-bg: rgba(${hexToRgb(theme.primaryColor)}, 0.15);
 
           /* ===== STYLE PRESET VARIABLES ===== */
           --style-preset: "${preset}";

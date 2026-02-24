@@ -1,114 +1,128 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { MousePointer } from "lucide-react";
+import { MousePointer, ExternalLink, Calendar, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface PageStat {
   id: string;
   title: string;
   url: string;
-  visits: number;
-  conversionRate: number;
+  updatedAt: string;
   status: "Published" | "Draft";
-  image?: string;
+  type: string;
 }
 
-const defaultPages: PageStat[] = [
-  {
-    id: "1",
-    title: "Myautoinsurance.com",
-    url: "https://myautoinsurance.com",
-    visits: 150,
-    conversionRate: 12.5,
-    status: "Published",
-  },
-  {
-    id: "2",
-    title: "Securelifenow.com",
-    url: "https://securelifenow.com",
-    visits: 50,
-    conversionRate: -6.3,
-    status: "Draft",
-  },
-  {
-    id: "3",
-    title: "Myautoinsurance.com",
-    url: "https://myautoinsurance.com",
-    visits: 150,
-    conversionRate: 12.5,
-    status: "Published",
-  },
-];
-
 const RecentPages: React.FC = () => {
+  const [pages, setPages] = useState<PageStat[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecentPages = async () => {
+      try {
+        const response = await fetch("/api/admin/recent-pages");
+        if (response.ok) {
+          const data = await response.json();
+          setPages(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch recent pages", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentPages();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card className="border-none shadow-sm h-full flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
+          <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
+            Pages récentes
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="border-none shadow-sm h-full flex flex-col bg-gray-100 dark:bg-gray-900">
-      <CardHeader className="flex flex-row items-center justify-between pb-4">
+    <Card className="border-none shadow-sm h-full flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
           Pages récentes
         </CardTitle>
-        <button className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium">
+        <Link
+          href="/admin/products"
+          className="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors"
+        >
           Voir tout
-        </button>
+        </Link>
       </CardHeader>
-      <CardContent className="flex-1 overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-gray-500 dark:text-gray-400 text-sm border-b border-gray-100 dark:border-gray-700">
-              <th className="font-medium pb-3 pl-2">Page de destination</th>
-              <th className="font-medium pb-3">Taux de conversion</th>
-            </tr>
-          </thead>
-          <tbody className="space-y-4">
-            {defaultPages.map((page, index) => (
-              <tr key={`${page.id}-${index}`} className="group">
-                <td className="py-4 pl-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden flex-shrink-0">
-                      {}
-                      <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                        <MousePointer className="w-4 h-4 text-gray-400" />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800 dark:text-white text-sm">
-                        {page.title}
-                      </p>
-                      <div
-                        className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium mt-1 ${
-                          page.status === "Published"
-                            ? "bg-green-100 text-green-600"
-                            : "bg-orange-100 text-orange-600"
-                        }`}
-                      >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full mr-1 ${
-                            page.status === "Published"
-                              ? "bg-green-500"
-                              : "bg-orange-500"
-                          }`}
-                        ></span>
-                        {page.status === "Published" ? "Publié" : "Brouillon"}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-4 align-middle">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold text-gray-800 dark:text-white">
-                      {page.visits}
+      <CardContent className="flex-1 p-0 overflow-y-auto custom-scrollbar">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          {pages.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              Aucune activité récente.
+            </div>
+          ) : (
+            pages.map((page) => (
+              <Link
+                key={page.id}
+                href={page.url}
+                className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all group"
+              >
+                <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 transition-colors">
+                  <MousePointer className="w-5 h-5 text-indigo-500" />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="font-bold text-gray-900 dark:text-white text-sm truncate">
+                      {page.title}
+                    </p>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">
+                      {page.type}
                     </span>
-                    <div
-                      className={`text-xs font-medium flex items-center ${page.conversionRate > 0 ? "text-green-500" : "text-red-500"}`}
-                    >
-                      {page.conversionRate > 0 ? "↗" : "↘"}{" "}
-                      {Math.abs(page.conversionRate)}%
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center text-[11px] text-gray-400 dark:text-gray-500">
+                      <Calendar className="w-3 h-3 mr-1" />
+                      Modifier{" "}
+                      {formatDistanceToNow(new Date(page.updatedAt), {
+                        addSuffix: true,
+                        locale: fr,
+                      })}
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          page.status === "Published"
+                            ? "bg-emerald-500"
+                            : "bg-amber-500"
+                        }`}
+                      />
+                      <span className="text-[11px] font-medium text-gray-500">
+                        {page.status === "Published" ? "Publié" : "Brouillon"}
+                      </span>
                     </div>
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity pr-2">
+                  <ExternalLink className="w-4 h-4 text-indigo-500" />
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
       </CardContent>
     </Card>
   );

@@ -23,6 +23,7 @@ export default function BannerForm({
     buttonText: "",
     buttonLink: "",
     imageUrl: "",
+    bgColor: "",
     order: 1,
     isActive: true,
   });
@@ -38,6 +39,7 @@ export default function BannerForm({
         buttonText: initialData.buttonText || "",
         buttonLink: initialData.buttonLink || "",
         imageUrl: initialData.imageUrl,
+        bgColor: initialData.bgColor || "",
         order: initialData.order,
         isActive: initialData.isActive,
       });
@@ -193,6 +195,52 @@ export default function BannerForm({
               showUrlInput={false}
             />
           </div>
+        </div>
+
+        {/* Background Color */}
+        <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
+            Couleur de fond personnalisée
+          </label>
+          <div className="flex items-center gap-3">
+            <div className="relative group">
+              <input
+                type="color"
+                value={formData.bgColor || "#ffffff"}
+                onChange={(e) =>
+                  setFormData({ ...formData, bgColor: e.target.value })
+                }
+                className="w-10 h-10 rounded-lg border-2 border-white dark:border-gray-700 shadow-sm cursor-pointer overflow-hidden p-0"
+              />
+              <div className="absolute inset-0 rounded-lg ring-1 ring-black/5 pointer-events-none"></div>
+            </div>
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={formData.bgColor}
+                onChange={(e) =>
+                  setFormData({ ...formData, bgColor: e.target.value })
+                }
+                placeholder="Par défaut (Thème)"
+                className="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all font-mono text-xs"
+              />
+              {formData.bgColor && (
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, bgColor: "" })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                  title="Réinitialiser"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="mt-2 text-[11px] text-gray-500 dark:text-gray-400 leading-tight">
+            Optionnel. Si vide, la couleur par défaut du thème (`--hero-bg`)
+            sera utilisée.
+          </p>
         </div>
 
         {/* Order & Active */}
