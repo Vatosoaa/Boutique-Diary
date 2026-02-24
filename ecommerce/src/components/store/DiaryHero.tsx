@@ -626,10 +626,10 @@ export default function DiaryHero({
 
         {/* Arrow navigation */}
         {total > 1 && (
-          <div className="absolute bottom-10 right-28 z-30 flex gap-2">
+          <div className="absolute bottom-10 right-48 z-40 flex gap-2">
             <button
               onClick={goToPrev}
-              className="w-8 h-8 rounded-full border border-white/25 text-white flex items-center justify-center hover:bg-white/15 transition-all active:scale-90"
+              className="w-8 h-8 rounded-full border border-[#d4a373] text-[#d4a373] flex items-center justify-center hover:bg-[#d4a373] hover:text-white transition-all duration-300 active:scale-90"
               aria-label="Précédent"
             >
               <svg
@@ -645,7 +645,7 @@ export default function DiaryHero({
             </button>
             <button
               onClick={goToNext}
-              className="w-8 h-8 rounded-full border border-white/25 text-white flex items-center justify-center hover:bg-white/15 transition-all active:scale-90"
+              className="w-8 h-8 rounded-full border border-[#d4a373] text-[#d4a373] flex items-center justify-center hover:bg-[#d4a373] hover:text-white transition-all duration-300 active:scale-90"
               aria-label="Suivant"
             >
               <svg
