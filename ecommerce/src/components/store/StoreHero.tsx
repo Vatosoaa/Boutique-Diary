@@ -34,10 +34,10 @@ export default function StoreHero() {
                 {formatPrice(500000)}
               </span>
               <span className="text-3xl font-bold text-black">
-                {formatPrice(450000)}
+                {formatPrice(250000)}
               </span>
-              <span className="bg-black text-white text-xs px-2 py-1 rounded">
-                5% Disc
+              <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                -50% de Réduction
               </span>
             </div>
 
@@ -92,13 +92,13 @@ export default function StoreHero() {
 
             <div className="flex gap-4">
               <button className="flex-1 py-4 rounded-full border border-gray-200 font-medium hover:bg-gray-50 transition-colors">
-                Add to Chart
+                Ajouter au Panier
               </button>
               <button
                 className="flex-1 py-4 rounded-full bg-black text-white font-medium hover:opacity-90 transition-colors shadow-lg"
                 style={{ backgroundColor: "var(--store-primary)" }}
               >
-                Checkout Now
+                Commander Maintenant
               </button>
             </div>
           </div>
