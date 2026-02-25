@@ -101,7 +101,7 @@ export default function FeaturesSection({
         {}
         <div className="feature-image opacity-0 relative h-[500px] w-full rounded-[32px] overflow-hidden shadow-2xl">
           <Image
-            src="/images/why-choose-us.jpg"
+            src="/images/why-choose-us.png"
             alt="Pourquoi Nous Choisir"
             fill
             className="object-cover"

@@ -19,7 +19,7 @@ import {
 
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts(12);
-  const topSellingProducts = await getTopSellingProducts(4);
+  const topSellingProducts = await getTopSellingProducts(8);
   const promotionalProducts = await getPromotionalProducts(3);
   const categories = await getCategories();
   const { customerCount, recentCustomers } = await getStoreStats();

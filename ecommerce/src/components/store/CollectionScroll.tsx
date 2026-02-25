@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { cn, formatPrice } from "@/lib/utils";
+import { useRef, useCallback } from "react";
+import { formatPrice } from "@/lib/utils";
 
 interface Product {
   id: number;
@@ -21,6 +22,7 @@ export default function CollectionScroll({
   products = [],
 }: CollectionScrollProps) {
   const displayProducts = products.length > 0 ? products : [];
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const bgColors = [
     "bg-[#e5fcf4]",
@@ -28,6 +30,18 @@ export default function CollectionScroll({
     "bg-[#b8d2e8]",
     "bg-[#336699]",
   ];
+
+  // Scroll by one card width
+  const scroll = useCallback((direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const cardWidth = scrollRef.current.firstElementChild
+      ? (scrollRef.current.firstElementChild as HTMLElement).offsetWidth + 24
+      : 320;
+    scrollRef.current.scrollBy({
+      left: direction === "right" ? cardWidth : -cardWidth,
+      behavior: "smooth",
+    });
+  }, []);
 
   return (
     <section className="py-16 px-4 md:px-6">
@@ -48,32 +62,44 @@ export default function CollectionScroll({
               Nous distribuons nos collections dans des magasins incroyables.
               Découvrez-en plus sur nous et nos boutiques préférées.
             </p>
-            <Link
-              href="/top-vente"
-              className="border border-gray-300 rounded-full px-6 py-2 text-xs font-bold hover:bg-black hover:text-white transition-colors inline-block"
-            >
-              Voir plus
-            </Link>
+            <div className="flex items-center justify-end gap-3">
+              <Link
+                href="/top-vente"
+                className="border border-gray-300 rounded-full px-6 py-2 text-xs font-bold hover:bg-black hover:text-white transition-colors inline-block"
+              >
+                Voir plus
+              </Link>
+              <div className="hidden md:flex gap-2">
+                <button
+                  onClick={() => scroll("left")}
+                  className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white transition-colors"
+                  aria-label="Défiler à gauche"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => scroll("right")}
+                  className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white transition-colors"
+                  aria-label="Défiler à droite"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end relative">
-          {}
-          <div className="absolute -top-20 right-0 hidden md:flex gap-2">
-            <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50">
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50">
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
+        {/* Scrollable product row */}
+        <div
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4"
+        >
           {displayProducts.map((item, index) => (
             <Link
               href={`/store/product/${item.id}`}
               key={item.id}
-              className={`flex flex-col gap-3 ${index === 1 ? "lg:-mt-12" : ""}`}
+              className="flex-shrink-0 flex flex-col gap-3 snap-start"
+              style={{ width: "clamp(280px, 25vw, 340px)" }}
             >
               <div
                 className={`relative rounded-[32px] overflow-hidden ${bgColors[index % bgColors.length]} ${index === 1 ? "h-[380px]" : "h-[280px]"} w-full group`}
@@ -83,8 +109,8 @@ export default function CollectionScroll({
                     src={item.images[0].url}
                     alt={item.name}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    className="object-cover"
+                    sizes="(max-width: 768px) 80vw, 25vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-black/20 font-bold text-xl">
