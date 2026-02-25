@@ -263,6 +263,50 @@ export const THEME_PRESETS: Record<string, Partial<StoreTheme>> = {
     fontBody: "Lato",
     stylePreset: "neobrutalism",
   },
+  // 1. Style "Luxe & Confort" (Café & Crème)
+  "Luxe & Confort": {
+    primaryColor: "#3D2B1F",
+    secondaryColor: "#D4A373",
+    accentColor: "#B8860B",
+    backgroundColor: "#FDF5E6",
+    textColor: "#3D2B1F",
+    fontHeading: "Playfair Display",
+    fontBody: "Montserrat",
+    stylePreset: "material",
+  },
+  // 2. Style "Héritage & Premium" (Forêt & Brume)
+  "Héritage & Premium": {
+    primaryColor: "#1B2624",
+    secondaryColor: "#8B4513",
+    accentColor: "#556B2F",
+    backgroundColor: "#E8EDE7",
+    textColor: "#1B2624",
+    fontHeading: "Playfair Display",
+    fontBody: "Montserrat",
+    stylePreset: "material",
+  },
+  // 3. Style "Urbain & Streetwear" (Ardoise & Argent)
+  "Urbain & Streetwear": {
+    primaryColor: "#2C3E50",
+    secondaryColor: "#FF7F50", // Coral button contrast
+    accentColor: "#FFBF00", // Amber yellow contrast
+    backgroundColor: "#F4F7F6",
+    textColor: "#2C3E50",
+    fontHeading: "Montserrat",
+    fontBody: "Inter",
+    stylePreset: "minimal",
+  },
+  // 4. Style "Haute Couture" (Monochrome Bordeaux)
+  "Haute Couture": {
+    primaryColor: "#2A0000",
+    secondaryColor: "#FFD700", // Gold button
+    accentColor: "#800000",
+    backgroundColor: "#FFF5F5",
+    textColor: "#2A0000",
+    fontHeading: "Playfair Display",
+    fontBody: "Montserrat",
+    stylePreset: "glassmorphism",
+  },
 };
 
 // Section type labels for UI

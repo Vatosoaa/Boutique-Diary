@@ -112,6 +112,7 @@ export function ThemeStyle({ theme }: { theme: StoreTheme }) {
           --store-secondary-gradient: ${theme.secondaryGradient || "none"};
 
           --store-accent: ${theme.accentColor};
+          --store-accent-rgb: ${hexToRgb(theme.accentColor)};
           --font-heading: "${theme.fontHeading}", serif;
           --font-body: "${theme.fontBody}", sans-serif;
 

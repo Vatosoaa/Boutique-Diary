@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Great_Vibes, Playfair_Display } from "next/font/google";
+import anime from "animejs";
 import { Banner } from "@/types/banner";
 
 /** Keyframes injected once */
@@ -28,6 +29,11 @@ const ANIMATIONS = `
   @keyframes hero-sparkle {
     0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
     50% { opacity: 0.7; transform: scale(1.2) rotate(180deg); }
+  }
+  @keyframes morph {
+    0%, 100% { border-radius: 40% 60% 70% 30% / 40% 40% 60% 50%; }
+    30% { border-radius: 60% 40% 30% 70% / 60% 50% 50% 60%; }
+    60% { border-radius: 70% 30% 50% 50% / 30% 60% 70% 40%; }
   }
 `;
 
@@ -332,7 +338,7 @@ function DotsPattern() {
         <div
           key={i}
           className="w-1 h-1 rounded-full"
-          style={{ backgroundColor: "#d4a373" }}
+          style={{ backgroundColor: "var(--store-primary)" }}
         />
       ))}
     </div>
@@ -346,7 +352,9 @@ export default function DiaryHero({
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [fade, setFade] = useState(true);
+
+  const contentRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -365,12 +373,39 @@ export default function DiaryHero({
     load();
   }, []);
 
+  const animateIn = useCallback(() => {
+    if (!contentRef.current) return;
+
+    // Staggered text animation
+    anime({
+      targets: contentRef.current.querySelectorAll(".stagger-item"),
+      opacity: [0, 1],
+      translateY: [20, 0],
+      delay: anime.stagger(150, { start: 200 }),
+      duration: 800,
+      easing: "easeOutExpo",
+    });
+
+    // Image scale animation
+    if (imageRef.current) {
+      anime({
+        targets: imageRef.current,
+        scale: [1.1, 1],
+        opacity: [0, 1],
+        duration: 1200,
+        easing: "easeOutExpo",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      animateIn();
+    }
+  }, [currentIndex, isLoading, animateIn]);
+
   const goTo = useCallback((index: number) => {
-    setFade(false);
-    setTimeout(() => {
-      setCurrentIndex(index);
-      setFade(true);
-    }, 350);
+    setCurrentIndex(index);
   }, []);
 
   const total = banners.length || 1;
@@ -393,41 +428,68 @@ export default function DiaryHero({
 
   return (
     <section
-      className="relative w-full overflow-hidden"
+      className="relative w-full overflow-hidden flex flex-col md:block"
       style={{
-        background: "linear-gradient(to right, #4a3728 70%, #f4f0e8 70%)",
+        background:
+          "linear-gradient(to right, var(--store-primary) 70%, var(--background) 70%)",
         minHeight: "460px",
+        borderTop: "1px solid var(--store-primary)",
+        borderBottom: "1px solid var(--store-primary)",
       }}
     >
-      {/* ─── FIXED BACKGROUND ELEMENTS (DO NOT ANIMATE) ─── */}
-      <div className="absolute inset-0 mx-auto max-w-[1200px] pointer-events-none">
-        <DotsPattern />
+      {/* ─── FIXED BACKGROUND ELEMENTS ─── */}
+      <div className="absolute inset-0 mx-auto max-w-[1200px] pointer-events-none overflow-hidden">
+        <div className="hidden sm:block">
+          <DotsPattern />
+        </div>
 
         {/* Logo */}
-        <div className="absolute top-7 left-12 z-20 flex items-center gap-2 pointer-events-auto">
+        <div className="absolute top-4 sm:top-7 left-6 sm:left-12 z-20 flex items-center gap-2 pointer-events-auto">
           <div
-            className="w-8 h-8 flex items-center justify-center rounded-sm"
+            className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-sm"
             style={{ backgroundColor: "var(--store-primary)" }}
           >
-            <span className="text-white text-xs font-black">D</span>
+            <span className="text-white text-[10px] sm:text-xs font-black">
+              D
+            </span>
           </div>
-          <span className="text-white text-sm font-bold uppercase tracking-widest">
-            Diary Store
+          <span className="text-white text-[10px] sm:text-sm font-bold uppercase tracking-widest leading-none">
+            Diary boutique
           </span>
         </div>
 
         {/* Decorative circle */}
         <div
-          className="absolute -top-16 right-[42%] w-32 h-32 rounded-full opacity-10"
+          className="absolute -top-16 right-[10%] md:right-[42%] w-24 h-24 md:w-32 md:h-32 rounded-full opacity-10"
           style={{ backgroundColor: "var(--store-primary)" }}
         />
 
-        {/* ─── RIGHT BACKGROUND (Cream Ellipse + Floating) ─── */}
-        <div className="absolute inset-y-0 right-0 w-[52%] flex items-center justify-center">
+        {/* ─── RIGHT BACKGROUND (Morphing Blob + Cream Ellipse + Floating) ─── */}
+        <div className="absolute inset-y-0 right-0 w-full md:w-[52%] flex items-center justify-center">
+          {/* Infinite Morphing Blob */}
           <div
-            className="absolute inset-y-0 right-0 w-full"
+            className="absolute z-0 animate-morph opacity-10"
             style={{
-              backgroundColor: "#f4f0e8",
+              width: "clamp(400px, 50vw, 600px)",
+              height: "clamp(400px, 50vw, 600px)",
+              backgroundColor: "var(--store-primary)",
+              filter: "blur(60px)",
+              right: "-5%",
+              top: "10%",
+            }}
+          />
+
+          <div
+            className="absolute inset-0 md:inset-y-0 md:right-0 w-full"
+            style={{
+              backgroundColor: "var(--background)",
+              clipPath: "ellipse(100% 50% at 50% 100%)",
+            }}
+          />
+          <div
+            className="hidden md:block absolute inset-y-0 right-0 w-full"
+            style={{
+              backgroundColor: "var(--background)",
               clipPath: "ellipse(78% 90% at 80% 50%)",
             }}
           />
@@ -437,21 +499,23 @@ export default function DiaryHero({
         </div>
       </div>
 
-      {/* ─── ANIMATED CONTENT LAYER ─── */}
       <div
+        ref={contentRef}
         className="relative mx-auto overflow-hidden"
         style={{
           maxWidth: "1200px",
           minHeight: "460px",
-          opacity: fade ? 1 : 0,
-          transition: "opacity 0.35s ease",
         }}
       >
         {/* ─── LEFT: Text content ─── */}
-        <div className="relative z-10 flex flex-col justify-center pl-12 pr-4 py-24 w-[52%]">
+        <div className="relative z-10 flex flex-col justify-center px-6 sm:px-12 py-16 sm:py-24 w-full md:w-[52%]">
           <span
-            className="inline-block text-white text-[10px] font-extrabold uppercase tracking-[3px] mb-5 px-4 py-1.5 w-fit"
-            style={{ backgroundColor: "#d4a373" }}
+            className="stagger-item inline-block text-[10px] font-extrabold uppercase tracking-[3px] mb-5 px-4 py-1.5 w-fit rounded-full shadow-sm"
+            style={{
+              backgroundColor: "var(--background)",
+              color: "var(--store-primary)",
+              opacity: 0,
+            }}
           >
             {banner.title}
           </span>
@@ -461,41 +525,47 @@ export default function DiaryHero({
             style={{ marginBottom: "clamp(48px, 5vw, 68px)" }}
           >
             <h1
-              className={`${playfair.className} leading-none uppercase m-0 select-none`}
+              className={`${playfair.className} stagger-item leading-none uppercase m-0 select-none`}
               style={{
-                fontSize: "clamp(72px, 9vw, 120px)",
-                color: "rgba(212, 163, 115, 0.22)",
+                fontSize: "clamp(80px, 12vw, 150px)",
+                color: "rgba(var(--store-accent-rgb), 0.6)",
                 lineHeight: 0.85,
+                opacity: 0,
               }}
             >
               {banner.subtitle}
             </h1>
             <span
-              className={`${greatVibes.className} absolute text-white pointer-events-none`}
+              className={`${greatVibes.className} stagger-item absolute text-white pointer-events-none`}
               style={{
-                fontSize: "clamp(52px, 6.5vw, 84px)",
-                top: "28px",
-                left: "18px",
-                textShadow: "3px 3px 14px rgba(0,0,0,0.25)",
+                fontSize: "clamp(60px, 8vw, 100px)",
+                top: "min(35px, 4vw)",
+                left: "20px",
+                textShadow: "2px 2px 10px rgba(0,0,0,0.3)",
                 lineHeight: 1,
+                opacity: 0,
               }}
             >
               {banner.description}
             </span>
           </div>
 
-          <p className="text-white/40 text-[10px] uppercase tracking-[3px] mb-5 font-medium">
+          <p
+            className="stagger-item text-white/40 text-[10px] uppercase tracking-[3px] mb-5 font-medium"
+            style={{ opacity: 0 }}
+          >
             www.diary-boutique.com
           </p>
 
           {banner.buttonText && (
             <Link
               href={banner.buttonLink || "/shop"}
-              className="group inline-flex items-center gap-2 w-fit rounded-full font-semibold text-xs uppercase tracking-widest transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+              className="stagger-item group inline-flex items-center gap-2 w-fit rounded-full font-semibold text-xs uppercase tracking-widest transition-all duration-300 hover:-translate-y-0.5 shadow-sm hover:shadow-lg"
               style={{
-                backgroundColor: "#d4a373",
-                color: "#fff",
+                backgroundColor: "var(--background)",
+                color: "var(--store-primary)",
                 padding: "13px 32px",
+                opacity: 0,
               }}
             >
               {banner.buttonText}
@@ -534,11 +604,17 @@ export default function DiaryHero({
         </div>
 
         {/* ─── RIGHT: Product Image + Badges ─── */}
-        <div className="absolute inset-y-0 right-0 w-[52%] flex items-center justify-center">
-          {/* Product Image content */}
+        <div className="relative md:absolute md:inset-y-0 md:right-0 w-full md:w-[52%] flex flex-col items-center justify-center py-10 md:py-0">
+          {/* Product Image container */}
           <div
+            ref={imageRef}
             className="relative z-10 overflow-hidden"
-            style={{ width: "320px", height: "420px", marginRight: "50px" }}
+            style={{
+              width: "clamp(260px, 40vw, 360px)",
+              height: "clamp(340px, 55vw, 480px)",
+              marginRight: "0 md:50px",
+              opacity: 0,
+            }}
           >
             {!isLoading && (
               <Image
@@ -554,7 +630,7 @@ export default function DiaryHero({
 
           {/* Badge Clients satisfaits */}
           <div
-            className="absolute top-6 right-4 z-20 animate-float-gentle"
+            className="absolute top-0 md:top-6 right-4 md:right-4 z-20 animate-float-gentle scale-75 sm:scale-100 origin-top-right"
             style={{ animationDelay: "0.5s" }}
           >
             <div
@@ -562,7 +638,7 @@ export default function DiaryHero({
               style={{
                 backgroundColor: "var(--background)",
                 borderColor: "rgba(var(--store-primary-rgb), 0.25)",
-                minWidth: "130px",
+                minWidth: "120px",
               }}
             >
               <div className="flex -space-x-3">
@@ -572,13 +648,15 @@ export default function DiaryHero({
                 ).map((c, i) => (
                   <div
                     key={typeof c === "object" ? c.id : i}
-                    className="w-8 h-8 rounded-full border-2 border-white overflow-hidden relative shadow bg-gray-100"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white overflow-hidden relative shadow bg-gray-100"
                   >
                     <Image
                       src={
                         typeof c === "object" && c.photo
                           ? c.photo
-                          : `https://i.pravatar.cc/150?img=${typeof c === "object" ? 20 + i : c}`
+                          : `https://i.pravatar.cc/150?img=${
+                              typeof c === "object" ? 20 + i : c
+                            }`
                       }
                       alt="client"
                       fill
@@ -589,13 +667,13 @@ export default function DiaryHero({
               </div>
               <div className="text-center">
                 <span
-                  className="block text-lg font-black leading-none"
+                  className="block text-base sm:text-lg font-black leading-none"
                   style={{ color: "var(--store-primary)" }}
                 >
                   {customerCount}+
                 </span>
                 <span
-                  className="block text-[9px] font-semibold uppercase tracking-widest mt-0.5"
+                  className="block text-[8px] sm:text-[9px] font-semibold uppercase tracking-widest mt-0.5"
                   style={{ color: "var(--store-primary)", opacity: 0.55 }}
                 >
                   Clients satisfaits
@@ -603,64 +681,66 @@ export default function DiaryHero({
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Badge 50% Réduction */}
-        <div
-          className="absolute right-10 bottom-10 z-30 flex flex-col items-center justify-center hover:scale-105 transition-transform duration-300 cursor-default select-none"
-          style={{
-            width: "110px",
-            height: "110px",
-            backgroundColor: "var(--store-primary)",
-            borderRadius: "50%",
-            border: "8px solid rgba(255,255,255,0.2)",
-            color: "#fff",
-            transform: "rotate(10deg)",
-          }}
-        >
-          <span className="text-2xl font-black leading-none">50%</span>
-          <span className="text-[9px] font-bold uppercase tracking-widest mt-0.5">
-            Réduction
-          </span>
-        </div>
-
-        {/* Arrow navigation */}
-        {total > 1 && (
-          <div className="absolute bottom-10 right-48 z-40 flex gap-2">
-            <button
-              onClick={goToPrev}
-              className="w-8 h-8 rounded-full border border-[var(--store-primary)] text-[var(--store-primary)] flex items-center justify-center hover:bg-[var(--store-primary)] hover:text-white transition-all duration-300 active:scale-90"
-              aria-label="Précédent"
-            >
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <button
-              onClick={goToNext}
-              className="w-8 h-8 rounded-full border border-[var(--store-primary)] text-[var(--store-primary)] flex items-center justify-center hover:bg-[var(--store-primary)] hover:text-white transition-all duration-300 active:scale-90"
-              aria-label="Suivant"
-            >
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
+          {/* Badge 50% Réduction */}
+          <div
+            className="absolute left-4 md:left-auto md:right-10 bottom-6 md:bottom-10 z-30 flex flex-col items-center justify-center hover:scale-105 transition-transform duration-300 cursor-default select-none scale-90 md:scale-100 shadow-xl"
+            style={{
+              width: "110px",
+              height: "110px",
+              backgroundColor: "var(--store-primary)",
+              borderRadius: "50%",
+              border: "8px solid rgba(255,255,255,0.2)",
+              color: "#fff",
+              transform: "rotate(10deg)",
+            }}
+          >
+            <span className="text-2xl sm:text-3xl font-black leading-none">
+              50%
+            </span>
+            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mt-0.5 text-center">
+              Réduction
+            </span>
           </div>
-        )}
+
+          {/* Arrow navigation */}
+          {total > 1 && (
+            <div className="absolute bottom-4 right-4 md:right-48 z-40 flex gap-2">
+              <button
+                onClick={goToPrev}
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[var(--store-primary)] text-[var(--store-primary)] bg-background/80 flex items-center justify-center hover:bg-[var(--store-primary)] hover:text-white transition-all duration-300 active:scale-90 shadow-md"
+                aria-label="Précédent"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                onClick={goToNext}
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[var(--store-primary)] text-[var(--store-primary)] bg-background/80 flex items-center justify-center hover:bg-[var(--store-primary)] hover:text-white transition-all duration-300 active:scale-90 shadow-md"
+                aria-label="Suivant"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
