@@ -4,9 +4,9 @@ import Link from "next/link";
 
 export default function StoreFooter() {
   return (
-    <footer className="bg-card text-muted-foreground py-24 px-4 md:px-8 font-sans border-t border-border">
+    <footer className="bg-card text-muted-foreground py-12 px-4 md:px-8 font-sans border-t border-border">
       <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16 mb-20 text-center md:text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16 mb-10 text-center md:text-left">
           {/* Brand & Address */}
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-3xl font-black mb-8 text-foreground tracking-tighter font-sans">
@@ -117,7 +117,7 @@ export default function StoreFooter() {
         </div>
 
         {/* Bottom Legal */}
-        <div className="border-t border-border pt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+        <div className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p className="text-muted-foreground text-xs font-sans tracking-wide">
             &copy; 2026{" "}
             <span className="text-foreground font-bold">DIARY BOUTIQUE</span>.
