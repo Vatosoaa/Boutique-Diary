@@ -27,7 +27,7 @@ export async function GET(
         },
         transactions: {
           take: 1,
-          select: { metadata: true },
+          select: { metadata: true, provider: true },
         },
         items: {
           include: {
@@ -78,6 +78,7 @@ export async function GET(
       status: order.status,
       total: order.total,
       createdAt: order.createdAt.toISOString(),
+      paymentMethod: order.transactions[0]?.provider || null,
       customer: order.customer
         ? {
             id: order.customer.id,

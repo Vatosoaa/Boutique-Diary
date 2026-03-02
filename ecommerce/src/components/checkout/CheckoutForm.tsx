@@ -24,6 +24,10 @@ const formSchema = z.object({
   paymentMethod: z.enum(["mvola", "orange_money", "airtel_money", "card"]),
   mvolaPhone: z.string().optional(),
   mvolaName: z.string().optional(),
+  orangePhone: z.string().optional(),
+  orangeName: z.string().optional(),
+  airtelPhone: z.string().optional(),
+  airtelName: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -57,6 +61,10 @@ export default function CheckoutForm({
       paymentMethod: undefined,
       mvolaPhone: "",
       mvolaName: "",
+      orangePhone: "",
+      orangeName: "",
+      airtelPhone: "",
+      airtelName: "",
     },
   });
 
@@ -126,9 +134,13 @@ export default function CheckoutForm({
 
   const selectedPaymentMethod = watch("paymentMethod");
   const phoneValue = watch("phone");
-  const addressValue = watch("address");
+  watch("address"); // kept to trigger re-render on address change
   const mvolaPhoneValue = watch("mvolaPhone");
   const mvolaNameValue = watch("mvolaName");
+  const orangePhoneValue = watch("orangePhone");
+  const orangeNameValue = watch("orangeName");
+  const airtelPhoneValue = watch("airtelPhone");
+  const airtelNameValue = watch("airtelName");
 
   const onAddressSelect = useCallback(
     (address: string, latLng: { lat: number; lng: number }) => {
@@ -161,6 +173,40 @@ export default function CheckoutForm({
       }
     }
 
+    if (data.paymentMethod === "orange_money") {
+      if (!data.orangePhone) {
+        form.setError("orangePhone", {
+          type: "manual",
+          message: "Numéro Orange Money requis",
+        });
+        return;
+      }
+      if (!data.orangeName) {
+        form.setError("orangeName", {
+          type: "manual",
+          message: "Nom du titulaire requis",
+        });
+        return;
+      }
+    }
+
+    if (data.paymentMethod === "airtel_money") {
+      if (!data.airtelPhone) {
+        form.setError("airtelPhone", {
+          type: "manual",
+          message: "Numéro Airtel Money requis",
+        });
+        return;
+      }
+      if (!data.airtelName) {
+        form.setError("airtelName", {
+          type: "manual",
+          message: "Nom du titulaire requis",
+        });
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -184,6 +230,10 @@ export default function CheckoutForm({
           paymentMethod: data.paymentMethod,
           mvolaPhone: data.mvolaPhone,
           mvolaName: data.mvolaName,
+          orangePhone: data.orangePhone,
+          orangeName: data.orangeName,
+          airtelPhone: data.airtelPhone,
+          airtelName: data.airtelName,
           promoCode: appliedPromo?.code || null,
           discount: appliedPromo?.discount || 0,
         }),
@@ -364,6 +414,14 @@ export default function CheckoutForm({
           onMvolaPhoneChange={(val) => setValue("mvolaPhone", val)}
           mvolaName={mvolaNameValue || ""}
           onMvolaNameChange={(val) => setValue("mvolaName", val)}
+          orangePhone={orangePhoneValue || ""}
+          onOrangePhoneChange={(val) => setValue("orangePhone", val)}
+          orangeName={orangeNameValue || ""}
+          onOrangeNameChange={(val) => setValue("orangeName", val)}
+          airtelPhone={airtelPhoneValue || ""}
+          onAirtelPhoneChange={(val) => setValue("airtelPhone", val)}
+          airtelName={airtelNameValue || ""}
+          onAirtelNameChange={(val) => setValue("airtelName", val)}
         />
         {errors.paymentMethod && (
           <p className="text-xs text-red-500 mt-2">

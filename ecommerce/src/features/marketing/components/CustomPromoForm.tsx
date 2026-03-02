@@ -59,6 +59,10 @@ export function CustomPromoForm({
   );
   const [mvolaPhone, setMvolaPhone] = useState("");
   const [mvolaName, setMvolaName] = useState("");
+  const [orangePhone, setOrangePhone] = useState("");
+  const [orangeName, setOrangeName] = useState("");
+  const [airtelPhone, setAirtelPhone] = useState("");
+  const [airtelName, setAirtelName] = useState("");
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // New state for dynamic features
@@ -123,6 +127,16 @@ export function CustomPromoForm({
       return;
     }
 
+    if (paymentMethod === "orange_money" && (!orangePhone || !orangeName)) {
+      toast.error("Veuillez remplir les informations Orange Money");
+      return;
+    }
+
+    if (paymentMethod === "airtel_money" && (!airtelPhone || !airtelName)) {
+      toast.error("Veuillez remplir les informations Airtel Money");
+      return;
+    }
+
     setIsProcessingPayment(true);
 
     try {
@@ -137,6 +151,10 @@ export function CustomPromoForm({
           metadata: {
             mvolaPhone,
             mvolaName,
+            orangePhone,
+            orangeName,
+            airtelPhone,
+            airtelName,
             amount: finalPrice,
           },
         }),
@@ -442,6 +460,14 @@ export function CustomPromoForm({
               onMvolaPhoneChange={setMvolaPhone}
               mvolaName={mvolaName}
               onMvolaNameChange={setMvolaName}
+              orangePhone={orangePhone}
+              onOrangePhoneChange={setOrangePhone}
+              orangeName={orangeName}
+              onOrangeNameChange={setOrangeName}
+              airtelPhone={airtelPhone}
+              onAirtelPhoneChange={setAirtelPhone}
+              airtelName={airtelName}
+              onAirtelNameChange={setAirtelName}
             />
 
             <div className="mt-8 sm:mt-10 flex flex-col gap-4">

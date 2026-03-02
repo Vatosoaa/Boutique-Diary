@@ -47,6 +47,7 @@ export interface OrderDetails {
     | "COMPLETED";
   total: number;
   createdAt: Date | string;
+  paymentMethod?: string | null;
   items: Array<{
     id: string;
     productName: string;
@@ -55,6 +56,18 @@ export interface OrderDetails {
     price: number;
     variant?: string;
   }>;
+}
+
+const PAYMENT_LABELS: Record<string, string> = {
+  mvola: "MVola",
+  orange_money: "Orange Money",
+  airtel_money: "Airtel Money",
+  card: "Carte Bancaire",
+};
+
+function getPaymentLabel(method: string | null | undefined): string {
+  if (!method) return "Non renseigné";
+  return PAYMENT_LABELS[method.toLowerCase()] || method;
 }
 
 const StatusBadge = ({ status }: { status: OrderDetails["status"] }) => {
@@ -341,7 +354,7 @@ export function OrderFloatingPanel({
                 <InfoRow
                   icon={CreditCard}
                   label="Paiement"
-                  value="Mobile Money (MVola)"
+                  value={getPaymentLabel(order.paymentMethod)}
                 />
               </div>
             </div>
