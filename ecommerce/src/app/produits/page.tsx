@@ -1,5 +1,4 @@
 import StoreProductBanner from "@/components/store/StoreProductBanner";
-import ProductsImageBanner from "@/components/store/ProductsImageBanner";
 import StoreProductList from "@/components/store/StoreProductList";
 import StoreFooter from "@/components/store/StoreFooter";
 import ScrollReveal from "@/components/store/ScrollReveal";
@@ -15,7 +14,6 @@ export default async function ProduitsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="pt-4 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
-        <ProductsImageBanner />
         <StoreProductBanner
           title="Tous nos Produits"
           subtitle="Parcourez l'intégralité de notre collection. Des pièces uniques conçus avec passion pour sublimer votre quotidien."

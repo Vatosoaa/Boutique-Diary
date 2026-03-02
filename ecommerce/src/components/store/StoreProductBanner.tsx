@@ -1,6 +1,7 @@
-import { Sparkles, Users } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Sparkles, ArrowUpRight, Zap } from "lucide-react";
 import StoreTypewriter from "./StoreTypewriter";
+import Image from "next/image";
+import Link from "next/link";
 
 interface Customer {
   id: number;
@@ -18,6 +19,15 @@ interface StoreProductBannerProps {
   enableTypewriter?: boolean;
 }
 
+const variantConfig = {
+  indigo: { accent: "#818cf8", bg: "#0b0b18", blob: "#4f46e5" },
+  rose: { accent: "#fb7185", bg: "#12080d", blob: "#e11d48" },
+  amber: { accent: "#fbbf24", bg: "#110d00", blob: "#d97706" },
+  cyan: { accent: "#22d3ee", bg: "#040d12", blob: "#0891b2" },
+  emerald: { accent: "#34d399", bg: "#041009", blob: "#059669" },
+  theme: { accent: "#a78bfa", bg: "#0c0b1a", blob: "#6366f1" },
+};
+
 export default function StoreProductBanner({
   title,
   subtitle,
@@ -27,198 +37,218 @@ export default function StoreProductBanner({
   variant = "indigo",
   enableTypewriter = false,
 }: StoreProductBannerProps) {
-  const variantStyles = {
-    indigo: {
-      bg: "bg-slate-900",
-      blobs: ["bg-purple-600", "bg-indigo-600", "bg-rose-500"],
-      textGradient: "from-amber-200 via-rose-200 to-indigo-200",
-    },
-    rose: {
-      bg: "bg-rose-950",
-      blobs: ["bg-rose-600", "bg-pink-600", "bg-orange-500"],
-      textGradient: "from-rose-100 via-pink-100 to-orange-100",
-    },
-    amber: {
-      bg: "bg-amber-950",
-      blobs: ["bg-amber-600", "bg-yellow-600", "bg-orange-500"],
-      textGradient: "from-amber-100 via-yellow-100 to-orange-100",
-    },
-    cyan: {
-      bg: "bg-cyan-950",
-      blobs: ["bg-cyan-600", "bg-sky-600", "bg-indigo-500"],
-      textGradient: "from-cyan-100 via-sky-100 to-indigo-100",
-    },
-    emerald: {
-      bg: "bg-emerald-950",
-      blobs: ["bg-emerald-600", "bg-teal-600", "bg-lime-500"],
-      textGradient: "from-emerald-100 via-teal-100 to-lime-100",
-    },
-    theme: {
-      bg: "bg-background",
-      blobs: ["bg-store-primary", "bg-store-secondary", "bg-store-accent"],
-      textGradient: "from-store-primary via-store-secondary to-store-accent",
-    },
-  };
-
-  const currentVariant = variantStyles[variant];
+  const cfg = variantConfig[variant];
 
   const formatCount = (count: number) => {
     if (count >= 1000) return (count / 1000).toFixed(1) + "k";
     return count.toString();
   };
 
+  const avatars =
+    recentCustomers.length > 0
+      ? recentCustomers.slice(0, 4)
+      : [1, 2, 3, 4].map((i) => ({
+          id: i + 100,
+          username: "Client",
+          photo: null,
+        }));
+
   return (
     <div
-      className={cn(
-        "relative w-full rounded-[2.5rem] overflow-hidden mb-12 group shadow-2xl transition-all duration-700 hover:shadow-cyan-900/10",
-        currentVariant.bg,
-      )}
+      className="relative w-full rounded-[2rem] overflow-hidden mb-12 shadow-[0_32px_80px_rgba(0,0,0,0.45)]"
+      style={{ minHeight: "420px" }}
     >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 opacity-40">
-          <div
-            className={cn(
-              "absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[140px] animate-pulse mix-blend-screen",
-              currentVariant.blobs[0],
-            )}
-          />
-          <div
-            className={cn(
-              "absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full blur-[140px] animate-pulse delay-700 mix-blend-screen",
-              currentVariant.blobs[1],
-            )}
-          />
-          <div
-            className={cn(
-              "absolute top-[20%] right-[10%] w-[40%] h-[40%] rounded-full blur-[120px] animate-bounce mix-blend-screen duration-[12000ms]",
-              currentVariant.blobs[2],
-            )}
-          />
-        </div>
-
+      <div className="flex flex-col md:flex-row min-h-[420px]">
+        {/* ─── LEFT — content ─── */}
         <div
-          className="absolute inset-0 opacity-[0.2]"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)`,
-            backgroundSize: "32px 32px",
-          }}
-        />
-      </div>
+          className="relative flex flex-col justify-between px-10 md:px-14 pt-10 pb-0 md:w-[52%] shrink-0 z-10"
+          style={{ background: cfg.bg }}
+        >
+          {/* Subtle glow */}
+          <div
+            className="absolute bottom-0 left-0 w-3/4 h-1/2 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse at 0% 100%, ${cfg.blob}18 0%, transparent 65%)`,
+            }}
+          />
 
-      <div className="relative z-10 px-6 py-10 md:py-14 lg:py-16 flex flex-col items-center text-center">
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(8)].map((_, i) => (
+          {/* Top */}
+          <div className="relative flex items-center justify-between">
             <div
-              key={i}
-              className="absolute w-1.5 h-1.5 bg-background rounded-full opacity-30 blur-[1px]"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.3em] border"
               style={{
-                top: `${(i * 13) % 100}%`,
-                left: `${(i * 21) % 100}%`,
-                animationDelay: `${i * 0.8}s`,
+                borderColor: `${cfg.accent}30`,
+                background: `${cfg.accent}10`,
+                color: cfg.accent,
               }}
-            />
-          ))}
+            >
+              <Sparkles className="w-2.5 h-2.5" />
+              {badge}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span
+                className="w-1.5 h-1.5 rounded-full"
+                style={{
+                  background: cfg.accent,
+                  boxShadow: `0 0 6px ${cfg.accent}`,
+                }}
+              />
+              <span className="text-white/25 text-[9px] font-bold uppercase tracking-widest">
+                2026
+              </span>
+            </div>
+          </div>
+
+          {/* Hero text */}
+          <div className="relative flex flex-col gap-5 flex-1 justify-center py-8">
+            {/* Eyebrow line */}
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-px" style={{ background: cfg.accent }} />
+              <span
+                className="text-[9px] font-black uppercase tracking-[0.35em]"
+                style={{ color: `${cfg.accent}80` }}
+              >
+                Printemps — Été 2026
+              </span>
+            </div>
+
+            {/* Title */}
+            <h1 className="text-[clamp(2.6rem,4.5vw,4.2rem)] font-black text-white tracking-tighter leading-[0.88]">
+              {title.split(" ").map((word, i) => {
+                const highlighted = [
+                  "Produits",
+                  "Promotions",
+                  "Journal",
+                  "Nouveautés",
+                ].includes(word);
+                return (
+                  <span key={i} className="inline-block mr-2.5 last:mr-0">
+                    {highlighted ? (
+                      <span className="italic" style={{ color: cfg.accent }}>
+                        {word}
+                      </span>
+                    ) : (
+                      word
+                    )}
+                  </span>
+                );
+              })}
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-white/45 text-sm leading-relaxed max-w-[360px]">
+              {enableTypewriter ? (
+                <StoreTypewriter text={subtitle} delay={800} speed={35} />
+              ) : (
+                subtitle
+              )}
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="#products"
+                className="group/btn inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-black text-sm uppercase tracking-wider transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                style={{
+                  background: cfg.accent,
+                  color: "#000",
+                  boxShadow: `0 8px 28px ${cfg.accent}35`,
+                }}
+              >
+                Explorer
+                <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+              </Link>
+
+              <Link
+                href="/nouveautes"
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full font-bold text-sm uppercase tracking-wider border border-white/10 text-white/50 hover:text-white hover:border-white/25 hover:bg-white/5 transition-all duration-300"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                Nouveautés
+              </Link>
+            </div>
+
+            {/* Avatars + count */}
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2.5">
+                {avatars.map((c, i) => (
+                  <div
+                    key={c.id}
+                    className="w-7 h-7 rounded-full overflow-hidden border-2 bg-slate-800"
+                    style={{ borderColor: cfg.bg, zIndex: 10 - i }}
+                  >
+                    <Image
+                      src={c.photo || `https://i.pravatar.cc/80?u=${c.id}`}
+                      alt={c.username}
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+              <span className="text-white/35 text-xs">
+                <span className="text-white font-black">
+                  +{formatCount(customerCount)}
+                </span>{" "}
+                clients satisfaits
+              </span>
+            </div>
+          </div>
+
+          {/* ── Bottom stats row ── */}
+          <div
+            className="relative -mx-10 md:-mx-14 border-t px-10 md:px-14 py-4 grid grid-cols-3 gap-4"
+            style={{
+              borderColor: `rgba(255,255,255,0.06)`,
+              background: "rgba(255,255,255,0.02)",
+            }}
+          >
+            {[
+              { value: "4.9", label: "Note / 5" },
+              { value: "+38%", label: "Ce mois" },
+              { value: "30j", label: "Retours" },
+            ].map(({ value, label }) => (
+              <div key={label} className="flex flex-col gap-0.5">
+                <span
+                  className="text-white font-black text-lg leading-none"
+                  style={{ color: cfg.accent }}
+                >
+                  {value}
+                </span>
+                <span className="text-white/30 text-[9px] font-bold uppercase tracking-widest">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="max-w-5xl space-y-6 relative">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-background/5 backdrop-blur-xl border border-white/10 text-white/90 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="relative">
-              <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" />
-              <div className="absolute inset-0 blur-sm bg-amber-400 opacity-50" />
-            </div>
-            <span>{badge}</span>
-          </div>
+        {/* ─── RIGHT — image ─── */}
+        <div className="relative flex-1 min-h-[280px] md:min-h-0">
+          <Image
+            src="/images/banner.jpg"
+            alt="Women's Collection"
+            fill
+            priority
+            unoptimized
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 100vw, 640px"
+          />
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black text-foreground tracking-tighter leading-[0.85] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-both">
-            {title.split(" ").map((word, i) => (
-              <span key={i} className="inline-block mr-4 last:mr-0">
-                {word === "Produits" ||
-                word === "Promotions" ||
-                word === "Journal" ||
-                word === "Nouveautés" ? (
-                  <span
-                    className={cn(
-                      "bg-gradient-to-r bg-clip-text text-transparent italic",
-                      variant === "theme"
-                        ? "from-store-primary via-store-secondary to-store-accent"
-                        : currentVariant.textGradient,
-                    )}
-                  >
-                    {word}
-                  </span>
-                ) : (
-                  word
-                )}
-              </span>
-            ))}
-          </h1>
+          {/* Left-side blend */}
+          <div
+            className="absolute inset-x-0 inset-y-0 pointer-events-none"
+            style={{
+              background: `linear-gradient(to right, ${cfg.bg} 0%, ${cfg.bg}cc 8%, transparent 35%)`,
+            }}
+          />
 
-          <p className="text-sm md:text-lg lg:text-xl text-foreground/60 font-medium max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500 fill-mode-both group-hover:text-foreground/80 transition-colors">
-            {enableTypewriter ? (
-              <StoreTypewriter text={subtitle} delay={1000} speed={40} />
-            ) : (
-              subtitle
-            )}
-          </p>
-
-          <div className="pt-8 flex flex-col md:flex-row items-center justify-center gap-8 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-700 fill-mode-both">
-            <div className="flex items-center gap-5 px-6 py-4 rounded-[2rem] bg-slate-900/40 border border-white/10 backdrop-blur-3xl transition-all hover:bg-background/10 hover:scale-[1.02] active:scale-95 group/stats shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-              <div className="flex -space-x-4">
-                {recentCustomers.length > 0
-                  ? recentCustomers.map((customer, i) => (
-                      <div
-                        key={customer.id}
-                        className="w-12 h-12 rounded-full border-2 border-slate-800 bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl transition-transform group-hover/stats:-translate-y-1"
-                        style={{ zIndex: 10 - i }}
-                      >
-                        <img
-                          src={
-                            customer.photo ||
-                            `https://i.pravatar.cc/150?u=${customer.id}`
-                          }
-                          alt={customer.username}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))
-                  : [1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className="w-12 h-12 rounded-full border-2 border-slate-800 bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl transition-transform group-hover/stats:-translate-y-1"
-                        style={{ zIndex: 10 - i }}
-                      >
-                        <img
-                          src={`https://i.pravatar.cc/150?u=${i + 100}`}
-                          alt="Client"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
-              </div>
-              <div className="text-left">
-                <div className="text-white font-black text-xl leading-tight tracking-tight">
-                  +{formatCount(customerCount)} clients
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-white/40 text-[9px] font-black uppercase tracking-[0.2em]">
-                    Certifiés satisfaits
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden md:block w-px h-12 bg-background/20" />
-
-            <div className="flex items-center gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-              <span>Style & Tendances 2026</span>
-            </div>
-          </div>
+          {/* Vignette effect */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/20 pointer-events-none" />
         </div>
       </div>
-
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-slate-900/40 via-transparent to-transparent z-0" />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/5 to-transparent z-0 opacity-50" />
     </div>
   );
 }
