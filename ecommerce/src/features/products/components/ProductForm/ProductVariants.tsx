@@ -99,7 +99,7 @@ export function ProductVariants({
   const updateVariant = (
     index: number,
     field: keyof ProductVariation,
-    value: any,
+    value: string | number | boolean | null,
   ) => {
     const newVariations = [...(formData.variations || [])];
     newVariations[index] = { ...newVariations[index], [field]: value };
@@ -275,7 +275,7 @@ export function ProductVariants({
                       <SelectTrigger className="h-8 text-xs w-full bg-transparent border-dashed hover:bg-accent hover:border-solid text-muted-foreground">
                         <SelectValue placeholder="-" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper" sideOffset={4}>
                         <SelectItem value="none">Aucune</SelectItem>
                         {activeRules.map((rule) => (
                           <SelectItem key={rule.id} value={rule.id.toString()}>
@@ -347,8 +347,8 @@ export function ProductVariants({
             Aucune variante générée
           </h3>
           <p className="text-xs text-muted-foreground mb-4 text-center max-w-xs">
-            Cliquez sur "Générer les variantes" pour créer le tableau de stock
-            basé sur vos images.
+            Cliquez sur &quot;Générer les variantes&quot; pour créer le tableau
+            de stock basé sur vos images.
           </p>
           <Button onClick={generateVariants} size="sm">
             Générer maintenant

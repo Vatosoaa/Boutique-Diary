@@ -94,7 +94,7 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-black uppercase tracking-widest text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all disabled:opacity-70 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-black uppercase tracking-widest text-white btn-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all disabled:opacity-70 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
         >
           {loading ? "Connexion..." : "Se connecter"}
         </button>
@@ -113,7 +113,7 @@ export default function LoginForm() {
       {}
       <Link
         href="/register"
-        className="block w-full py-4 px-4 border-2 border-slate-900 rounded-xl text-center text-xs font-black uppercase tracking-widest text-slate-900 hover:bg-slate-900 hover:text-white transition-all hover:shadow-lg"
+        className="block w-full py-4 px-4 border-2 border-primary text-center text-xs font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all hover:shadow-lg rounded-xl"
       >
         Créer un nouveau compte
       </Link>

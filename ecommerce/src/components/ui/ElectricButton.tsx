@@ -30,7 +30,7 @@ export default function ElectricButton({
     fontWeight: 600,
     color: "#ffffff",
     background:
-      "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+      "var(--primary-gradient, linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%))",
     border: "none",
     borderRadius: "50px",
     cursor: disabled ? "not-allowed" : "pointer",
@@ -63,7 +63,7 @@ export default function ElectricButton({
     right: "2px",
     bottom: "2px",
     background:
-      "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+      "var(--primary-gradient, linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%))",
     borderRadius: "48px",
     zIndex: 0,
   };

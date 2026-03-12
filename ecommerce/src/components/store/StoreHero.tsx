@@ -94,10 +94,7 @@ export default function StoreHero() {
               <button className="flex-1 py-4 rounded-full border border-gray-200 font-medium hover:bg-gray-50 transition-colors">
                 Ajouter au Panier
               </button>
-              <button
-                className="flex-1 py-4 rounded-full bg-black text-white font-medium hover:opacity-90 transition-colors shadow-lg"
-                style={{ backgroundColor: "var(--store-primary)" }}
-              >
+              <button className="flex-1 py-4 rounded-full btn-primary text-white font-medium transition-colors shadow-lg">
                 Commander Maintenant
               </button>
             </div>

@@ -220,7 +220,7 @@ export default function ProductReviews({
                     <Button
                       onClick={() => setIsExpanded(true)}
                       variant="outline"
-                      className="group flex items-center gap-2 px-8 py-6 border-2 border-gray-100 hover:border-black hover:bg-black hover:text-white rounded-2xl font-bold transition-all duration-300"
+                      className="group flex items-center gap-2 px-8 py-6 border-2 border-gray-100 hover:border-primary hover:bg-primary hover:text-white rounded-2xl font-bold transition-all duration-300"
                     >
                       Voir plus d&apos;avis
                       <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />

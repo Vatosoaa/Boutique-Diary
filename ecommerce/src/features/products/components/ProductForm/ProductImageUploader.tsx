@@ -566,7 +566,7 @@ export function ProductImageUploader({
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="Non classé" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" sideOffset={4}>
                     <SelectItem value="uncategorized">Non classé</SelectItem>
                     {categories?.map((category) => (
                       <SelectItem
@@ -618,10 +618,16 @@ export function ProductImageUploader({
                     />
                     <span>Top Vente</span>
                   </label>
-                  <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs opacity-60">
+                  <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs">
                     <Checkbox
                       checked={currentImageAsProductImage.isPromotion || false}
-                      disabled
+                      onCheckedChange={(checked) =>
+                        handleUpdateImageAttribute(
+                          selectedImageIndex,
+                          "isPromotion",
+                          !!checked,
+                        )
+                      }
                       className="h-3.5 w-3.5"
                     />
                     <span>Promo</span>
@@ -653,7 +659,7 @@ export function ProductImageUploader({
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="Aucune" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" sideOffset={4}>
                     <SelectItem value="none">Aucune</SelectItem>
                     {activeRules.map((rule) => (
                       <SelectItem key={rule.id} value={rule.id.toString()}>
@@ -684,7 +690,7 @@ export function ProductImageUploader({
                     <SelectTrigger className="h-9 text-sm">
                       <SelectValue placeholder="Choisir une couleur" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" sideOffset={4}>
                       <SelectItem value="none">Aucune</SelectItem>
                       {AVAILABLE_COLORS.map((color) => (
                         <SelectItem key={color} value={color}>

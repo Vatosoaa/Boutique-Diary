@@ -18,8 +18,8 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const getSubtotal = useCartStore((state) => state.getSubtotal);
 
   const subtotal = getSubtotal();
-  const delivery = 0;
-  const taxes = subtotal * 0.2;
+  // const delivery = 0;
+  // const taxes = subtotal * 0.2;
   // const total = subtotal + delivery + taxes;
 
   return (
@@ -197,7 +197,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               </Link>
               <Link
                 href="/checkout"
-                className="group w-full bg-black text-white px-4 py-3 rounded-xl font-bold hover:bg-gray-900 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm"
+                className="group w-full btn-primary text-white px-4 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm"
                 onClick={onClose}
               >
                 <span>Commander</span>

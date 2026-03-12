@@ -532,7 +532,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     Mode visiteur —{" "}
                     <Link
                       href="/login"
-                      className="underline hover:text-amber-700"
+                      className="underline hover:text-primary transition-colors"
                     >
                       Connectez-vous
                     </Link>
@@ -767,7 +767,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     displayStock > 0
                       ? isLoggedIn
                         ? "btn-primary hover:shadow-lg"
-                        : "bg-blue-600 text-white hover:bg-blue-700"
+                        : "btn-primary text-white hover:shadow-lg"
                       : "bg-muted text-muted-foreground cursor-not-allowed",
                   )}
                 >

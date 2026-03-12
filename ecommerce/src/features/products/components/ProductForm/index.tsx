@@ -153,6 +153,28 @@ export default function ProductForm({
     }
   }, [formData.images]);
 
+  // Sync isPromotion + promotionRuleId from Main Image
+  useEffect(() => {
+    const images = formData.images || [];
+    if (images.length > 0) {
+      const mainImage = images[0];
+      if (typeof mainImage !== "string") {
+        const newIsPromotion = mainImage.isPromotion ?? false;
+        const newRuleId = (mainImage as ProductImage).promotionRuleId ?? null;
+        if (
+          formData.isPromotion !== newIsPromotion ||
+          formData.promotionRuleId !== newRuleId
+        ) {
+          setFormData((prev) => ({
+            ...prev,
+            isPromotion: newIsPromotion,
+            promotionRuleId: newRuleId,
+          }));
+        }
+      }
+    }
+  }, [formData.images]);
+
   const { createProduct, updateProduct } = useProducts({ autoFetch: false });
 
   const handleSubmit = async (

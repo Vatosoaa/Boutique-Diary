@@ -397,7 +397,7 @@ export default function ShopProductModal({
                   Ajouter au panier
                 </Button>
                 <Button
-                  className="h-12 text-base font-medium bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-200"
+                  className="h-12 text-base font-medium btn-primary text-white shadow-lg"
                   onClick={handleBuyNow}
                   disabled={currentStock === 0}
                 >
