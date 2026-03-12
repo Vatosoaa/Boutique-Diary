@@ -25,16 +25,16 @@ interface PaymentMethodsProps {
 // Logos SVG inline pour chaque opérateur
 const MVolaLogo = () => (
   <svg viewBox="0 0 40 40" fill="none" className="w-6 h-6">
-    <circle cx="20" cy="20" r="20" fill="#E31837" />
+    <circle cx="20" cy="20" r="20" fill="#FFD200" />
     <text
       x="50%"
       y="55%"
       dominantBaseline="middle"
       textAnchor="middle"
-      fill="white"
-      fontSize="11"
-      fontWeight="bold"
-      fontFamily="Arial"
+      fill="#00A651"
+      fontSize="22"
+      fontWeight="900"
+      fontFamily="Arial-Black, Arial, sans-serif"
     >
       M
     </text>

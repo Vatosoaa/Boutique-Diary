@@ -28,7 +28,7 @@ export async function GET() {
       },
       orderBy: { createdAt: "desc" },
     });
-
+    w;
     // On formate les données pour qu'elles correspondent à l'interface InvoiceData attendue par le front
     const formattedOrders = orders.map((order) => ({
       ...order,
