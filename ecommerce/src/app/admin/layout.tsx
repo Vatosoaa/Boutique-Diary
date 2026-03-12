@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Sidebar from "@/components/admin/Sidebar";
 import { Header } from "@/components/admin/Header";
 import { Breadcrumbs } from "@/components/admin/Breadcrumbs";
+import { AdminAssistant } from "@/components/admin/AdminAssistant";
 import { usePathname } from "next/navigation";
 import { useTheme, THEME_PRESETS } from "@/contexts/theme-context";
 
@@ -77,6 +78,7 @@ export default function AdminLayout({
             {children}
           </main>
         </div>
+        <AdminAssistant />
       </div>
     </div>
   );
