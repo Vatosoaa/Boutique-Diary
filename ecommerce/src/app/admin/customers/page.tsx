@@ -388,18 +388,18 @@ export default function CustomerPage() {
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
+                            <AlertDialogContent>
                               <AlertDialogHeader>
                                 <AlertDialogTitle>
                                   Confirmer la suppression
                                 </AlertDialogTitle>
-                                <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+                                <AlertDialogDescription>
                                   Voulez-vous vraiment supprimer ce client ?
                                   Cette action est irréversible.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel className="bg-transparent border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+                                <AlertDialogCancel>
                                   Annuler
                                 </AlertDialogCancel>
                                 <AlertDialogAction
@@ -565,18 +565,18 @@ export default function CustomerPage() {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
-        <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-gray-900 dark:text-white text-xl">
+            <AlertDialogTitle className="text-xl">
               Confirmer la suppression
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+            <AlertDialogDescription>
               Êtes-vous sûr de vouloir supprimer ce client ? Cette action est
               irréversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+            <AlertDialogCancel>
               Annuler
             </AlertDialogCancel>
             <AlertDialogAction
@@ -594,18 +594,18 @@ export default function CustomerPage() {
         open={isBulkDeleteDialogOpen}
         onOpenChange={setIsBulkDeleteDialogOpen}
       >
-        <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-gray-900 dark:text-white text-xl">
+            <AlertDialogTitle className="text-xl">
               Confirmer la suppression groupée
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+            <AlertDialogDescription>
               Êtes-vous sûr de vouloir supprimer les {selectedCustomers.length}{" "}
               clients sélectionnés ? Cette action est irréversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+            <AlertDialogCancel>
               Annuler
             </AlertDialogCancel>
             <AlertDialogAction

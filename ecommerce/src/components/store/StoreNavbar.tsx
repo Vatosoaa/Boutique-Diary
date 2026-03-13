@@ -28,8 +28,10 @@ import {
   UserCircle,
   Heart,
   MapPin,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import BrandLogo from "./BrandLogo";
@@ -153,10 +155,10 @@ export default function StoreNavbar({
   ];
 
   const categoriesList = [
-    { name: "Hommes", href: "/shop?category=men" },
-    { name: "Femmes", href: "/shop?category=women" },
-    { name: "Enfants", href: "/shop?category=kids" },
-    { name: "Accessoires", href: "/shop?category=accessories" },
+    { name: "Femmes", href: "/shop?category=femmes", image: "/images/femme.jpg" },
+    { name: "Hommes", href: "/shop?category=hommes", image: "/images/homme1.jpg" },
+    { name: "Enfants", href: "/shop?category=enfants", image: "/images/enfant2.jpg" },
+    { name: "Accessoires", href: "/shop?category=accessoires", image: "/images/accessoir.jpg" },
   ];
 
   const pillTriggerStyle = cn(
@@ -225,76 +227,114 @@ export default function StoreNavbar({
                       Boutique
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <ul className="grid gap-6 p-8 md:w-[600px] lg:w-[750px] lg:grid-cols-[280px_1fr]">
-                        <li className="row-span-3">
-                          <NavigationMenuLink asChild>
+                      <div className="w-[100vw] max-w-[1000px] p-6 lg:p-8 rounded-[32px] bg-background border border-border shadow-2xl flex flex-col md:flex-row gap-6 lg:gap-8 overflow-hidden relative">
+                        {/* Editor's pick banner */}
+                        <div className="w-full md:w-[320px] shrink-0 rounded-[24px] overflow-hidden relative group hidden md:block aspect-[4/5] lg:aspect-auto">
+                          <Image
+                            src="/images/collection.jpg"
+                            alt="Collection Printemps"
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-1000"
+                            unoptimized
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                          <div className="absolute top-6 left-6 z-10">
+                            <span className="px-3 py-1.5 bg-white/20 backdrop-blur-md text-white font-bold text-[10px] uppercase tracking-widest rounded-full shadow-sm">
+                              En Vedette
+                            </span>
+                          </div>
+                          <div className="absolute bottom-8 left-8 right-8 z-10">
+                            <h3 className="text-white text-3xl font-black leading-[1.1] tracking-tight mb-4 drop-shadow-lg">
+                              Nouvelle<br />Collection
+                            </h3>
                             <Link
-                              className="flex h-full w-full select-none flex-col justify-end rounded-[32px] bg-muted/40 p-8 no-underline outline-none focus:shadow-md border border-border transition-all hover:bg-muted animate-in fade-in zoom-in-95 duration-500"
-                              href="/produits"
+                              href="/nouveautes"
+                              className="inline-flex items-center justify-center w-full gap-2 px-6 py-3 bg-white text-black hover:bg-gray-100 rounded-full text-sm font-bold transition-transform hover:scale-105 shadow-xl"
                             >
-                              <div className="relative w-48 h-48 mb-6 transition-transform duration-300 group-hover:scale-110 mx-auto">
-                                <img
-                                  src="/assets/menu/cart-3d.png"
-                                  alt="Top Vente Panier"
-                                  className="w-full h-full object-contain drop-shadow-xl"
-                                />
-                              </div>
-                              <div className="mb-2 text-2xl font-black tracking-tighter uppercase leading-tight text-foreground text-center">
-                                TOP VENTE
-                              </div>
-                              <p className="text-sm leading-relaxed text-muted-foreground font-medium text-center">
-                                Découvers nos meilleures offres
-                              </p>
+                              Explorer <ArrowRight className="w-4 h-4" />
                             </Link>
-                          </NavigationMenuLink>
-                        </li>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          {collections.map((item) => (
-                            <li key={item.title}>
-                              <NavigationMenuLink asChild>
-                                <Link
-                                  href={item.href}
-                                  className={cn(
-                                    "group/item block select-none space-y-2 rounded-[24px] p-4 leading-none no-underline outline-none transition-all duration-300 hover:bg-muted/50 border border-transparent hover:border-border",
-                                  )}
-                                >
-                                  {item.icon && (
-                                    <div
-                                      className={cn(
-                                        "p-2 w-10 h-10 rounded-xl bg-background shadow-sm flex items-center justify-center mb-1 group-hover/item:scale-110 transition-transform duration-300",
-                                        item.color,
-                                      )}
-                                    >
-                                      <item.icon className="w-5 h-5" />
-                                    </div>
-                                  )}
-                                  <div className="text-[15px] font-bold leading-none text-foreground">
-                                    {item.title}
-                                  </div>
-                                </Link>
-                              </NavigationMenuLink>
-                            </li>
-                          ))}
-                        </div>
-
-                        <div className="col-span-1 lg:col-start-2 pt-4 mt-2 border-t border-border">
-                          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                            {categoriesList.map((item) => (
-                              <li key={item.name} className="list-none">
-                                <NavigationMenuLink asChild>
-                                  <Link
-                                    href={item.href}
-                                    className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-lg hover:bg-muted"
-                                  >
-                                    {item.name}
-                                  </Link>
-                                </NavigationMenuLink>
-                              </li>
-                            ))}
                           </div>
                         </div>
-                      </ul>
+
+                        {/* Categories List */}
+                        <div className="flex-1 flex flex-col pt-2 pb-1 relative z-10">
+                          <div className="flex items-center justify-between mb-6 px-1">
+                            <h3 className="text-xl font-black tracking-tight text-foreground">
+                              Catégories
+                            </h3>
+                            <Link
+                              href="/produits"
+                              className="text-sm font-bold text-primary flex items-center gap-1.5 hover:gap-2 transition-all p-2 -mr-2 rounded-lg hover:bg-muted"
+                            >
+                              Tout voir <ArrowRight className="w-4 h-4" />
+                            </Link>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 relative min-h-[220px]">
+                            {categoriesList.map((cat) => (
+                              <Link
+                                key={cat.name}
+                                href={cat.href}
+                                className="group relative rounded-2xl overflow-hidden bg-muted min-h-[140px] md:h-full w-full block shadow-sm border border-transparent hover:border-border transition-all hover:shadow-lg"
+                              >
+                                <Image
+                                  src={cat.image}
+                                  alt={cat.name}
+                                  fill
+                                  sizes="(max-width: 1024px) 25vw, 15vw"
+                                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                  unoptimized
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
+                                <div className="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300 z-10">
+                                  <h4 className="text-white text-lg font-black mb-0.5 drop-shadow-md">
+                                    {cat.name}
+                                  </h4>
+                                  <span className="text-white/90 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1">
+                                    Voir <ArrowRight className="w-3 h-3" />
+                                  </span>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 lg:gap-4 mt-auto">
+                            <Link
+                              href="/shop?sort=newest"
+                              className="group rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/10 p-4 transition-colors flex items-center gap-4"
+                            >
+                                <div className="bg-background shadow-sm text-primary p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                  <Sparkles className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="font-bold text-foreground leading-none mb-1.5 group-hover:text-primary transition-colors truncate">
+                                    Nouveautés
+                                  </h4>
+                                  <p className="text-[11px] font-semibold text-muted-foreground truncate">
+                                    Dernières pépites
+                                  </p>
+                                </div>
+                            </Link>
+
+                            <Link
+                              href="/shop?promo=true"
+                              className="group rounded-2xl bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 border border-rose-100 dark:border-rose-500/20 p-4 transition-colors flex items-center gap-4"
+                            >
+                                <div className="bg-background shadow-sm text-rose-500 p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                  <Tag className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="font-bold text-foreground leading-none mb-1.5 group-hover:text-rose-500 transition-colors truncate">
+                                    Promotions
+                                  </h4>
+                                  <p className="text-[11px] font-semibold text-muted-foreground truncate">
+                                    Jusqu&apos;à -50%
+                                  </p>
+                                </div>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
 

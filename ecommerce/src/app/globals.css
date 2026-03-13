@@ -124,7 +124,7 @@
   }
 
   body {
-    @apply dark:bg-gray-900/50 text-foreground;
+    @apply bg-background text-foreground;
   }
 
   /* Custom scrollbar styles */

@@ -284,28 +284,28 @@ export default function MessagesPage() {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Confirmer la suppression
-                              </AlertDialogTitle>
-                              <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
-                                Voulez-vous vraiment supprimer ce message ?
-                                Cette action est irréversible.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="bg-transparent border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-                                Annuler
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDelete(message.id)}
-                                className="bg-red-600 hover:bg-red-700 text-white"
-                              >
-                                Supprimer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Confirmer la suppression
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Voulez-vous vraiment supprimer ce message ?
+                              Cette action est irréversible.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>
+                              Annuler
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(message.id)}
+                              className="bg-red-600 hover:bg-red-700 text-white"
+                            >
+                              Supprimer
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
                         </AlertDialog>
                       </div>
                     </TableCell>

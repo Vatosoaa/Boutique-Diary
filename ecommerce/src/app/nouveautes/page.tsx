@@ -2,13 +2,10 @@ import StoreProductGrid from "@/components/store/StoreProductGrid";
 import StoreFooter from "@/components/store/StoreFooter";
 import StoreProductBanner from "@/components/store/StoreProductBanner";
 import ScrollReveal from "@/components/store/ScrollReveal";
-import { getProducts, getStoreStats } from "@/lib/store-data";
+import { getProducts } from "@/lib/store-data";
 
 export default async function NouveautesPage() {
-  const [products, stats] = await Promise.all([
-    getProducts({ isNew: true }),
-    getStoreStats(),
-  ]);
+  const products = await getProducts({ isNew: true });
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,8 +14,6 @@ export default async function NouveautesPage() {
           title="Nouveautés"
           subtitle="Découvrez nos dernières créations fraîchement arrivées en boutique. Soyez les premiers à arborer nos nouvelles tendances."
           badge="Nouveaux Arrivages"
-          customerCount={stats.customerCount}
-          recentCustomers={stats.recentCustomers}
           variant="cyan"
           enableTypewriter={true}
         />

@@ -74,8 +74,8 @@ export default function StoreFooter() {
                 { label: "Promotions", href: "/promotions" },
                 { label: "Top Vente", href: "/top-vente" },
                 { label: "Tous les produits", href: "/produits" },
-                { label: "Hommes", href: "/shop?category=men" },
-                { label: "Femmes", href: "/shop?category=women" },
+                { label: "Hommes", href: "/shop?category=hommes" },
+                { label: "Femmes", href: "/shop?category=femmes" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link

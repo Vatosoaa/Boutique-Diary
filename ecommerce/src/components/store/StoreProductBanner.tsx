@@ -1,254 +1,265 @@
-import { Sparkles, ArrowUpRight, Zap } from "lucide-react";
+"use client";
+
+import {
+  Sparkles,
+  ArrowUpRight,
+  Target,
+  TrendingUp,
+  ShieldCheck,
+} from "lucide-react";
 import StoreTypewriter from "./StoreTypewriter";
 import Image from "next/image";
 import Link from "next/link";
-
-interface Customer {
-  id: number;
-  username: string;
-  photo?: string | null;
-}
+import { motion } from "framer-motion";
 
 interface StoreProductBannerProps {
   title: string;
   subtitle: string;
   badge: string;
-  customerCount: number;
-  recentCustomers?: Customer[];
   variant?: "indigo" | "rose" | "amber" | "cyan" | "emerald" | "theme";
   enableTypewriter?: boolean;
+  image?: string;
 }
 
 const variantConfig = {
-  indigo: { accent: "#818cf8", bg: "#0b0b18", blob: "#4f46e5" },
-  rose: { accent: "#fb7185", bg: "#12080d", blob: "#e11d48" },
-  amber: { accent: "#fbbf24", bg: "#110d00", blob: "#d97706" },
-  cyan: { accent: "#22d3ee", bg: "#040d12", blob: "#0891b2" },
-  emerald: { accent: "#34d399", bg: "#041009", blob: "#059669" },
-  theme: { accent: "#a78bfa", bg: "#0c0b1a", blob: "#6366f1" },
+  indigo: {
+    accent: "#4f46e5",
+    bg: "#f8fafc",
+    blob: "#e0e7ff",
+    gradient: "from-indigo-100/50",
+  },
+  rose: {
+    accent: "#e11d48",
+    bg: "#fff1f2",
+    blob: "#ffe4e6",
+    gradient: "from-rose-100/50",
+  },
+  amber: {
+    accent: "#d97706",
+    bg: "#fffbeb",
+    blob: "#fef3c7",
+    gradient: "from-amber-100/50",
+  },
+  cyan: {
+    accent: "#0891b2",
+    bg: "#ecfeff",
+    blob: "#cffafe",
+    gradient: "from-cyan-100/50",
+  },
+  emerald: {
+    accent: "#059669",
+    bg: "#ecfdf5",
+    blob: "#d1fae5",
+    gradient: "from-emerald-100/50",
+  },
+  theme: {
+    accent: "#6366f1",
+    bg: "#f8fafc",
+    blob: "#e0e7ff",
+    gradient: "from-violet-100/50",
+  },
 };
 
 export default function StoreProductBanner({
   title,
   subtitle,
   badge,
-  customerCount,
-  recentCustomers = [],
   variant = "indigo",
   enableTypewriter = false,
+  image = "/images/banner.jpg",
 }: StoreProductBannerProps) {
   const cfg = variantConfig[variant];
 
-  const formatCount = (count: number) => {
-    if (count >= 1000) return (count / 1000).toFixed(1) + "k";
-    return count.toString();
-  };
-
-  const avatars =
-    recentCustomers.length > 0
-      ? recentCustomers.slice(0, 4)
-      : [1, 2, 3, 4].map((i) => ({
-          id: i + 100,
-          username: "Client",
-          photo: null,
-        }));
-
   return (
-    <div
-      className="relative w-full rounded-[2rem] overflow-hidden mb-12 shadow-[0_32px_80px_rgba(0,0,0,0.45)]"
-      style={{ minHeight: "420px" }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="relative w-full overflow-hidden border border-gray-100 bg-white rounded-none sm:rounded-[2.5rem] shadow-sm mb-8"
     >
-      <div className="flex flex-col md:flex-row min-h-[420px]">
-        {/* ─── LEFT — content ─── */}
+      <div className="flex flex-col lg:flex-row min-h-[500px] w-full max-w-[1920px] mx-auto">
+        {/* ─── LEFT SIDE — CONTENT ─── */}
         <div
-          className="relative flex flex-col justify-between px-10 md:px-14 pt-10 pb-0 md:w-[52%] shrink-0 z-10"
+          className="relative flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24 py-8 lg:w-[55%] shrink-0 z-10"
           style={{ background: cfg.bg }}
         >
-          {/* Subtle glow */}
+          {/* Decorative ambient light */}
           <div
-            className="absolute bottom-0 left-0 w-3/4 h-1/2 pointer-events-none"
+            className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-60"
             style={{
-              background: `radial-gradient(ellipse at 0% 100%, ${cfg.blob}18 0%, transparent 65%)`,
+              background: `radial-gradient(circle at 10% 20%, ${cfg.blob}80 0%, transparent 50%), radial-gradient(circle at 90% 80%, ${cfg.blob}40 0%, transparent 50%)`,
             }}
           />
 
-          {/* Top */}
-          <div className="relative flex items-center justify-between">
-            <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.3em] border"
+          {/* Header row */}
+          <div className="relative flex items-center justify-between z-10 max-w-[500px] mb-6">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] bg-white shadow-sm border border-gray-100"
               style={{
-                borderColor: `${cfg.accent}30`,
-                background: `${cfg.accent}10`,
                 color: cfg.accent,
               }}
             >
-              <Sparkles className="w-2.5 h-2.5" />
+              <Sparkles className="w-3 h-3" />
               {badge}
-            </div>
+            </motion.div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm hidden sm:flex">
               <span
-                className="w-1.5 h-1.5 rounded-full"
+                className="w-1.5 h-1.5 rounded-full animate-pulse"
                 style={{
                   background: cfg.accent,
-                  boxShadow: `0 0 6px ${cfg.accent}`,
+                  boxShadow: `0 0 10px ${cfg.accent}`,
                 }}
               />
-              <span className="text-white/25 text-[9px] font-bold uppercase tracking-widest">
-                2026
+              <span className="text-gray-500 text-[9px] font-black uppercase tracking-widest">
+                Saison 2026
               </span>
             </div>
           </div>
 
-          {/* Hero text */}
-          <div className="relative flex flex-col gap-5 flex-1 justify-center py-8">
-            {/* Eyebrow line */}
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-px" style={{ background: cfg.accent }} />
-              <span
-                className="text-[9px] font-black uppercase tracking-[0.35em]"
-                style={{ color: `${cfg.accent}80` }}
+          {/* Core Content */}
+          <div className="relative flex flex-col gap-4 flex-1 justify-center z-10">
+            <div className="space-y-4">
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center gap-4"
               >
-                Printemps — Été 2026
-              </span>
+                <div
+                  className="w-16 h-px"
+                  style={{ backgroundColor: cfg.accent }}
+                />
+                <span
+                  className="text-[10px] sm:text-xs font-black uppercase tracking-[0.4em]"
+                  style={{ color: cfg.accent }}
+                >
+                  Haute Couture — Modernité
+                </span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-[clamp(2.5rem,5vw,4.5rem)] font-black text-gray-900 tracking-tighter leading-[0.9]"
+              >
+                {title}
+              </motion.h1>
             </div>
 
-            {/* Title */}
-            <h1 className="text-[clamp(2.6rem,4.5vw,4.2rem)] font-black text-white tracking-tighter leading-[0.88]">
-              {title.split(" ").map((word, i) => {
-                const highlighted = [
-                  "Produits",
-                  "Promotions",
-                  "Journal",
-                  "Nouveautés",
-                ].includes(word);
-                return (
-                  <span key={i} className="inline-block mr-2.5 last:mr-0">
-                    {highlighted ? (
-                      <span className="italic" style={{ color: cfg.accent }}>
-                        {word}
-                      </span>
-                    ) : (
-                      word
-                    )}
-                  </span>
-                );
-              })}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-white/45 text-sm leading-relaxed max-w-[360px]">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-gray-600 text-sm md:text-base leading-relaxed max-w-[520px] font-medium hidden md:block"
+            >
               {enableTypewriter ? (
-                <StoreTypewriter text={subtitle} delay={800} speed={35} />
+                <StoreTypewriter text={subtitle} delay={1000} speed={40} />
               ) : (
                 subtitle
               )}
-            </p>
+            </motion.div>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-3">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-wrap items-center gap-4 pt-4"
+            >
               <Link
                 href="#products"
-                className="group/btn inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-black text-sm uppercase tracking-wider transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                className="group/btn relative overflow-hidden inline-flex items-center gap-3 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/20 active:scale-95"
                 style={{
                   background: cfg.accent,
-                  color: "#000",
-                  boxShadow: `0 8px 28px ${cfg.accent}35`,
+                  color: "#ffffff",
                 }}
               >
+                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000 skew-x-[-20deg]" />
                 Explorer
-                <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                <ArrowUpRight className="w-4 h-4 transition-transform duration-500 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
               </Link>
-
-              <Link
-                href="/nouveautes"
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full font-bold text-sm uppercase tracking-wider border border-white/10 text-white/50 hover:text-white hover:border-white/25 hover:bg-white/5 transition-all duration-300"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                Nouveautés
-              </Link>
-            </div>
-
-            {/* Avatars + count */}
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2.5">
-                {avatars.map((c, i) => (
-                  <div
-                    key={c.id}
-                    className="w-7 h-7 rounded-full overflow-hidden border-2 bg-slate-800"
-                    style={{ borderColor: cfg.bg, zIndex: 10 - i }}
-                  >
-                    <Image
-                      src={c.photo || `https://i.pravatar.cc/80?u=${c.id}`}
-                      alt={c.username}
-                      width={80}
-                      height={80}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-              <span className="text-white/35 text-xs">
-                <span className="text-white font-black">
-                  +{formatCount(customerCount)}
-                </span>{" "}
-                clients satisfaits
-              </span>
-            </div>
+            </motion.div>
           </div>
 
-          {/* ── Bottom stats row ── */}
-          <div
-            className="relative -mx-10 md:-mx-14 border-t px-10 md:px-14 py-4 grid grid-cols-3 gap-4"
-            style={{
-              borderColor: `rgba(255,255,255,0.06)`,
-              background: "rgba(255,255,255,0.02)",
-            }}
+          {/* ── Stats Glass Card (COMPACT) ── */}
+          <motion.div
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="relative lg:absolute lg:bottom-8 lg:-right-32 lg:w-[420px] bg-white/80 backdrop-blur-xl border border-gray-100 rounded-2xl p-6 grid grid-cols-3 gap-6 z-50 shadow-2xl shadow-gray-200/50 overflow-hidden mt-6 lg:mt-0 hidden md:grid"
           >
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${cfg.gradient} opacity-50 pointer-events-none`}
+            />
+
             {[
-              { value: "4.9", label: "Note / 5" },
-              { value: "+38%", label: "Ce mois" },
-              { value: "30j", label: "Retours" },
-            ].map(({ value, label }) => (
-              <div key={label} className="flex flex-col gap-0.5">
-                <span
-                  className="text-white font-black text-lg leading-none"
+              { value: "4.9", label: "Excellence", icon: Target },
+              { value: "+38%", label: "Tendance", icon: TrendingUp },
+              { value: "30j", label: "Garantie", icon: ShieldCheck },
+            ].map(({ value, label, icon: Icon }) => (
+              <div
+                key={label}
+                className="relative flex flex-col items-center gap-1.5"
+              >
+                <Icon
+                  className="w-5 h-5 mb-1.5 opacity-80"
                   style={{ color: cfg.accent }}
-                >
+                />
+                <span className="text-gray-900 font-black text-xl md:text-2xl tracking-tighter">
                   {value}
                 </span>
-                <span className="text-white/30 text-[9px] font-bold uppercase tracking-widest">
+                <span className="text-gray-500 text-[8px] font-black uppercase tracking-[0.2em]">
                   {label}
                 </span>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
-        {/* ─── RIGHT — image ─── */}
-        <div className="relative flex-1 min-h-[280px] md:min-h-0">
-          <Image
-            src="/images/banner.jpg"
-            alt="Women's Collection"
-            fill
-            priority
-            unoptimized
-            className="object-cover object-center"
-            sizes="(max-width: 768px) 100vw, 640px"
-          />
+        {/* ─── RIGHT SIDE — MEDIA ─── */}
+        <div className="relative flex-1 min-h-[250px] lg:min-h-0 overflow-hidden bg-gray-100">
+          <motion.div
+            initial={{ scale: 1.05, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.5 }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={image}
+              alt={title}
+              fill
+              priority
+              unoptimized
+              className="object-cover object-center scale-105 transition-transform hover:scale-100 duration-1000"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </motion.div>
 
-          {/* Left-side blend */}
+          {/* Blends and Vignettes tuned for light mode */}
           <div
             className="absolute inset-x-0 inset-y-0 pointer-events-none"
             style={{
-              background: `linear-gradient(to right, ${cfg.bg} 0%, ${cfg.bg}cc 8%, transparent 35%)`,
+              background: `linear-gradient(to right, ${cfg.bg} 0%, ${cfg.bg}E6 10%, transparent 40%)`,
+            }}
+          />
+          <div
+            className="absolute inset-x-0 inset-y-0 pointer-events-none lg:hidden"
+            style={{
+              background: `linear-gradient(to bottom, ${cfg.bg} 0%, transparent 20%)`,
             }}
           />
 
-          {/* Vignette effect */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/20 pointer-events-none" />
+          {/* Artistic vignette - lighter for light mode */}
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-transparent pointer-events-none mix-blend-multiply" />
+
+          {/* Subtle light leak matching background */}
+          <div className="absolute top-0 right-0 w-full h-full bg-white/10 mix-blend-overlay pointer-events-none" />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

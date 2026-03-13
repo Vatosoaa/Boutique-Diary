@@ -23,6 +23,39 @@ export async function getFeaturedProducts(limit = 8) {
   }
 }
 
+export async function getRandomProduct() {
+  try {
+    const productCount = await prisma.product.count({
+      where: {
+        status: "PUBLISHED",
+        deletedAt: null,
+      },
+    });
+
+    if (productCount === 0) return null;
+
+    const skip = Math.floor(Math.random() * productCount);
+
+    const products = await prisma.product.findMany({
+      where: {
+        status: "PUBLISHED",
+        deletedAt: null,
+      },
+      include: {
+        images: true,
+        category: true,
+      },
+      take: 1,
+      skip: skip,
+    });
+
+    return products[0] || null;
+  } catch (error) {
+    console.error("Error fetching random product:", error);
+    return null;
+  }
+}
+
 export async function getPromotionalProducts(limit = 3) {
   try {
     const products = await prisma.product.findMany({

@@ -1013,18 +1013,18 @@ export default function ProductList({
                     Supprimer
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="bg-gray-900 border-white/10 text-white">
+                <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
                       Confirmer la suppression
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="text-gray-400">
+                    <AlertDialogDescription>
                       Voulez-vous vraiment déplacer ces {selectedRows.length}{" "}
                       produits vers la corbeille ?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+                    <AlertDialogCancel>
                       Annuler
                     </AlertDialogCancel>
                     <AlertDialogAction

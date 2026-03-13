@@ -850,7 +850,7 @@ export default function AdminBlogPage() {
       </Dialog>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent className="bg-white dark:bg-gray-800 border-border">
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Supprimer cet article ?</AlertDialogTitle>
             <AlertDialogDescription>

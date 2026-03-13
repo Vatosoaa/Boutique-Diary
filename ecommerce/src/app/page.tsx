@@ -1,8 +1,8 @@
 import DiaryHero from "@/components/store/DiaryHero";
+import StoreFeaturesBar from "@/components/store/StoreFeaturesBar";
 import PromoSection from "@/components/store/PromoSection";
 import CollectionScroll from "@/components/store/CollectionScroll";
 import FeaturesSection from "@/components/store/FeaturesSection";
-import ServiceHighlights from "@/components/store/ServiceHighlights";
 import BestCollectionBanner from "@/components/store/BestCollectionBanner";
 import StoreProductGrid from "@/components/store/StoreProductGrid";
 import ClientTestimonials from "@/components/store/ClientTestimonials";
@@ -32,6 +32,8 @@ export default async function Home() {
         recentCustomers={recentCustomers}
       />
 
+      <StoreFeaturesBar />
+
       <ScrollReveal animation="fade-up" delay={200}>
         <PromoSection products={promotionalProducts} />
       </ScrollReveal>
@@ -47,12 +49,8 @@ export default async function Home() {
         />
       </ScrollReveal>
 
-      <ScrollReveal animation="scale-up" delay={100}>
-        <ServiceHighlights />
-      </ScrollReveal>
-
       <ScrollReveal animation="fade-up">
-        <BestCollectionBanner />
+        <BestCollectionBanner products={featuredProducts} />
       </ScrollReveal>
 
       <ScrollReveal
