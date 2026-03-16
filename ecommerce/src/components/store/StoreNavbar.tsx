@@ -98,6 +98,7 @@ export default function StoreNavbar({
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      useCartStore.getState().clearCart();
       window.location.href = "/api/auth/social/logout";
     } catch (_error) {
       toast.error("Erreur lors de la déconnexion");
@@ -532,7 +533,7 @@ export default function StoreNavbar({
               style={{ backgroundColor: "var(--store-primary)" }}
             >
               <ShoppingBag className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
-              {itemCount > 0 && (
+              {user && itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 flex h-5 w-5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-5 w-5 bg-rose-500 text-[10px] font-bold text-white items-center justify-center border-2 border-white">
@@ -618,7 +619,7 @@ export default function StoreNavbar({
               >
                 <div className="relative">
                   <ShoppingBag className="w-5 h-5 text-foreground" />
-                  {itemCount > 0 && (
+                  {user && itemCount > 0 && (
                     <span className="absolute -top-2 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-primary text-primary-foreground rounded-full">
                       {itemCount}
                     </span>

@@ -21,12 +21,12 @@ export default function LoginPage() {
           <BrandLogo variant="light" className="w-56 mx-auto opacity-90" />
           <div className="space-y-6">
             <h2 className="text-5xl font-black text-white tracking-tighter leading-tight uppercase italic font-playfair animate-in fade-in slide-in-from-left-4 duration-1000">
-              L'élégance <br /> à votre portée.
+              L&apos;élégance <br /> à votre portée.
             </h2>
             <div className="h-1 w-12 bg-indigo-500 mx-auto rounded-full transition-all duration-700 hover:w-24" />
             <p className="text-gray-400 font-medium leading-relaxed max-w-sm mx-auto opacity-80">
-              Rejoignez notre communauté exclusive et profitez d'une expérience
-              shopping redéfinie.
+              Rejoignez notre communauté exclusive et profitez d&apos;une
+              expérience shopping redéfinie.
             </p>
           </div>
 
@@ -93,7 +93,7 @@ export default function LoginPage() {
 
               {}
               <div className="grid grid-cols-2 gap-4">
-                <a
+                <Link
                   href="/api/auth/social/login?connection=google-oauth2"
                   className="flex items-center justify-center gap-3 h-12 bg-white border border-gray-100 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-gray-200 hover:shadow-md transition-all font-bold text-[11px] uppercase tracking-wider text-gray-600 group"
                 >
@@ -103,8 +103,8 @@ export default function LoginPage() {
                     className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
                   />
                   Google
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/api/auth/social/login?connection=github"
                   className="flex items-center justify-center gap-3 h-12 bg-slate-950 rounded-xl shadow-lg hover:bg-black transition-all font-bold text-[11px] uppercase tracking-wider text-white group"
                 >
@@ -113,7 +113,7 @@ export default function LoginPage() {
                     className="text-white/70 group-hover:text-white transition-colors"
                   />
                   GitHub
-                </a>
+                </Link>
               </div>
 
               <div className="relative">
@@ -138,7 +138,7 @@ export default function LoginPage() {
                     href="/register"
                     className="text-black font-black hover:underline underline-offset-4 decoration-2 block sm:inline mt-2 sm:mt-0"
                   >
-                    S'inscrire GRATUITEMENT
+                    S&apos;inscrire GRATUITEMENT
                   </Link>
                 </p>
               </div>

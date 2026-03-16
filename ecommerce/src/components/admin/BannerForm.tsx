@@ -247,7 +247,7 @@ export default function BannerForm({
         <div className="flex gap-6 pt-2">
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Ordre d'affichage
+              Ordre d&apos;affichage
             </label>
             <input
               type="number"

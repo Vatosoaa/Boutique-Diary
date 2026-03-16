@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/cart-store";
 import {
@@ -193,18 +194,18 @@ export default function ProductDetailClient({
       <div className="max-w-[1400px] mx-auto px-4 py-8">
         {}
         <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <a href="/" className="hover:text-foreground">
+          <Link href="/" className="hover:text-foreground">
             Accueil
-          </a>
+          </Link>
           <span>/</span>
           {product.category && (
             <>
-              <a
+              <Link
                 href={`/shop?category=${product.category.name}`}
                 className="hover:text-foreground"
               >
                 {product.category.name}
-              </a>
+              </Link>
               <span>/</span>
             </>
           )}

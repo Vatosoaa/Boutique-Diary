@@ -13,6 +13,22 @@ interface SearchCommandProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface SearchProduct {
+  id: number;
+  name: string;
+  price: number;
+  oldPrice?: number | null;
+  isNew?: boolean;
+  isPromotion?: boolean;
+  images: { url: string }[];
+  category?: { name: string } | null;
+}
+
+interface SearchCategory {
+  id: number;
+  name: string;
+}
+
 export default function SearchCommand({
   open,
   onOpenChange,
@@ -21,8 +37,8 @@ export default function SearchCommand({
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<{
-    products: any[];
-    categories: any[];
+    products: SearchProduct[];
+    categories: SearchCategory[];
   }>({ products: [], categories: [] });
 
   useEffect(() => {
@@ -98,7 +114,7 @@ export default function SearchCommand({
               results.products.length === 0 &&
               results.categories.length === 0 && (
                 <div className="py-12 text-center text-sm text-gray-500">
-                  Aucun résultat trouvé pour "{query}"
+                  Aucun résultat trouvé pour &quot;{query}&quot;
                 </div>
               )}
 
@@ -107,7 +123,7 @@ export default function SearchCommand({
                 <div className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                   Collections
                 </div>
-                {results.categories.map((cat: any) => (
+                {results.categories.map((cat: SearchCategory) => (
                   <div
                     key={cat.id}
                     onClick={() => handleSelect(`/shop?category=${cat.id}`)}
@@ -128,7 +144,7 @@ export default function SearchCommand({
                 <div className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                   Produits
                 </div>
-                {results.products.map((product: any) => (
+                {results.products.map((product: SearchProduct) => (
                   <div
                     key={product.id}
                     onClick={() => handleSelect(`/store/product/${product.id}`)}

@@ -8,8 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { COLOR_MAP } from "@/lib/constants";
 import { formatPrice } from "@/lib/utils";
 import { DollarSign, Edit, Package, Share2, Star, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { ReviewListAdmin } from "./ReviewListAdmin";
 
@@ -55,54 +55,26 @@ interface ProductDetailsViewProps {
 
 export function ProductDetailsView({ product }: ProductDetailsViewProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const targetRef = searchParams.get("reference");
 
-  // Initialize state from URL params if available
-  const [selectedImageIndex, setSelectedImageIndex] = useState(() => {
-    if (typeof window === "undefined") return 0;
-    const params = new URLSearchParams(window.location.search);
-    const targetRef = params.get("reference");
+  // Local state for when no reference is in URL or for images without references
+  const [localImageIndex, setLocalImageIndex] = useState(0);
+
+  // Derived state: prioritize URL reference, fallback to local state
+  const selectedImageIndex = useMemo(() => {
     if (targetRef && product.images) {
       const index = product.images.findIndex(
         (img) => img.reference === targetRef,
       );
-      return index !== -1 ? index : 0;
+      if (index !== -1) return index;
     }
-    return 0;
-  });
-
-  // Keep autoSelectedRef for tracking changes if needed, but not for initial load
-  const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    return new URLSearchParams(window.location.search).get("reference");
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const params = new URLSearchParams(window.location.search);
-    const targetRef = params.get("reference");
-
-    // Only update if targetRef changed from what we already selected
-    if (
-      targetRef &&
-      product.images &&
-      product.images.length > 0 &&
-      targetRef !== autoSelectedRef
-    ) {
-      const index = product.images.findIndex(
-        (img) => img.reference === targetRef,
-      );
-      if (index !== -1) {
-        setSelectedImageIndex(index);
-        setAutoSelectedRef(targetRef);
-      }
-    }
-  }, [product.images, autoSelectedRef]);
+    return localImageIndex;
+  }, [targetRef, product.images, localImageIndex]);
 
   const currentImage = product.images[selectedImageIndex];
 
   const displayPrice = currentImage?.price ?? product.price;
-  const displayOldPrice = currentImage?.oldPrice ?? product.oldPrice;
   const displayStock = currentImage?.stock ?? product.stock;
   const displayRef = currentImage?.reference ?? product.reference;
 
@@ -130,6 +102,16 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
       bg: "bg-amber-50",
     },
   ];
+
+  const uniqueColors = useMemo(() => {
+    const colors = new Set<string>();
+    product.images?.forEach((img) => {
+      if (img.color) colors.add(img.color);
+    });
+    // Variations are not included in the interface but let's be safe if they are added later
+    // or just stick to images for now as this is what's used for display
+    return Array.from(colors);
+  }, [product.images]);
 
   const handleEdit = () => {
     router.push(`/admin/products/${product.id}/edit`);
@@ -183,7 +165,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
             {product.images.map((img, idx) => (
               <div
                 key={img.id || idx}
-                onClick={() => setSelectedImageIndex(idx)}
+                onClick={() => setLocalImageIndex(idx)}
                 className={`aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
                   idx === selectedImageIndex
                     ? "border-black ring-1 ring-black/20"
@@ -270,7 +252,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                       Couleurs Disponibles
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {product.colors.map((color) => {
+                      {uniqueColors.map((color) => {
                         const isActive = currentImage?.color === color;
                         return (
                           <div
@@ -279,8 +261,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                               const imgIndex = product.images.findIndex(
                                 (img) => img.color === color,
                               );
-                              if (imgIndex !== -1)
-                                setSelectedImageIndex(imgIndex);
+                              if (imgIndex !== -1) setLocalImageIndex(imgIndex);
                             }}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-all hover:scale-105 ${isActive ? "border-black dark:border-white bg-gray-50 dark:bg-gray-700 ring-1 ring-black/5" : "border-gray-200 dark:border-gray-700 hover:border-gray-300"}`}
                           >
@@ -292,7 +273,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                           </div>
                         );
                       })}
-                      {product.colors.length === 0 && (
+                      {uniqueColors.length === 0 && (
                         <span className="text-sm text-gray-400 italic">
                           Aucune variante couleur
                         </span>

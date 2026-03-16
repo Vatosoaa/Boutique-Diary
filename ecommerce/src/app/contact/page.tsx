@@ -67,7 +67,7 @@ export default function ContactPage() {
             CONTACTEZ-NOUS
           </h1>
           <p className="text-lg md:text-xl text-gray-100 max-w-2xl mx-auto leading-relaxed drop-shadow-sm font-medium">
-            Si vous avez des questions, n'hésitez pas à nous contacter par
+            Si vous avez des questions, n&apos;hésitez pas à nous contacter par
             téléphone, email, via le formulaire ci-dessous ou même sur les
             réseaux sociaux !
           </p>

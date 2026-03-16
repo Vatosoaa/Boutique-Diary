@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useCartStore } from "@/lib/cart-store";
 
 export default function LoginForm() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const clearCart = useCartStore((state) => state.clearCart);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,8 @@ export default function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
+        // Clear guest cart on login
+        clearCart();
         window.location.href = "/dashboard/customer";
       } else {
         setError(data.message || "Échec de la connexion");

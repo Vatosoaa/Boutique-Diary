@@ -147,8 +147,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     }
   };
 
-  const images: ProductImage[] =
-    product?.images?.length > 0
+  const images: ProductImage[] = useMemo(() => {
+    return product?.images?.length > 0
       ? product.images
       : [
           {
@@ -162,13 +162,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             sizes: [],
           },
         ];
+  }, [product?.images]);
+
   const currentImage = images[selectedImageIndex];
 
   // Filter variations by current color
   const colorVariations = useMemo(() => {
     if (!currentImage?.color) return [];
     return product.variations.filter((v) => v.color === currentImage.color);
-  }, [product.variations, currentImage.color]);
+  }, [product.variations, currentImage?.color]);
 
   const displayPrice = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
@@ -197,7 +199,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     product?.oldPrice,
   ]);
 
-  const uniqueColors = product?.colors || [];
+  // Derive unique colors from both images and variations to stay in sync with actual data
+  const uniqueColors = useMemo(() => {
+    const colors = new Set<string>();
+    images.forEach((img) => {
+      if (img.color) colors.add(img.color);
+    });
+    product.variations.forEach((v) => {
+      if (v.color) colors.add(v.color);
+    });
+    return Array.from(colors);
+  }, [images, product.variations]);
 
   const currentRef = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
@@ -236,6 +248,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     // 3. Fallback to image stock or product stock
     return currentImage?.stock ?? product?.stock ?? 0;
   }, [selectedSize, colorVariations, currentImage, product?.stock]);
+
+  // Reset selected image index if it becomes invalid (e.g. after a deletion)
+  useEffect(() => {
+    if (selectedImageIndex >= images.length || selectedImageIndex < 0) {
+      setSelectedImageIndex(0);
+    }
+  }, [images.length, selectedImageIndex]);
 
   useEffect(() => {
     if (selectedSize && !availableSizes.includes(selectedSize)) {
@@ -524,6 +543,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {product.name}
             </h1>
 
+            <div className="flex items-center gap-2 text-xs text-muted-foreground/60 font-medium">
+              <span className="uppercase tracking-widest">Réf:</span>
+              <span className="font-mono text-foreground/80">{currentRef}</span>
+            </div>
+
             {!isLoggedIn && (
               <div className="mb-3 p-2 rounded-lg bg-amber-50 border border-amber-100 flex items-start gap-2">
                 <AlertCircle className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" />
@@ -622,7 +646,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       return (
                         <button
                           key={color}
-                          onClick={() => setSelectedImageIndex(index)}
+                          onClick={() => {
+                            if (index !== -1) {
+                              setSelectedImageIndex(index);
+                            }
+                          }}
                           className={cn(
                             "group relative w-9 h-9 rounded-full transition-all duration-200",
                             isSelected

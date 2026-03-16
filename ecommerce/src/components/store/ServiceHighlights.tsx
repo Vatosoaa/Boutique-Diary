@@ -46,7 +46,7 @@ export default function ServiceHighlights() {
               100% Authentiques
             </h3>
             <p className="text-[10px] text-gray-500 leading-tight">
-              Nous garantissons l'authenticité de tous nos produits.
+              Nous garantissons l&apos;authenticité de tous nos produits.
             </p>
           </div>
           <button className="self-start flex items-center gap-2 border border-black/10 rounded-full pl-3 pr-2 py-1 text-[10px] font-bold hover:bg-background transition-colors">
@@ -91,7 +91,7 @@ export default function ServiceHighlights() {
           <h3 className="relative z-10 text-white font-bold text-xl">
             Vêtements
             <br />
-            d'Été
+            d&apos;Été
           </h3>
           {}
           <div className="absolute right-[-20px] bottom-[-20px] w-32 h-32 bg-orange-500 rounded-full blur-xl opacity-80"></div>

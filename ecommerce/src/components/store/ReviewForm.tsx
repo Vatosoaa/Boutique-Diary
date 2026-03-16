@@ -114,7 +114,7 @@ export default function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
               <Sparkles className="w-4 h-4 text-amber-400" />
             </div>
             <DialogTitle className="text-xl font-black tracking-tight text-center text-gray-900">
-              Comment était l'article ?
+              Comment était l&apos;article ?
             </DialogTitle>
             <p className="text-gray-500 text-center font-medium mt-1 text-xs">
               Votre avis compte énormément pour nous et nos clients

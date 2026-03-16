@@ -17,7 +17,6 @@ export default function OrderSummary({ appliedPromo }: OrderSummaryProps) {
 
   // 1. Calculate Per-Item Discount and Total Discount using useMemo for performance and to avoid re-assignment issues
   const { itemDiscounts, totalDiscount } = useMemo(() => {
-    let currentTotalDiscount = 0;
     const discounts = items.map((item) => {
       const itemTotal = item.price * item.quantity;
       let discount = 0;
@@ -31,9 +30,13 @@ export default function OrderSummary({ appliedPromo }: OrderSummaryProps) {
         }
       }
 
-      currentTotalDiscount += discount;
       return { id: item.id, amount: discount };
     });
+
+    const currentTotalDiscount = discounts.reduce(
+      (acc, d) => acc + d.amount,
+      0,
+    );
 
     return { itemDiscounts: discounts, totalDiscount: currentTotalDiscount };
   }, [items, appliedPromo, subtotal]);

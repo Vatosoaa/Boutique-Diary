@@ -618,21 +618,8 @@ export function ProductImageUploader({
                     />
                     <span>Top Vente</span>
                   </label>
-                  <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs">
-                    <Checkbox
-                      checked={currentImageAsProductImage.isPromotion || false}
-                      onCheckedChange={(checked) =>
-                        handleUpdateImageAttribute(
-                          selectedImageIndex,
-                          "isPromotion",
-                          !!checked,
-                        )
-                      }
-                      className="h-3.5 w-3.5"
-                    />
-                    <span>Promo</span>
-                  </label>
                 </div>
+
               </div>
             </div>
 
