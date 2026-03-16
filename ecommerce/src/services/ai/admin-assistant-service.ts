@@ -1,4 +1,9 @@
-import { GoogleGenerativeAI, Tool, SchemaType } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  Tool,
+  SchemaType,
+  Content,
+} from "@google/generative-ai";
 import { prisma } from "@/lib/prisma";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
@@ -124,9 +129,9 @@ const adminTools: Tool[] = [
 ];
 
 export class AdminAssistantService {
-  private static readonly MODEL_NAME = "gemini-flash-latest"; // Alias to 1.5-flash or similar available version
+  private static readonly MODEL_NAME = "gemini-2.5-flash";
 
-  static async handleRequest(message: string, history: any[] = []) {
+  static async handleRequest(message: string, history: Content[] = []) {
     const model = genAI.getGenerativeModel({
       model: this.MODEL_NAME,
       tools: adminTools,
@@ -139,26 +144,20 @@ export class AdminAssistantService {
     // Clean history: Gemini is strict about roles
     // 1. Must start with 'user'
     // 2. Roles must alternate
-    const cleanedHistory = (history || []).map((h: any) => {
+    const cleanedHistory: Content[] = (history || []).map((h) => {
       const isFunctionRole = h.role === "function";
       return {
         role: h.role === "system" ? "user" : h.role,
-        parts: h.parts.map((p: any) => {
-          const part: any = {};
-          if (p.text && !isFunctionRole) part.text = p.text;
-          if (p.functionCall) part.functionCall = p.functionCall;
-          if (p.functionResponse) part.functionResponse = p.functionResponse;
+        parts: h.parts.map((p) => {
+          if (p.functionCall) return { functionCall: p.functionCall };
+          if (p.functionResponse)
+            return { functionResponse: p.functionResponse };
 
-          // Fallback: Gemini requires at least one part.
-          // If it's a model/user turn and no text/call, add empty text.
-          if (!part.text && !part.functionCall && !part.functionResponse) {
-            if (!isFunctionRole) part.text = "";
-          }
-          return part;
+          // Default to text part, ensuring at least one part exists
+          return { text: p.text || (isFunctionRole ? "" : " ") };
         }),
       };
     });
-
     // Start index for history to ensure it starts with 'user'
     let startIndex = 0;
     while (
@@ -183,42 +182,46 @@ export class AdminAssistantService {
 
         for (const call of calls) {
           const { name, args } = call;
-          const toolArgs = args as any;
+          const toolArgs = args as Record<string, string | number | undefined>;
           console.log(`[AdminAI] Calling tool: ${name}`, toolArgs);
 
           let toolResult;
           switch (name) {
             case "get_sales_performance":
-              toolResult = await this.getSalesPerformance(toolArgs.days || 7);
+              toolResult = await this.getSalesPerformance(
+                Number(toolArgs.days) || 7,
+              );
               break;
             case "get_inventory_report":
               toolResult = await this.getInventoryReport(
-                toolArgs.threshold || 5,
+                Number(toolArgs.threshold) || 5,
               );
               break;
             case "update_product_stock":
               toolResult = await this.updateProductStock(
-                toolArgs.productId,
-                toolArgs.newStock,
+                Number(toolArgs.productId),
+                Number(toolArgs.newStock),
               );
               break;
             case "update_product_price":
               toolResult = await this.updateProductPrice(
-                toolArgs.productId,
-                toolArgs.newPrice,
+                Number(toolArgs.productId),
+                Number(toolArgs.newPrice),
               );
               break;
             case "apply_promotion":
               toolResult = await this.applyPromotion(
-                toolArgs.productId,
-                toolArgs.discountPercentage,
+                Number(toolArgs.productId),
+                Number(toolArgs.discountPercentage),
               );
               break;
             case "search_products":
-              toolResult = await this.searchProducts(toolArgs.query);
+              toolResult = await this.searchProducts(String(toolArgs.query));
               break;
             case "get_recent_orders":
-              toolResult = await this.getRecentOrders(toolArgs.limit || 10);
+              toolResult = await this.getRecentOrders(
+                Number(toolArgs.limit) || 10,
+              );
               break;
             default:
               toolResult = { error: "Outil non trouvé" };

@@ -143,16 +143,23 @@ export default function CollectionScroll({
                   <span className="font-bold text-sm">
                     {formatPrice(item.price)}
                   </span>
-                  {item.isPromotion && item.oldPrice && item.oldPrice > item.price && (
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] text-muted-foreground line-through opacity-50">
-                        {formatPrice(item.oldPrice)}
-                      </span>
-                      <span className="text-[10px] font-black text-rose-500">
-                        -{Math.round(((item.oldPrice - item.price) / item.oldPrice) * 100)}%
-                      </span>
-                    </div>
-                  )}
+                  {item.isPromotion &&
+                    item.oldPrice &&
+                    item.oldPrice > item.price && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] text-muted-foreground line-through opacity-50">
+                          {formatPrice(item.oldPrice)}
+                        </span>
+                        <span className="text-[10px] font-black text-rose-500">
+                          -
+                          {Math.round(
+                            ((item.oldPrice - item.price) / item.oldPrice) *
+                              100,
+                          )}
+                          %
+                        </span>
+                      </div>
+                    )}
                 </div>
               </div>
             </Link>

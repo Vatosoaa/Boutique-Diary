@@ -47,7 +47,6 @@ const MegaMenu = ({ onClose }: MegaMenuProps) => {
     <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-950 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border-t border-gray-100 dark:border-gray-800 animate-in fade-in slide-in-from-top-4 duration-300 z-50">
       <div className="max-w-7xl mx-auto p-8 md:p-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          
           {/* Left Column: Categories Grid */}
           <div className="md:col-span-8 lg:col-span-9">
             <div className="flex items-center justify-between mb-6">
@@ -62,7 +61,7 @@ const MegaMenu = ({ onClose }: MegaMenuProps) => {
                 Tout voir <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 min-h-[400px]">
               {categories.map((category) => (
                 <Link
@@ -70,7 +69,9 @@ const MegaMenu = ({ onClose }: MegaMenuProps) => {
                   href={category.href}
                   onClick={onClose}
                   className={`group relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 ${
-                    category.colSpan === "col-span-2" ? "col-span-2 md:col-span-2" : "col-span-1 md:col-span-1"
+                    category.colSpan === "col-span-2"
+                      ? "col-span-2 md:col-span-2"
+                      : "col-span-1 md:col-span-1"
                   } h-48 md:h-auto`}
                 >
                   <Image
@@ -83,7 +84,7 @@ const MegaMenu = ({ onClose }: MegaMenuProps) => {
                   />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
-                  
+
                   {/* Content */}
                   <div className="absolute bottom-0 left-0 p-5 md:p-6 w-full translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                     <h4 className="text-white text-xl md:text-2xl font-black mb-1">
@@ -126,14 +127,13 @@ const MegaMenu = ({ onClose }: MegaMenuProps) => {
                 <p className="text-muted-foreground text-sm font-medium">
                   Les pièces préférées de nos clients cette saison.
                 </p>
-                
+
                 <div className="mt-6 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-primary/30">
                   <ArrowRight className="w-5 h-5" />
                 </div>
               </div>
             </Link>
           </div>
-          
         </div>
       </div>
     </div>

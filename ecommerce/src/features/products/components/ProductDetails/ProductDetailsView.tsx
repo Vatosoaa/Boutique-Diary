@@ -55,8 +55,26 @@ interface ProductDetailsViewProps {
 
 export function ProductDetailsView({ product }: ProductDetailsViewProps) {
   const router = useRouter();
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(null);
+
+  // Initialize state from URL params if available
+  const [selectedImageIndex, setSelectedImageIndex] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    const params = new URLSearchParams(window.location.search);
+    const targetRef = params.get("reference");
+    if (targetRef && product.images) {
+      const index = product.images.findIndex(
+        (img) => img.reference === targetRef,
+      );
+      return index !== -1 ? index : 0;
+    }
+    return 0;
+  });
+
+  // Keep autoSelectedRef for tracking changes if needed, but not for initial load
+  const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("reference");
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -64,6 +82,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
     const params = new URLSearchParams(window.location.search);
     const targetRef = params.get("reference");
 
+    // Only update if targetRef changed from what we already selected
     if (
       targetRef &&
       product.images &&
@@ -76,9 +95,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
       if (index !== -1) {
         setSelectedImageIndex(index);
         setAutoSelectedRef(targetRef);
-        console.log(
-          `[ProductDetailsView] Auto-selected image index ${index} for reference ${targetRef}`,
-        );
       }
     }
   }, [product.images, autoSelectedRef]);
@@ -119,14 +135,8 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
     router.push(`/admin/products/${product.id}/edit`);
   };
 
-  const hasDiscount = displayOldPrice && displayOldPrice > displayPrice;
-  const discountPercent = hasDiscount
-    ? Math.round(((displayOldPrice! - displayPrice) / displayOldPrice!) * 100)
-    : 0;
-
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {}
       <PageHeader
         title={product.name}
         description={`Réf: ${displayRef} • Publié le: ${new Date(product.createdAt).toLocaleDateString()}`}
@@ -150,9 +160,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
         </div>
       </PageHeader>
 
-      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {}
         <div className="lg:col-span-1 space-y-4">
           <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm relative group">
             <img
@@ -160,7 +168,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
               alt={product.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            {}
             <div className="absolute top-3 left-3 flex flex-col gap-2">
               {product.isNew && <Badge className="bg-blue-600">Nouveau</Badge>}
               {product.isPromotion && (
@@ -172,7 +179,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
             </div>
           </div>
 
-          {}
           <div className="grid grid-cols-5 gap-2">
             {product.images.map((img, idx) => (
               <div
@@ -194,9 +200,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
           </div>
         </div>
 
-        {/* Right Columns: Stats & Info */}
         <div className="lg:col-span-2 space-y-6">
-          {}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
               <Card
@@ -229,7 +233,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
             ))}
           </div>
 
-          {}
           <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <Tabs defaultValue="details" className="w-full">
               <div className="border-b border-gray-100 dark:border-gray-700 flex justify-between p-4">
@@ -253,7 +256,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                 value="details"
                 className="p-6 space-y-8 animate-in slide-in-from-bottom-2 duration-300"
               >
-                {}
                 <div>
                   <h3 className="text-base font-semibold mb-2">Description</h3>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
@@ -262,7 +264,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                   </p>
                 </div>
 
-                {}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-sm font-semibold mb-3">
@@ -324,7 +325,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                   </div>
                 </div>
 
-                {}
                 <div>
                   <h3 className="text-base font-semibold mb-2">
                     Spécifications
@@ -353,8 +353,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
                           -- Gr
-                        </p>{" "}
-                        {}
+                        </p>
                       </div>
                       <div className="p-4">
                         <p className="text-xs text-gray-500 uppercase font-semibold">

@@ -123,11 +123,19 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
                   <div className="font-bold text-sm">
                     {formatPrice(product.price)}
                   </div>
-                  {product.isPromotion && product.oldPrice && product.oldPrice > product.price && (
-                    <span className="text-[10px] font-black text-rose-500">
-                      -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
-                    </span>
-                  )}
+                  {product.isPromotion &&
+                    product.oldPrice &&
+                    product.oldPrice > product.price && (
+                      <span className="text-[10px] font-black text-rose-500">
+                        -
+                        {Math.round(
+                          ((product.oldPrice - product.price) /
+                            product.oldPrice) *
+                            100,
+                        )}
+                        %
+                      </span>
+                    )}
                 </div>
               </div>
             </div>

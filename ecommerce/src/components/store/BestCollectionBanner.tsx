@@ -54,12 +54,11 @@ export default function BestCollectionBanner({
   return (
     <section className="py-12 md:py-20 px-4 md:px-6 relative overflow-hidden">
       {/* Background abstract decoration */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent -z-10 blur-3xl opacity-30" />
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-primary/5 to-transparent -z-10 blur-3xl opacity-30" />
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/10 rounded-full -z-10 blur-3xl opacity-20" />
 
       <div className="max-w-[1400px] mx-auto">
         <div className="bg-white dark:bg-gray-900 rounded-[48px] overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] relative">
-          
           {/* Subtle background text */}
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center overflow-hidden pointer-events-none opacity-[0.03] select-none">
             <span className="text-[20vw] font-black whitespace-nowrap uppercase tracking-tighter">
@@ -68,7 +67,6 @@ export default function BestCollectionBanner({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center min-h-[500px] md:min-h-[600px]">
-            
             {/* Content Side */}
             <div className="p-8 md:p-16 lg:p-24 z-10">
               <AnimatePresence mode="wait">
@@ -93,10 +91,13 @@ export default function BestCollectionBanner({
                   </motion.div>
 
                   <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground mb-8 leading-[1.05] tracking-tight max-w-lg">
-                    <span className="block mb-2 font-serif" style={{ fontVariant: 'small-caps' }}>
+                    <span
+                      className="block mb-2 font-serif"
+                      style={{ fontVariant: "small-caps" }}
+                    >
                       {product.name.split(" ")[0]}
                     </span>
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#248197] to-[#3aabc6] leading-tight">
+                    <span className="block text-transparent bg-clip-text bg-linear-to-r from-[#248197] to-[#3aabc6] leading-tight">
                       Collection Exclusive
                     </span>
                     <span className="block font-serif italic font-light opacity-90">
@@ -118,7 +119,7 @@ export default function BestCollectionBanner({
                         Acheter Maintenant
                       </Link>
                     </Button>
-                    
+
                     <div className="flex -space-x-4">
                       {[1, 2, 3].map((i) => (
                         <div
@@ -146,7 +147,7 @@ export default function BestCollectionBanner({
             <div className="relative h-full min-h-[400px] flex items-center justify-center p-8 lg:p-16">
               {/* Complex background aura */}
               <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                <div className="w-[80%] h-[80%] bg-gradient-to-tr from-[#248197]/40 to-transparent rounded-full blur-[100px] animate-pulse" />
+                <div className="w-[80%] h-[80%] bg-linear-to-tr from-[#248197]/40 to-transparent rounded-full blur-[100px] animate-pulse" />
                 <div className="absolute w-[60%] h-[60%] bg-blue-100/30 rounded-full blur-[80px] animate-pulse delay-700" />
               </div>
 
@@ -161,19 +162,19 @@ export default function BestCollectionBanner({
                 >
                   {/* Floating animation for the image container */}
                   <motion.div
-                    animate={{ 
+                    animate={{
                       y: [0, -15, 0],
-                      rotate: [0, 1, 0]
+                      rotate: [0, 1, 0],
                     }}
-                    transition={{ 
-                      duration: 6, 
-                      repeat: Infinity, 
-                      ease: "easeInOut" 
+                    transition={{
+                      duration: 6,
+                      repeat: Infinity,
+                      ease: "easeInOut",
                     }}
                     className="relative z-10"
                   >
                     {/* Polaroid Styled Frame */}
-                    <div className="relative aspect-[3/4] w-full bg-white dark:bg-gray-800 p-4 md:p-6 rounded-[32px] shadow-[0_32px_80px_-16px_rgba(0,0,0,0.15)] rotate-[-4deg] border border-gray-100 dark:border-gray-800">
+                    <div className="relative aspect-3/4 w-full bg-white dark:bg-gray-800 p-4 md:p-6 rounded-[32px] shadow-[0_32px_80px_-16px_rgba(0,0,0,0.15)] rotate-[-4deg] border border-gray-100 dark:border-gray-800">
                       <div className="relative w-full h-full rounded-[20px] overflow-hidden">
                         <Image
                           src={productImage}
@@ -183,29 +184,39 @@ export default function BestCollectionBanner({
                           unoptimized
                           priority
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       </div>
                     </div>
-                    
+
                     {/* Secondary decorative frame */}
-                    <div className="absolute inset-0 bg-primary/5 rounded-[32px] rotate-[3deg] -z-10 blur-sm scale-105" />
+                    <div className="absolute inset-0 bg-primary/5 rounded-[32px] rotate-3 -z-10 blur-sm scale-105" />
                   </motion.div>
 
                   {/* Premium Price Tag */}
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.6 }}
                     className="absolute bottom-4 -right-2 md:-right-6 lg:-right-10 z-20"
                   >
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl px-8 py-5 rounded-3xl shadow-[0_20px_40px_-8px_rgba(0,0,0,0.1)] border border-white/20 dark:border-gray-800/50 transform rotate-[-2deg]">
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl px-8 py-5 rounded-3xl shadow-[0_20px_40px_-8px_rgba(0,0,0,0.1)] border border-white/20 dark:border-gray-800/50 transform -rotate-2">
                       <div className="flex items-center justify-between mb-1">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">Prix Exclusif</div>
-                        {product.isPromotion && product.oldPrice && product.oldPrice > product.price && (
-                          <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
-                            -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
-                          </span>
-                        )}
+                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">
+                          Prix Exclusif
+                        </div>
+                        {product.isPromotion &&
+                          product.oldPrice &&
+                          product.oldPrice > product.price && (
+                            <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+                              -
+                              {Math.round(
+                                ((product.oldPrice - product.price) /
+                                  product.oldPrice) *
+                                  100,
+                              )}
+                              %
+                            </span>
+                          )}
                       </div>
                       <div className="flex items-baseline gap-2">
                         <span className="text-3xl md:text-4xl font-black text-[#248197] tracking-tight">
@@ -221,7 +232,7 @@ export default function BestCollectionBanner({
                   </motion.div>
 
                   {/* Floating interaction hints */}
-                  <div className="absolute -top-10 -left-10 w-24 h-24 bg-[#248197]/10 rounded-full blur-[40px] mix-blend-multiply animate-bounce duration-[3000ms]" />
+                  <div className="absolute -top-10 -left-10 w-24 h-24 bg-[#248197]/10 rounded-full blur-2xl mix-blend-multiply animate-bounce duration-3000" />
                   <div className="absolute top-1/2 -right-12 w-16 h-16 bg-amber-100/30 rounded-full blur-[30px] animate-pulse" />
                 </motion.div>
               </AnimatePresence>
@@ -236,8 +247,8 @@ export default function BestCollectionBanner({
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               className={`h-2.5 rounded-full transition-all duration-500 ${
-                idx === currentIndex 
-                  ? "w-10 bg-[#248197] shadow-lg shadow-[#248197]/20" 
+                idx === currentIndex
+                  ? "w-10 bg-[#248197] shadow-lg shadow-[#248197]/20"
                   : "w-2.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700"
               }`}
             />

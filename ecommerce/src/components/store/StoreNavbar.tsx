@@ -155,10 +155,26 @@ export default function StoreNavbar({
   ];
 
   const categoriesList = [
-    { name: "Femmes", href: "/shop?category=femmes", image: "/images/femme.jpg" },
-    { name: "Hommes", href: "/shop?category=hommes", image: "/images/homme1.jpg" },
-    { name: "Enfants", href: "/shop?category=enfants", image: "/images/enfant2.jpg" },
-    { name: "Accessoires", href: "/shop?category=accessoires", image: "/images/accessoir.jpg" },
+    {
+      name: "Femmes",
+      href: "/shop?category=femmes",
+      image: "/images/femme.jpg",
+    },
+    {
+      name: "Hommes",
+      href: "/shop?category=hommes",
+      image: "/images/homme1.jpg",
+    },
+    {
+      name: "Enfants",
+      href: "/shop?category=enfants",
+      image: "/images/enfant2.jpg",
+    },
+    {
+      name: "Accessoires",
+      href: "/shop?category=accessoires",
+      image: "/images/accessoir.jpg",
+    },
   ];
 
   const pillTriggerStyle = cn(
@@ -245,7 +261,9 @@ export default function StoreNavbar({
                           </div>
                           <div className="absolute bottom-8 left-8 right-8 z-10">
                             <h3 className="text-white text-3xl font-black leading-[1.1] tracking-tight mb-4 drop-shadow-lg">
-                              Nouvelle<br />Collection
+                              Nouvelle
+                              <br />
+                              Collection
                             </h3>
                             <Link
                               href="/nouveautes"
@@ -269,7 +287,7 @@ export default function StoreNavbar({
                               Tout voir <ArrowRight className="w-4 h-4" />
                             </Link>
                           </div>
-                          
+
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 relative min-h-[220px]">
                             {categoriesList.map((cat) => (
                               <Link
@@ -303,34 +321,34 @@ export default function StoreNavbar({
                               href="/nouveautes"
                               className="group rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/10 p-4 transition-colors flex items-center gap-4"
                             >
-                                <div className="bg-background shadow-sm text-primary p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                  <Sparkles className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0">
-                                  <h4 className="font-bold text-foreground leading-none mb-1.5 group-hover:text-primary transition-colors truncate">
-                                    Nouveautés
-                                  </h4>
-                                  <p className="text-[11px] font-semibold text-muted-foreground truncate">
-                                    Dernières pépites
-                                  </p>
-                                </div>
+                              <div className="bg-background shadow-sm text-primary p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                <Sparkles className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="font-bold text-foreground leading-none mb-1.5 group-hover:text-primary transition-colors truncate">
+                                  Nouveautés
+                                </h4>
+                                <p className="text-[11px] font-semibold text-muted-foreground truncate">
+                                  Dernières pépites
+                                </p>
+                              </div>
                             </Link>
 
                             <Link
                               href="/promotions"
                               className="group rounded-2xl bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 border border-rose-100 dark:border-rose-500/20 p-4 transition-colors flex items-center gap-4"
                             >
-                                <div className="bg-background shadow-sm text-rose-500 p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                  <Tag className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0">
-                                  <h4 className="font-bold text-foreground leading-none mb-1.5 group-hover:text-rose-500 transition-colors truncate">
-                                    Promotions
-                                  </h4>
-                                  <p className="text-[11px] font-semibold text-muted-foreground truncate">
-                                    Jusqu&apos;à -50%
-                                  </p>
-                                </div>
+                              <div className="bg-background shadow-sm text-rose-500 p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                <Tag className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="font-bold text-foreground leading-none mb-1.5 group-hover:text-rose-500 transition-colors truncate">
+                                  Promotions
+                                </h4>
+                                <p className="text-[11px] font-semibold text-muted-foreground truncate">
+                                  Jusqu&apos;à -50%
+                                </p>
+                              </div>
                             </Link>
                           </div>
                         </div>

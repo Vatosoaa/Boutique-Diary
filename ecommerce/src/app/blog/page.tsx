@@ -70,10 +70,10 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       },
     });
 
-    return (posts as any).map((post: any) => ({
+    return posts.map((post) => ({
       ...post,
-      publishedAt: post.publishedAt.toISOString(),
-    }));
+      publishedAt: post.publishedAt?.toISOString() || new Date().toISOString(),
+    })) as unknown as BlogPost[];
   } catch (error) {
     console.error("Error fetching blog posts:", error);
     return [];
@@ -81,7 +81,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 export default async function BlogPage() {
-  const [posts, stats] = await Promise.all([getBlogPosts(), getStoreStats()]);
+  const [posts] = await Promise.all([getBlogPosts(), getStoreStats()]);
   const featuredPost = posts[0];
   const otherPosts = posts.slice(1);
 
@@ -140,10 +140,13 @@ export default async function BlogPage() {
           <div className="space-y-16">
             {/* Featured Post */}
             {featuredPost && (
-              <Link href={`/blog/${featuredPost.slug}`} className="group block mb-12">
-                <article className="relative grid md:grid-cols-2 gap-0 bg-white dark:bg-gray-950 rounded-[2rem] overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-[#267b93]/30 transition-all duration-500 hover:shadow-2xl hover:shadow-[#267b93]/10">
+              <Link
+                href={`/blog/${featuredPost.slug}`}
+                className="group block mb-12"
+              >
+                <article className="relative grid md:grid-cols-2 gap-0 bg-white dark:bg-gray-950 rounded-4xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-[#267b93]/30 transition-all duration-500 hover:shadow-2xl hover:shadow-[#267b93]/10">
                   {/* Image */}
-                  <div className="relative aspect-[4/3] md:aspect-[3/4] lg:aspect-auto lg:min-h-[500px] overflow-hidden">
+                  <div className="relative aspect-4/3 md:aspect-3/4 lg:aspect-auto lg:min-h-[500px] overflow-hidden">
                     {featuredPost.coverImage ? (
                       <Image
                         src={featuredPost.coverImage}
@@ -155,7 +158,7 @@ export default async function BlogPage() {
                         unoptimized
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
+                      <div className="w-full h-full bg-linear-to-br from-gray-100 to-gray-50 flex items-center justify-center">
                         <Sparkles className="w-20 h-20 text-gray-300" />
                       </div>
                     )}
@@ -163,8 +166,8 @@ export default async function BlogPage() {
                     {/* Featured badge */}
                     <div className="absolute top-6 left-6 z-10">
                       <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#3891a6] text-white shadow-sm border border-[#3891a6]/20">
-                        <Sparkles className="w-3.5 h-3.5 text-[#f5a623]" />
-                        À la une
+                        <Sparkles className="w-3.5 h-3.5 text-[#f5a623]" />À la
+                        une
                       </div>
                     </div>
                   </div>
@@ -213,7 +216,7 @@ export default async function BlogPage() {
 
                     <div className="pt-4">
                       <span className="inline-flex items-center gap-2 text-[#267b93] dark:text-[#52b1cd] font-bold group-hover:gap-3 transition-all duration-300">
-                        Lire l'article
+                        Lire l&apos;article
                         <ArrowRight className="w-5 h-5" />
                       </span>
                     </div>
@@ -231,7 +234,7 @@ export default async function BlogPage() {
       {/* Bottom CTA */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 text-white rounded-3xl p-10 md:p-16 text-center overflow-hidden">
+          <div className="relative bg-linear-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 text-white rounded-3xl p-10 md:p-16 text-center overflow-hidden">
             {/* Decorative blobs */}
             <div className="absolute top-0 right-0 w-72 h-72 bg-primary/15 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-56 h-56 bg-primary/10 rounded-full blur-3xl" />
