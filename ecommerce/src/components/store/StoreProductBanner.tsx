@@ -19,6 +19,12 @@ interface StoreProductBannerProps {
   variant?: "indigo" | "rose" | "amber" | "cyan" | "emerald" | "theme";
   enableTypewriter?: boolean;
   image?: string;
+  customerCount?: number;
+  recentCustomers?: {
+    id: string | number;
+    username: string;
+    photo?: string | null;
+  }[];
 }
 
 const variantConfig = {
@@ -67,6 +73,10 @@ export default function StoreProductBanner({
   variant = "indigo",
   enableTypewriter = false,
   image = "/images/banner.jpg",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  customerCount,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  recentCustomers,
 }: StoreProductBannerProps) {
   const cfg = variantConfig[variant];
 

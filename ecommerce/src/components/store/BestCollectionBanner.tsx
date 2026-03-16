@@ -9,8 +9,10 @@ import { AnimatePresence, motion } from "framer-motion";
 interface BannerProduct {
   id: number | string;
   name: string;
-  description?: string;
+  description?: string | null;
   price: number;
+  oldPrice?: number | null;
+  isPromotion?: boolean;
   images: { url: string }[];
 }
 
@@ -197,10 +199,24 @@ export default function BestCollectionBanner({
                     className="absolute bottom-4 -right-2 md:-right-6 lg:-right-10 z-20"
                   >
                     <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl px-8 py-5 rounded-3xl shadow-[0_20px_40px_-8px_rgba(0,0,0,0.1)] border border-white/20 dark:border-gray-800/50 transform rotate-[-2deg]">
-                      <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1 block">Prix Exclusif</div>
-                      <span className="text-3xl md:text-4xl font-black text-[#248197] tracking-tight">
-                        {formatPrice(product.price)}
-                      </span>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">Prix Exclusif</div>
+                        {product.isPromotion && product.oldPrice && product.oldPrice > product.price && (
+                          <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+                            -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl md:text-4xl font-black text-[#248197] tracking-tight">
+                          {formatPrice(product.price)}
+                        </span>
+                        {product.isPromotion && product.oldPrice && (
+                          <span className="text-sm text-muted-foreground line-through decoration-rose-400/30">
+                            {formatPrice(product.oldPrice)}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
 

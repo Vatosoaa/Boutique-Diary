@@ -12,6 +12,8 @@ interface PromoSectionProps {
     id: number;
     name: string;
     price: number;
+    oldPrice?: number | null;
+    isPromotion?: boolean;
     category?: { name: string } | null;
     images?: { url: string }[];
   }[];
@@ -117,8 +119,15 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
                     {product.category?.name || "Produit"}
                   </p>
                 </div>
-                <div className="font-bold text-sm">
-                  {formatPrice(product.price)}
+                <div className="flex flex-col items-end">
+                  <div className="font-bold text-sm">
+                    {formatPrice(product.price)}
+                  </div>
+                  {product.isPromotion && product.oldPrice && product.oldPrice > product.price && (
+                    <span className="text-[10px] font-black text-rose-500">
+                      -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

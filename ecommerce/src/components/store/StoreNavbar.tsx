@@ -300,7 +300,7 @@ export default function StoreNavbar({
 
                           <div className="grid grid-cols-2 gap-3 lg:gap-4 mt-auto">
                             <Link
-                              href="/shop?sort=newest"
+                              href="/nouveautes"
                               className="group rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/10 p-4 transition-colors flex items-center gap-4"
                             >
                                 <div className="bg-background shadow-sm text-primary p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
@@ -317,7 +317,7 @@ export default function StoreNavbar({
                             </Link>
 
                             <Link
-                              href="/shop?promo=true"
+                              href="/promotions"
                               className="group rounded-2xl bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 border border-rose-100 dark:border-rose-500/20 p-4 transition-colors flex items-center gap-4"
                             >
                                 <div className="bg-background shadow-sm text-rose-500 p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">

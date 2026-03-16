@@ -34,7 +34,7 @@ export default function ClientLayout({
               </li>
               <li>
                 <a
-                  href="/shop?promo=true"
+                  href="/promotions"
                   className="hover:text-foreground transition-colors"
                 >
                   Promotions

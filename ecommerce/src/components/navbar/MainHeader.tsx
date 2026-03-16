@@ -32,7 +32,7 @@ const MainHeader = () => {
           {}
           <div className="flex items-center gap-2 flex-shrink-0 self-start md:self-center">
             <Link
-              href="/shop?promo=true"
+              href="/promotions"
               className="px-3 py-1 bg-[#fce7f3] text-[#db2777] rounded-full text-sm font-bold hover:bg-[#fbcfe8] transition-colors"
             >
               Promos
