@@ -5,7 +5,7 @@ import { Eye, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface ProductCardProps {
@@ -22,10 +22,6 @@ interface ProductCardProps {
   reviewCount?: number;
   imageColor?: string;
   initialIsWishlisted?: boolean;
-  promotionRule?: {
-    isActive: boolean;
-    actions: any;
-  } | null;
 }
 
 export default function ProductCard({
@@ -43,7 +39,6 @@ export default function ProductCard({
   reviewCount,
   imageColor,
   initialIsWishlisted = false,
-  promotionRule,
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(initialIsWishlisted);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
@@ -86,26 +81,10 @@ export default function ProductCard({
     }
   };
 
-  const discountPercentage = useMemo(() => {
-    // 1. Try to get from promotionRule actions
-    if (promotionRule?.isActive && promotionRule.actions && typeof promotionRule.actions === "object") {
-      const actions = promotionRule.actions as any;
-      if (actions.discountType === "PERCENTAGE" && actions.discountValue) {
-        return Math.round(Number(actions.discountValue));
-      }
-    }
-
-    // 2. Fallback to calculating from oldPrice ONLY if isPromotion is true but no promotionRule
-    // This handles manual oldPrice entries if needed, but the primary logic should be the rule
-    if (isPromotion && oldPrice && oldPrice > price) {
-      return Math.round(((oldPrice - price) / oldPrice) * 100);
-    }
-
-    return null;
-  }, [isPromotion, promotionRule, oldPrice, price]);
-
-  const showPromotionBadge =
-    (promotionRule?.isActive || (isPromotion && !promotionRule)) && discountPercentage !== null;
+  const discountPercentage =
+    isPromotion && oldPrice && oldPrice > price
+      ? Math.round(((oldPrice - price) / oldPrice) * 100)
+      : null;
 
   return (
     <div className="group relative flex flex-col h-full product-card-reveal">
@@ -122,7 +101,7 @@ export default function ProductCard({
               src={image}
               alt={title}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, (max-width: 1536px) 20vw, 16vw"
               className="object-cover object-center group-hover:scale-110 transition-transform duration-500 ease-out"
             />
           ) : (
@@ -139,9 +118,11 @@ export default function ProductCard({
               Nouveau
             </span>
           )}
-          {showPromotionBadge && (
+          {isPromotion && (
             <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white rounded-full shadow-sm">
-              -{discountPercentage}%
+              {discountPercentage !== null && discountPercentage > 0
+                ? `-${discountPercentage}%`
+                : "PROMO"}
             </span>
           )}
           {isBestSeller && (
@@ -187,7 +168,7 @@ export default function ProductCard({
               {category}
             </span>
           )}
-          {rating && (
+          {rating !== null && rating! > 0 && (
             <div className="flex items-center gap-1">
               <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
               <span className="text-[10px] font-bold text-muted-foreground">

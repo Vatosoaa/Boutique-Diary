@@ -244,7 +244,7 @@ export default function StoreNavbar({
                       Boutique
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="w-[100vw] max-w-[1000px] p-6 lg:p-8 rounded-[32px] bg-background border border-border shadow-2xl flex flex-col md:flex-row gap-6 lg:gap-8 overflow-hidden relative">
+                      <div className="w-[calc(100vw-40px)] md:w-[1000px] p-6 lg:p-8 rounded-[32px] bg-background border border-border shadow-2xl flex flex-col md:flex-row gap-6 lg:gap-8 overflow-hidden relative">
                         {/* Editor's pick banner */}
                         <div className="w-full md:w-[320px] shrink-0 rounded-[24px] overflow-hidden relative group hidden md:block aspect-[4/5] lg:aspect-auto">
                           <Image
