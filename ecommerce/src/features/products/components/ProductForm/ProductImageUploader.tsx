@@ -619,7 +619,6 @@ export function ProductImageUploader({
                     <span>Top Vente</span>
                   </label>
                 </div>
-
               </div>
             </div>
 

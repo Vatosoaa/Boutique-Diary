@@ -88,7 +88,11 @@ export default function ProductCard({
 
   const discountPercentage = useMemo(() => {
     // 1. Try to get from promotionRule actions
-    if (promotionRule?.isActive && promotionRule.actions && typeof promotionRule.actions === "object") {
+    if (
+      promotionRule?.isActive &&
+      promotionRule.actions &&
+      typeof promotionRule.actions === "object"
+    ) {
       const actions = promotionRule.actions as any;
       if (actions.discountType === "PERCENTAGE" && actions.discountValue) {
         return Math.round(Number(actions.discountValue));
@@ -105,7 +109,8 @@ export default function ProductCard({
   }, [isPromotion, promotionRule, oldPrice, price]);
 
   const showPromotionBadge =
-    (promotionRule?.isActive || (isPromotion && !promotionRule)) && discountPercentage !== null;
+    (promotionRule?.isActive || (isPromotion && !promotionRule)) &&
+    discountPercentage !== null;
 
   return (
     <div className="group relative flex flex-col h-full product-card-reveal">
