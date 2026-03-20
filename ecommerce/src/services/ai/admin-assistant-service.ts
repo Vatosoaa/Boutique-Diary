@@ -124,6 +124,19 @@ const adminTools: Tool[] = [
           },
         },
       },
+      {
+        name: "get_top_products",
+        description: "Obtenir la liste des produits les plus vendus.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            limit: {
+              type: SchemaType.NUMBER,
+              description: "Nombre de produits à retourner (par défaut 5).",
+            },
+          },
+        },
+      },
     ],
   },
 ];
@@ -221,6 +234,11 @@ export class AdminAssistantService {
             case "get_recent_orders":
               toolResult = await this.getRecentOrders(
                 Number(toolArgs.limit) || 10,
+              );
+              break;
+            case "get_top_products":
+              toolResult = await this.getTopProducts(
+                Number(toolArgs.limit) || 5,
               );
               break;
             default:
@@ -426,5 +444,35 @@ export class AdminAssistantService {
       },
     });
     return { limit, orders };
+  }
+
+  private static async getTopProducts(limit: number) {
+    const topProducts = await prisma.orderItem.groupBy({
+      by: ["productId"],
+      _sum: {
+        quantity: true,
+      },
+      orderBy: {
+        _sum: {
+          quantity: "desc",
+        },
+      },
+      take: limit,
+    });
+
+    const products = await Promise.all(
+      topProducts.map(async (item) => {
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+          select: { id: true, name: true, price: true, reference: true },
+        });
+        return {
+          ...product,
+          totalSold: item._sum.quantity,
+        };
+      }),
+    );
+
+    return { limit, products };
   }
 }
