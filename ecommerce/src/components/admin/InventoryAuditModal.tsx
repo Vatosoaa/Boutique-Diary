@@ -152,7 +152,7 @@ export function InventoryAuditModal({
             <div>
               <h2 className="text-xl font-bold tracking-tight">Ajustement</h2>
               <p className="text-xs text-muted-foreground">
-                Mise à jour d'inventaire
+                Mise à jour d&apos;inventaire
               </p>
             </div>
           </div>

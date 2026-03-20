@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +126,7 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(initialReference !== undefined && { reference: initialReference }),
 
-        ...(variations !== undefined && {
+        ...((variations !== undefined || images !== undefined) && {
           price: globalPrice,
           stock: globalStock,
           colors: Array.from(globalColors),
@@ -221,6 +222,11 @@ export async function PUT(
       },
     });
 
+    // Revalidate paths to ensure frontend is updated
+    revalidatePath(`/store/product/${id}`);
+    revalidatePath("/store/shop");
+    revalidatePath("/");
+
     return NextResponse.json(product);
   } catch (error: unknown) {
     console.error("Error updating product:", error);
@@ -272,16 +278,24 @@ export async function DELETE(
       await prisma.product.delete({
         where: { id },
       });
-      return NextResponse.json({ message: "Product permanently deleted" });
     } else {
       await prisma.product.update({
         where: { id },
         data: { deletedAt: new Date() },
       });
-      return NextResponse.json({ message: "Product moved to trash" });
     }
 
-    return NextResponse.json({ message: "Product deleted successfully" });
+    // Revalidate paths after deletion
+    revalidatePath(`/store/product/${id}`);
+    revalidatePath("/store/shop");
+    revalidatePath("/");
+
+    return NextResponse.json({
+      message:
+        permanent === "true"
+          ? "Product permanently deleted"
+          : "Product moved to trash",
+    });
   } catch (error: unknown) {
     console.error("Error deleting product:", error);
 

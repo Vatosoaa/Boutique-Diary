@@ -231,6 +231,7 @@ export async function getProducts(
       include: {
         images: true,
         category: true,
+        promotionRule: true,
       },
       take: limit,
       orderBy: {

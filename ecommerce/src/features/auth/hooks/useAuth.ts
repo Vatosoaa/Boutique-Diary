@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useCartStore } from "@/lib/cart-store";
 
 interface LoginCredentials {
   email: string;
@@ -97,6 +98,7 @@ export function useAuth(): UseAuthReturn {
 
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      useCartStore.getState().clearCart();
       toast.success("Déconnexion réussie");
     } catch (err) {
       console.error("Logout error:", err);

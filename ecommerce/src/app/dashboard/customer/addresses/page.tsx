@@ -218,7 +218,7 @@ export default function AddressesPage() {
             <div className="text-center py-16 bg-muted/20 rounded-[32px] border border-dashed border-border">
               <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <p className="text-muted-foreground font-medium">
-                Vous n'avez pas encore d'adresse enregistrée.
+                Vous n&apos;avez pas encore d&apos;adresse enregistrée.
               </p>
             </div>
           )}

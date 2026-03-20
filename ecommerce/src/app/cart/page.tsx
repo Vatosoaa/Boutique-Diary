@@ -35,8 +35,8 @@ export default function CartPage() {
             Votre panier est vide
           </h1>
           <p className="text-gray-500 max-w-md mx-auto">
-            Il semblerait que vous n'ayez pas encore craqué pour nos produits.
-            Découvrez notre collection dès maintenant !
+            Il semblerait que vous n&apos;ayez pas encore craqué pour nos
+            produits. Découvrez notre collection dès maintenant !
           </p>
         </div>
         <Link
@@ -195,7 +195,7 @@ export default function CartPage() {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <p className="text-xs text-gray-400 text-center mt-4">
-              Taxes et frais de livraison calculés à l'étape suivante
+              Taxes et frais de livraison calculés à l&apos;étape suivante
             </p>
           </div>
         </div>

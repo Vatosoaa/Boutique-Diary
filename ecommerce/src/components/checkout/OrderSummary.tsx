@@ -2,6 +2,7 @@ import { useCartStore, formatPrice } from "@/lib/cart-store";
 import Image from "next/image";
 import { ShoppingBag, Tag } from "lucide-react";
 import type { AppliedPromo } from "@/components/checkout/PromoCodeInput";
+import { useMemo } from "react";
 
 interface OrderSummaryProps {
   appliedPromo?: AppliedPromo | null;
@@ -14,25 +15,31 @@ export default function OrderSummary({ appliedPromo }: OrderSummaryProps) {
   const subtotal = getSubtotal();
   const delivery = 0;
 
-  // 1. Calculate Per-Item Discount
-  let totalDiscount = 0;
-  const itemDiscounts = items.map((item) => {
-    const itemTotal = item.price * item.quantity;
-    let discount = 0;
+  // 1. Calculate Per-Item Discount and Total Discount using useMemo for performance and to avoid re-assignment issues
+  const { itemDiscounts, totalDiscount } = useMemo(() => {
+    const discounts = items.map((item) => {
+      const itemTotal = item.price * item.quantity;
+      let discount = 0;
 
-    if (appliedPromo) {
-      if (appliedPromo.type === "PERCENTAGE") {
-        discount = Math.floor(itemTotal * (appliedPromo.value / 100));
-      } else {
-        // Pro-rate Fixed Amount: (ItemSubtotal / TotalSubtotal) * FixedAmount
-        // Using Math.round to ensure total sum matches fixed amount
-        discount = Math.round((itemTotal / subtotal) * appliedPromo.value);
+      if (appliedPromo) {
+        if (appliedPromo.type === "PERCENTAGE") {
+          discount = Math.floor(itemTotal * (appliedPromo.value / 100));
+        } else {
+          // Pro-rate Fixed Amount: (ItemSubtotal / TotalSubtotal) * FixedAmount
+          discount = Math.round((itemTotal / subtotal) * appliedPromo.value);
+        }
       }
-    }
 
-    totalDiscount += discount;
-    return { id: item.id, amount: discount };
-  });
+      return { id: item.id, amount: discount };
+    });
+
+    const currentTotalDiscount = discounts.reduce(
+      (acc, d) => acc + d.amount,
+      0,
+    );
+
+    return { itemDiscounts: discounts, totalDiscount: currentTotalDiscount };
+  }, [items, appliedPromo, subtotal]);
 
   const taxes = Math.round((subtotal - totalDiscount) * 0.2);
   const total = subtotal + delivery + taxes - totalDiscount;

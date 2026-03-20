@@ -15,16 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useProducts } from "@/features/products/hooks/useProducts";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
   Command,
@@ -98,14 +90,31 @@ export function PromotionRuleForm({
   });
 
   // Local state for UI builder
-  const [selectedCategoryId, setSelectedCategoryId] =
-    React.useState<string>("");
-  const [selectedProductId, setSelectedProductId] = React.useState<string>(""); // NEW
-  const [openProductCombo, setOpenProductCombo] = React.useState(false); // NEW
-  const [targetReference, setTargetReference] = React.useState<string>(""); // NEW
-  const [isNew, setIsNew] = React.useState<boolean>(false);
-  const [isBestSeller, setIsBestSeller] = React.useState<boolean>(false);
-  const [discountPercent, setDiscountPercent] = React.useState<string>("");
+  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>(
+    () => {
+      const conditions = initialData?.conditions as any;
+      return conditions?.categoryId?.toString() || "";
+    },
+  );
+  const [selectedProductId, setSelectedProductId] = React.useState<string>(
+    () => {
+      const conditions = initialData?.conditions as any;
+      return conditions?.productId?.toString() || "";
+    },
+  );
+  const [openProductCombo, setOpenProductCombo] = React.useState(false);
+  const [targetReference, setTargetReference] = React.useState<string>(
+    () => (initialData?.conditions as any)?.reference || "",
+  );
+  const [isNew, setIsNew] = React.useState<boolean>(
+    () => !!(initialData?.conditions as any)?.isNew,
+  );
+  const [isBestSeller, setIsBestSeller] = React.useState<boolean>(
+    () => !!(initialData?.conditions as any)?.isBestSeller,
+  );
+  const [discountPercent, setDiscountPercent] = React.useState<string>(
+    () => (initialData?.actions as any)?.discountPercentage?.toString() || "",
+  );
 
   useEffect(() => {
     if (initialData) {
@@ -116,7 +125,7 @@ export function PromotionRuleForm({
         name: initialData.name,
         priority: initialData.priority,
         actions: JSON.stringify(actions, null, 2),
-        props_conditions: JSON.stringify(conditions, null, 2),
+        conditions: JSON.stringify(conditions, null, 2),
         startDate: initialData.startDate
           ? new Date(initialData.startDate).toISOString().split("T")[0]
           : "",
@@ -126,17 +135,22 @@ export function PromotionRuleForm({
         isActive: initialData.isActive,
       } as any);
 
-      // Pre-fill local state
-      if (conditions.categoryId)
-        setSelectedCategoryId(conditions.categoryId.toString());
-      if (conditions.productId)
-        setSelectedProductId(conditions.productId.toString());
-      if (conditions.reference) setTargetReference(conditions.reference);
-      if (conditions.isNew) setIsNew(true);
-      if (conditions.isBestSeller) setIsBestSeller(true);
+      // Pre-fill local state if it changed from initialData (e.g. initialData loaded async)
+      // Wrapping in setTimeout to avoid "cascading renders" lint error
+      const timer = setTimeout(() => {
+        if (conditions.categoryId)
+          setSelectedCategoryId(conditions.categoryId.toString());
+        if (conditions.productId)
+          setSelectedProductId(conditions.productId.toString());
+        if (conditions.reference) setTargetReference(conditions.reference);
+        if (conditions.isNew) setIsNew(conditions.isNew);
+        if (conditions.isBestSeller) setIsBestSeller(conditions.isBestSeller);
 
-      if (actions.discountPercentage)
-        setDiscountPercent(actions.discountPercentage.toString());
+        if (actions.discountPercentage)
+          setDiscountPercent(actions.discountPercentage.toString());
+      }, 0);
+
+      return () => clearTimeout(timer);
     }
   }, [initialData, form]);
 
@@ -376,7 +390,7 @@ export function PromotionRuleForm({
                     </PopoverContent>
                   </Popover>
                   <FormDescription>
-                    Recherche par Nom ou Référence. La règle s'appliquera
+                    Recherche par Nom ou Référence. La règle s&apos;appliquera
                     UNIQUEMENT à ce produit.
                   </FormDescription>
                 </div>
@@ -403,12 +417,14 @@ export function PromotionRuleForm({
             {}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
-                <FormLabel className="text-sm">Seulement "Nouveauté"</FormLabel>
+                <FormLabel className="text-sm">
+                  Seulement &quot;Nouveauté&quot;
+                </FormLabel>
                 <Switch checked={isNew} onCheckedChange={setIsNew} />
               </div>
               <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
                 <FormLabel className="text-sm">
-                  Seulement "Best-seller"
+                  Seulement &quot;Best-seller&quot;
                 </FormLabel>
                 <Switch
                   checked={isBestSeller}

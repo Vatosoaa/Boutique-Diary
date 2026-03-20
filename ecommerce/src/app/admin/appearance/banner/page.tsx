@@ -40,7 +40,7 @@ export default function BannerPage() {
             Bannières
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Gérez les bannières affichées sur la page d'accueil.
+            Gérez les bannières affichées sur la page d&apos;accueil.
           </p>
         </div>
 

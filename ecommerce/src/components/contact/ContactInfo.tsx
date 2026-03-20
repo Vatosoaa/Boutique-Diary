@@ -60,7 +60,7 @@ export default function ContactInfo() {
       {/* Business Hours Card */}
       <div className="bg-[#f8f8f8] p-8 md:p-10 rounded-lg">
         <h2 className="text-xl font-bold text-gray-900 mb-8 uppercase tracking-wide">
-          HORAIRES D'OUVERTURE
+          HORAIRES D&apos;OUVERTURE
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

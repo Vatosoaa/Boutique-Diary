@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Minus, Plus, Trash2, ShoppingBag, X } from "lucide-react";
+import { Minus, Plus, ShoppingBag, X } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCartStore, formatPrice, CartItem } from "@/lib/cart-store";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 interface CartItemRowProps {
   item: CartItem;
@@ -102,6 +103,7 @@ const CartSheet = () => {
 
   const subtotal = getSubtotal();
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const { user, isLoading } = useUser();
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
@@ -164,21 +166,40 @@ const CartSheet = () => {
 
               {}
               <div className="w-full flex flex-col gap-2">
-                <Button
-                  asChild
-                  className="w-full"
-                  onClick={() => setOpen(false)}
-                >
-                  <Link href="/checkout">Commander</Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  asChild
-                  className="w-full"
-                  onClick={() => setOpen(false)}
-                >
-                  <Link href="/cart">Voir le panier</Link>
-                </Button>
+                {!isLoading && !user ? (
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 rounded-xl"
+                    onClick={() => setOpen(false)}
+                  >
+                    <Link href="/api/auth/login">
+                      Se connecter pour commander
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      asChild
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 rounded-xl flex items-center justify-center gap-2 group"
+                      onClick={() => setOpen(false)}
+                    >
+                      <Link href="/checkout">
+                        Commander
+                        <span className="transition-transform group-hover:translate-x-1">
+                          →
+                        </span>
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      asChild
+                      className="w-full border-border hover:bg-muted text-foreground font-medium h-12 rounded-xl"
+                      onClick={() => setOpen(false)}
+                    >
+                      <Link href="/cart">Voir le panier</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </SheetFooter>
           </>

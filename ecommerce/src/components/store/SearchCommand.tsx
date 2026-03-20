@@ -13,6 +13,22 @@ interface SearchCommandProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface SearchProduct {
+  id: number;
+  name: string;
+  price: number;
+  oldPrice?: number | null;
+  isNew?: boolean;
+  isPromotion?: boolean;
+  images: { url: string }[];
+  category?: { name: string } | null;
+}
+
+interface SearchCategory {
+  id: number;
+  name: string;
+}
+
 export default function SearchCommand({
   open,
   onOpenChange,
@@ -21,8 +37,8 @@ export default function SearchCommand({
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<{
-    products: any[];
-    categories: any[];
+    products: SearchProduct[];
+    categories: SearchCategory[];
   }>({ products: [], categories: [] });
 
   useEffect(() => {
@@ -38,7 +54,7 @@ export default function SearchCommand({
 
   useEffect(() => {
     if (query.length < 2) {
-      setResults({ products: [], categories: [] });
+      // Use a separate effect or just check if it's already empty to avoid redundant state updates
       return;
     }
 
@@ -52,6 +68,14 @@ export default function SearchCommand({
     return () => clearTimeout(timer);
   }, [query]);
 
+  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value;
+    setQuery(newQuery);
+    if (newQuery.length < 2) {
+      setResults({ products: [], categories: [] });
+    }
+  };
+
   const handleSelect = (url: string) => {
     onOpenChange(false);
     router.push(url);
@@ -61,20 +85,18 @@ export default function SearchCommand({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4">
-      {}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
         onClick={() => onOpenChange(false)}
       />
 
-      {}
       <div className="relative w-full max-w-[640px] shadow-2xl rounded-xl overflow-hidden bg-background ring-1 ring-black/5 flex flex-col animate-in fade-in zoom-in-95 duration-200">
         <div className="flex flex-col w-full h-full">
           <div className="flex items-center border-b px-4 py-3">
             <Search className="w-5 h-5 text-gray-400 mr-3" />
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={handleQueryChange}
               className="flex-1 bg-transparent text-lg outline-none placeholder:text-gray-400 text-gray-900 h-9 font-medium"
               placeholder="Rechercher des produits, catégories..."
               autoFocus
@@ -92,7 +114,7 @@ export default function SearchCommand({
               results.products.length === 0 &&
               results.categories.length === 0 && (
                 <div className="py-12 text-center text-sm text-gray-500">
-                  Aucun résultat trouvé pour "{query}"
+                  Aucun résultat trouvé pour &quot;{query}&quot;
                 </div>
               )}
 
@@ -101,7 +123,7 @@ export default function SearchCommand({
                 <div className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                   Collections
                 </div>
-                {results.categories.map((cat: any) => (
+                {results.categories.map((cat: SearchCategory) => (
                   <div
                     key={cat.id}
                     onClick={() => handleSelect(`/shop?category=${cat.id}`)}
@@ -122,7 +144,7 @@ export default function SearchCommand({
                 <div className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                   Produits
                 </div>
-                {results.products.map((product: any) => (
+                {results.products.map((product: SearchProduct) => (
                   <div
                     key={product.id}
                     onClick={() => handleSelect(`/store/product/${product.id}`)}
@@ -141,7 +163,6 @@ export default function SearchCommand({
                         <Package className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400" />
                       )}
 
-                      {}
                       <div className="absolute top-1 left-1 flex flex-col gap-0.5">
                         {product.isNew && (
                           <div className="w-2 h-2 rounded-full bg-black border border-white" />
@@ -191,19 +212,28 @@ export default function SearchCommand({
                 <div className="flex flex-wrap gap-2 justify-center mt-4">
                   <button
                     className="text-xs px-2 py-1 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-                    onClick={() => setQuery("Shoes")}
+                    onClick={() => {
+                      setQuery("Shoes");
+                      setResults({ products: [], categories: [] });
+                    }}
                   >
                     Shoes
                   </button>
                   <button
                     className="text-xs px-2 py-1 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-                    onClick={() => setQuery("Top")}
+                    onClick={() => {
+                      setQuery("Top");
+                      setResults({ products: [], categories: [] });
+                    }}
                   >
                     Top
                   </button>
                   <button
                     className="text-xs px-2 py-1 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-                    onClick={() => setQuery("New")}
+                    onClick={() => {
+                      setQuery("New");
+                      setResults({ products: [], categories: [] });
+                    }}
                   >
                     New
                   </button>

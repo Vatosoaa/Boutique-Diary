@@ -284,28 +284,26 @@ export default function MessagesPage() {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Confirmer la suppression
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Voulez-vous vraiment supprimer ce message ?
-                              Cette action est irréversible.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>
-                              Annuler
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(message.id)}
-                              className="bg-red-600 hover:bg-red-700 text-white"
-                            >
-                              Supprimer
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Confirmer la suppression
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Voulez-vous vraiment supprimer ce message ?
+                                Cette action est irréversible.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Annuler</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(message.id)}
+                                className="bg-red-600 hover:bg-red-700 text-white"
+                              >
+                                Supprimer
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
                         </AlertDialog>
                       </div>
                     </TableCell>

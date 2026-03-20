@@ -399,9 +399,7 @@ export default function CustomerPage() {
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>
-                                  Annuler
-                                </AlertDialogCancel>
+                                <AlertDialogCancel>Annuler</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleDelete(customer.id)}
                                   className="bg-red-600 hover:bg-red-700 text-white"
@@ -576,9 +574,7 @@ export default function CustomerPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>
-              Annuler
-            </AlertDialogCancel>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => customerToDelete && handleDelete(customerToDelete)}
               className="bg-red-600 hover:bg-red-700 text-white border-none"
@@ -605,9 +601,7 @@ export default function CustomerPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>
-              Annuler
-            </AlertDialogCancel>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleBulkDelete}
               className="bg-red-600 hover:bg-red-700 text-white border-none"

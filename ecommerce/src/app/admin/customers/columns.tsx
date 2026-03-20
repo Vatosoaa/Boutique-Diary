@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Column } from "@tanstack/react-table";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,7 +22,7 @@ const DataTableColumnHeader = ({
   column,
   title,
 }: {
-  column: any;
+  column: Column<Customer, unknown>;
   title: string;
 }) => {
   return (
@@ -34,6 +33,40 @@ const DataTableColumnHeader = ({
       {title}
       <ArrowUpDown className="ml-2 h-4 w-4" />
     </Button>
+  );
+};
+
+const ActionsCell = ({ customer }: { customer: Customer }) => {
+  const { role: currentUserRole } = useCurrentUser();
+
+  const canDelete =
+    (currentUserRole === "SuperAdmin" &&
+      (customer.role === "Admin" || customer.role === "User")) ||
+    (currentUserRole === "Admin" && customer.role === "User");
+
+  const canEdit = canDelete;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        {canEdit && <DropdownMenuItem>Modifier</DropdownMenuItem>}
+        {canDelete && (
+          <DropdownMenuItem className="text-red-500">
+            Supprimer
+          </DropdownMenuItem>
+        )}
+        {!canEdit && !canDelete && (
+          <DropdownMenuItem disabled>Aucune action disponible</DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
@@ -58,21 +91,10 @@ export const columns: ColumnDef<Customer>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "username",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Customer" />
+      <DataTableColumnHeader column={column} title="Nom d'utilisateur" />
     ),
-    cell: ({ row }) => {
-      const customer = row.original;
-      return (
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center font-bold">
-            {customer.name.charAt(0).toUpperCase()}
-          </div>
-          <div className="font-medium">{customer.name}</div>
-        </div>
-      );
-    },
   },
   {
     accessorKey: "email",
@@ -86,17 +108,20 @@ export const columns: ColumnDef<Customer>[] = [
       <DataTableColumnHeader column={column} title="Rôle" />
     ),
     cell: ({ row }) => {
-      const role = row.getValue("role") as Role;
-      const variant: "default" | "secondary" | "destructive" | "outline" =
-        role === "Admin"
-          ? "secondary"
-          : role === "SuperAdmin"
-            ? "destructive"
-            : "default";
-      return <Badge variant={variant}>{role}</Badge>;
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      const role = row.getValue("role") as string;
+      return (
+        <Badge
+          variant={
+            role === "SuperAdmin"
+              ? "destructive"
+              : role === "Admin"
+                ? "default"
+                : "secondary"
+          }
+        >
+          {role}
+        </Badge>
+      );
     },
   },
   {
@@ -110,41 +135,6 @@ export const columns: ColumnDef<Customer>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const customer = row.original;
-      const { role: currentUserRole } = useCurrentUser();
-
-      const canDelete =
-        (currentUserRole === "SuperAdmin" &&
-          (customer.role === "Admin" || customer.role === "User")) ||
-        (currentUserRole === "Admin" && customer.role === "User");
-
-      const canEdit = canDelete;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {canEdit && <DropdownMenuItem>Modifier</DropdownMenuItem>}
-            {canDelete && (
-              <DropdownMenuItem className="text-red-500">
-                Supprimer
-              </DropdownMenuItem>
-            )}
-            {!canEdit && !canDelete && (
-              <DropdownMenuItem disabled>
-                Aucune action disponible
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <ActionsCell customer={row.original} />,
   },
 ];

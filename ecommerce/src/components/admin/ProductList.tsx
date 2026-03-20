@@ -1024,9 +1024,7 @@ export default function ProductList({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>
-                      Annuler
-                    </AlertDialogCancel>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
                     <AlertDialogAction
                       className="bg-rose-600 hover:bg-rose-700 text-white border-none"
                       onClick={() => handleBulkAction("delete")}
