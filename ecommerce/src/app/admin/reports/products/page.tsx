@@ -1,25 +1,40 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { useFetchProductReports } from "@/features/reports/hooks/use-fetch-product-reports";
 import { ProductPerformanceTable } from "@/features/reports/components/ProductsReports/ProductPerformanceTable";
 import { StockDistributionChart } from "@/features/reports/components/ProductsReports/StockDistributionChart";
+import { ReportPeriodFilter } from "@/features/reports/components/Common/ReportPeriodFilter";
+import { ReportExportButton } from "@/features/reports/components/Common/ReportExportButton";
 import { Package, AlertTriangle, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { KpiCard } from "@/features/reports/components/SalesReports/KpiCards";
 
 export default function ProductsReportsPage() {
-  const { data, loading, error } = useFetchProductReports();
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({
+    start: new Date(new Date().setDate(new Date().getDate() - 30)),
+    end: new Date(),
+  });
+
+  const { data, loading, error } = useFetchProductReports(
+    dateRange.start,
+    dateRange.end,
+  );
 
   if (loading) {
     return (
       <div className="p-6">
         <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mb-6"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"></div>
-          <div className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"></div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"
+            ></div>
+          ))}
         </div>
+        <div className="h-96 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"></div>
       </div>
     );
   }
@@ -42,22 +57,32 @@ export default function ProductsReportsPage() {
   const topProducts = data?.topProducts || [];
   const totalProducts = data?.totalProducts || 0;
   const totalValue = data?.totalValue || 0;
+  const history = data?.history || { products: [], value: [], outOfStock: [] };
 
   const outOfStockCount =
     stockDistribution.find((d) => d.status === "Out of Stock")?.count || 0;
   const outOfStockPercent =
     totalProducts > 0 ? Math.round((outOfStockCount / totalProducts) * 100) : 0;
 
-  const productsChartData: any[] = [];
-  const valueChartData: any[] = [];
-  const stockChartData: any[] = [];
+  const handlePeriodChange = (start: Date, end: Date) => {
+    setDateRange({ start, end });
+  };
 
   return (
     <div className="p-6 space-y-6">
-      <PageHeader
-        title="Rapports Produits"
-        description="Analysez les performances des produits et l'état des stocks."
-      />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <PageHeader
+          title="Rapports Produits"
+          description="Analysez les performances des produits et l'état des stocks."
+        />
+        <div className="flex items-center gap-3">
+          <ReportExportButton
+            data={topProducts as unknown as Record<string, unknown>[]}
+            filename="rapport_produits"
+          />
+          <ReportPeriodFilter onPeriodChange={handlePeriodChange} />
+        </div>
+      </div>
 
       {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -66,7 +91,7 @@ export default function ProductsReportsPage() {
           value={totalProducts.toLocaleString()}
           icon={Package}
           trend="neutral"
-          chartData={productsChartData}
+          chartData={history.products}
           color="#8b5cf6"
         />
         <KpiCard
@@ -78,7 +103,7 @@ export default function ProductsReportsPage() {
           }).format(totalValue)}
           icon={Package}
           subValue="Valeur estimée (Prix * Stock)"
-          chartData={valueChartData}
+          chartData={history.value}
           color="#10b981"
         />
         <KpiCard
@@ -88,7 +113,7 @@ export default function ProductsReportsPage() {
           trend={outOfStockPercent > 10 ? "down" : "neutral"}
           trendValue={`${outOfStockCount} produits`}
           subValue="Attention requise"
-          chartData={stockChartData}
+          chartData={history.outOfStock}
           chartType="bar"
           color="#ef4444"
         />

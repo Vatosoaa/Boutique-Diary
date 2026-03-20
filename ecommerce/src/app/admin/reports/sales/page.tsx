@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { useFetchSalesData } from "@/features/reports/hooks/use-fetch-sales-data";
 import { KpiCard } from "@/features/reports/components/SalesReports/KpiCards";
 import { RevenueChart } from "@/features/reports/components/SalesReports/RevenueChart";
+import { ReportPeriodFilter } from "@/features/reports/components/Common/ReportPeriodFilter";
+import { ReportExportButton } from "@/features/reports/components/Common/ReportExportButton";
 import {
   DollarSign,
   ShoppingCart,
@@ -14,7 +16,15 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SalesReportsPage() {
-  const { data, loading, error } = useFetchSalesData();
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({
+    start: new Date(new Date().setDate(new Date().getDate() - 30)),
+    end: new Date(),
+  });
+
+  const { data, loading, error } = useFetchSalesData(
+    dateRange.start,
+    dateRange.end,
+  );
 
   if (loading) {
     return (
@@ -59,13 +69,29 @@ export default function SalesReportsPage() {
     value: d.orders,
   }));
   const aovChartData = (rawChartData || []).map((d) => ({ value: d.aov }));
+  const conversionChartData = (rawChartData || []).map((d) => ({
+    value: d.conversionRate,
+  }));
+
+  const handlePeriodChange = (start: Date, end: Date) => {
+    setDateRange({ start, end });
+  };
 
   return (
     <div className="p-6 space-y-6">
-      <PageHeader
-        title="Rapports des Ventes"
-        description="Analysez les performances financières et les tendances de vente."
-      />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <PageHeader
+          title="Rapports des Ventes"
+          description="Analysez les performances financières et les tendances de vente."
+        />
+        <div className="flex items-center gap-3">
+          <ReportExportButton
+            data={rawChartData as unknown as Record<string, unknown>[]}
+            filename="rapport_ventes"
+          />
+          <ReportPeriodFilter onPeriodChange={handlePeriodChange} />
+        </div>
+      </div>
 
       {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -111,8 +137,8 @@ export default function SalesReportsPage() {
           value={`${summary?.conversionRate || 0}%`}
           icon={TrendingUp}
           trend="neutral"
-          subValue="Visiteurs vs Commandes"
-          chartData={revenueChartData}
+          subValue="Commandes Payées vs Total"
+          chartData={conversionChartData}
           color="#8b5cf6"
         />
       </div>
@@ -121,7 +147,7 @@ export default function SalesReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
-            <CardTitle>Évolution du Revenu (30 derniers jours)</CardTitle>
+            <CardTitle>Évolution du Revenu</CardTitle>
           </CardHeader>
           <CardContent className="pl-0">
             <RevenueChart data={rawChartData} />
@@ -131,11 +157,42 @@ export default function SalesReportsPage() {
         {}
         <Card className="border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
-            <CardTitle>Détails</CardTitle>
+            <CardTitle>Statut des Commandes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-              <p>Plus de détails bientôt disponibles...</p>
+            <div className="space-y-4">
+              {Object.entries(summary?.statusBreakdown || {}).map(
+                ([status, count]) => {
+                  const total = summary?.totalOrders || 1;
+                  const percentage = Math.round(
+                    ((count as number) / total) * 100,
+                  );
+
+                  return (
+                    <div key={status} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          {status}
+                        </span>
+                        <span className="text-gray-500">
+                          {count as number} ({percentage}%)
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
+                        <div
+                          className="bg-emerald-500 h-2 rounded-full"
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                },
+              )}
+              {Object.keys(summary?.statusBreakdown || {}).length === 0 && (
+                <div className="flex flex-col items-center justify-center h-48 text-gray-500">
+                  <p>Aucune commande sur cette période.</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -7,7 +7,7 @@ interface FetchState {
   error: string | null;
 }
 
-export function useFetchCustomerReports() {
+export function useFetchCustomerReports(startDate?: Date, endDate?: Date) {
   const [state, setState] = useState<FetchState>({
     data: null,
     loading: true,
@@ -17,23 +17,28 @@ export function useFetchCustomerReports() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("/api/admin/reports/customers");
+        const params = new URLSearchParams();
+        if (startDate) params.set("startDate", startDate.toISOString());
+        if (endDate) params.set("endDate", endDate.toISOString());
+
+        const url = `/api/admin/reports/customers${params.toString() ? `?${params.toString()}` : ""}`;
+        const res = await fetch(url);
         if (!res.ok) {
           throw new Error("Erreur lors de la récupération des données clients");
         }
         const jsonData = await res.json();
         setState({ data: jsonData, loading: false, error: null });
-      } catch (err: any) {
+      } catch (err: unknown) {
         setState({
           data: null,
           loading: false,
-          error: err.message || "Une erreur est survenue",
+          error: err instanceof Error ? err.message : "Une erreur est survenue",
         });
       }
     }
 
     fetchData();
-  }, []);
+  }, [startDate, endDate]);
 
   return state;
 }

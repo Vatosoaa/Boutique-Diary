@@ -31,7 +31,7 @@ export function StockDistributionChart({ data }: StockDistributionChartProps) {
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
-            data={data as any[]}
+            data={data}
             cx="50%"
             cy="50%"
             innerRadius={60}

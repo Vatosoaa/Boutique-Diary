@@ -10,6 +10,7 @@ export interface TopProduct {
 export interface StockDistribution {
   status: "In Stock" | "Low Stock" | "Out of Stock";
   count: number;
+  [key: string]: any;
 }
 
 export interface ProductReportResponse {
@@ -17,4 +18,9 @@ export interface ProductReportResponse {
   stockDistribution: StockDistribution[];
   totalProducts: number;
   totalValue: number;
+  history: {
+    products: { value: number }[];
+    value: { value: number }[];
+    outOfStock: { value: number }[];
+  };
 }

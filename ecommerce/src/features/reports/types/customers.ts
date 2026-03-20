@@ -2,6 +2,7 @@ export interface CustomerMetric {
   totalCustomers: number;
   newCustomers: number;
   activeCustomers: number;
+  repeatPurchaseRate: number;
 }
 
 export interface TopCustomer {

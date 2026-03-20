@@ -10,7 +10,7 @@ interface KpiCardProps {
   trend?: "up" | "down" | "neutral";
   trendValue?: string;
   icon?: React.ElementType;
-  chartData?: any[];
+  chartData?: Record<string, unknown>[];
   chartType?: "area" | "bar";
   color?: string;
 }
