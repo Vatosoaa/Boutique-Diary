@@ -3,6 +3,7 @@ export interface SalesSummary {
   totalOrders: number;
   averageOrderValue: number;
   conversionRate: number;
+  statusBreakdown?: Record<string, number>;
 }
 
 export interface SalesChartDataPoint {
@@ -10,6 +11,7 @@ export interface SalesChartDataPoint {
   amount: number;
   orders: number;
   aov: number;
+  conversionRate?: number;
 }
 
 export interface SalesReportResponse {

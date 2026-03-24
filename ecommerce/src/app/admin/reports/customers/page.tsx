@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { useFetchCustomerReports } from "@/features/reports/hooks/use-fetch-customer-reports";
 import { CustomerMetricsCards } from "@/features/reports/components/CustomerReports/CustomerMetricsCards";
 import { CustomerGrowthChart } from "@/features/reports/components/CustomerReports/CustomerGrowthChart";
+import { ReportPeriodFilter } from "@/features/reports/components/Common/ReportPeriodFilter";
+import { ReportExportButton } from "@/features/reports/components/Common/ReportExportButton";
 import { AlertCircle } from "lucide-react";
 import {
   Card,
@@ -23,7 +25,15 @@ import {
 } from "@/components/ui/table";
 
 export default function CustomerReportsPage() {
-  const { data, loading, error } = useFetchCustomerReports();
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({
+    start: new Date(new Date().setDate(new Date().getDate() - 30)),
+    end: new Date(),
+  });
+
+  const { data, loading, error } = useFetchCustomerReports(
+    dateRange.start,
+    dateRange.end,
+  );
 
   if (loading) {
     return (
@@ -60,16 +70,30 @@ export default function CustomerReportsPage() {
     totalCustomers: 0,
     newCustomers: 0,
     activeCustomers: 0,
+    repeatPurchaseRate: 0,
   };
   const topCustomers = data?.topCustomers || [];
   const recentSignups = data?.recentSignups || [];
 
+  const handlePeriodChange = (start: Date, end: Date) => {
+    setDateRange({ start, end });
+  };
+
   return (
     <div className="p-6 space-y-6">
-      <PageHeader
-        title="Rapports Clients"
-        description="Analysez votre base de clients et leur comportement d'achat."
-      />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <PageHeader
+          title="Rapports Clients"
+          description="Analysez votre base de clients et leur comportement d'achat."
+        />
+        <div className="flex items-center gap-3">
+          <ReportExportButton
+            data={topCustomers as unknown as Record<string, unknown>[]}
+            filename="rapport_clients"
+          />
+          <ReportPeriodFilter onPeriodChange={handlePeriodChange} />
+        </div>
+      </div>
 
       {}
       <CustomerMetricsCards metrics={metrics} recentSignups={recentSignups} />

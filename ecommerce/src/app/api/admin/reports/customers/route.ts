@@ -2,24 +2,33 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkApiPermission } from "@/lib/backend-permissions";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const startDateParam = searchParams.get("startDate");
+  const endDateParam = searchParams.get("endDate");
+
   const permissionError = await checkApiPermission("reports.view");
   if (permissionError) {
     return permissionError;
   }
 
   try {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const endDate = endDateParam ? new Date(endDateParam) : new Date();
+    const startDate = startDateParam
+      ? new Date(startDateParam)
+      : new Date(new Date(endDate).setDate(endDate.getDate() - 30));
 
     const totalCustomers = await prisma.user.count({
-      where: { role: "CUSTOMER" },
+      where: {
+        role: "CUSTOMER",
+        createdAt: { lte: endDate },
+      },
     });
 
     const newCustomers = await prisma.user.count({
       where: {
         role: "CUSTOMER",
-        createdAt: { gte: thirtyDaysAgo },
+        createdAt: { gte: startDate, lte: endDate },
       },
     });
 
@@ -27,8 +36,33 @@ export async function GET() {
       where: {
         role: "CUSTOMER",
         isActive: true,
+        createdAt: { lte: endDate },
       },
     });
+
+    // Calcul du taux de réachat (Repeat Purchase Rate)
+    // Clients ayant passé plus d'une commande / Total clients ayant passé au moins une commande
+    const customerOrderCounts = await prisma.order.groupBy({
+      by: ["customerId"],
+      _count: {
+        id: true,
+      },
+      where: {
+        customerId: { not: null },
+        status: { in: ["DELIVERED", "COMPLETED"] },
+      },
+    });
+
+    const customersWithMultipleOrders = customerOrderCounts.filter(
+      (c) => c._count.id > 1,
+    ).length;
+    const customersWithAtLeastOneOrder = customerOrderCounts.length;
+    const repeatPurchaseRate =
+      customersWithAtLeastOneOrder > 0
+        ? Math.round(
+            (customersWithMultipleOrders / customersWithAtLeastOneOrder) * 100,
+          )
+        : 0;
 
     const topSpenders = await prisma.order.groupBy({
       by: ["customerId"],
@@ -41,6 +75,7 @@ export async function GET() {
       where: {
         status: { in: ["DELIVERED", "COMPLETED"] },
         customerId: { not: null },
+        createdAt: { gte: startDate, lte: endDate },
       },
       orderBy: {
         _sum: {
@@ -75,16 +110,20 @@ export async function GET() {
     const recentUsers = await prisma.user.findMany({
       where: {
         role: "CUSTOMER",
-        createdAt: { gte: thirtyDaysAgo },
+        createdAt: { gte: startDate, lte: endDate },
       },
       select: { createdAt: true },
     });
 
     const signupsByDate: Record<string, number> = {};
 
-    for (let i = 0; i < 30; i++) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
+    // Initialiser les dates
+    const diffDays = Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    for (let i = 0; i <= diffDays; i++) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + i);
       const dayStr = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
       signupsByDate[dayStr] = 0;
     }
@@ -105,9 +144,10 @@ export async function GET() {
       .sort((a, b) => {
         const [dA, mA] = a.date.split("/").map(Number);
         const [dB, mB] = b.date.split("/").map(Number);
+        const year = new Date().getFullYear();
         return (
-          new Date(new Date().getFullYear(), mA - 1, dA).getTime() -
-          new Date(new Date().getFullYear(), mB - 1, dB).getTime()
+          new Date(year, mA - 1, dA).getTime() -
+          new Date(year, mB - 1, dB).getTime()
         );
       });
 
@@ -116,6 +156,7 @@ export async function GET() {
         totalCustomers,
         newCustomers,
         activeCustomers,
+        repeatPurchaseRate,
       },
       topCustomers: validTopCustomers,
       recentSignups,
