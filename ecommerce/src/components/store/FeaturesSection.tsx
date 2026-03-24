@@ -86,8 +86,8 @@ export default function FeaturesSection({
       icon: Gem,
       content:
         "Nous voyageons pour dénicher les fibres les plus nobles. De la soie sauvage au lin premium, chaque pièce est une ode à la matière.",
-      color: "text-indigo-600",
-      bgColor: "bg-indigo-50 dark:bg-indigo-500/10",
+      color: "text-primary",
+      bgColor: "bg-primary/10 dark:bg-primary/20",
     },
     {
       title: "Artisanat d'Art",
@@ -124,7 +124,6 @@ export default function FeaturesSection({
 
       <div className="max-w-[1280px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-          
           {/* Visual Showcase - Slimmer aspect for minimal height */}
           <div className="lg:col-span-5 visual-reveal opacity-0 relative order-2 lg:order-1">
             <div className="relative aspect-[16/10] rounded-[24px] overflow-hidden shadow-xl group border-[3px] border-white dark:border-white/5">
@@ -136,11 +135,13 @@ export default function FeaturesSection({
                 unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-50" />
-              
+
               <div className="absolute top-3 left-3">
                 <div className="px-3 py-1.5 bg-white/95 dark:bg-black/95 backdrop-blur-xl rounded-full shadow-md border border-white/20 flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
-                  <span className="text-[8px] font-black uppercase tracking-widest text-gray-900 dark:text-white">Certifié</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-[8px] font-black uppercase tracking-widest text-gray-900 dark:text-white">
+                    Certifié
+                  </span>
                 </div>
               </div>
 
@@ -157,21 +158,27 @@ export default function FeaturesSection({
           {/* Content Column - Ultra-tightened spacing */}
           <div className="lg:col-span-7 space-y-6 order-1 lg:order-2">
             <div className="space-y-3">
-              <div className="stagger-animate opacity-0 inline-flex items-center gap-2 px-2.5 py-1 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 rounded-full">
+              <div className="stagger-animate opacity-0 inline-flex items-center gap-2 px-2.5 py-1 bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30 rounded-full">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-indigo-600"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/40 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
                 </span>
-                <span className="text-[8px] font-black text-indigo-900 dark:text-indigo-400 uppercase tracking-[0.2em]">Signature</span>
+                <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em]">
+                  Signature
+                </span>
               </div>
-              
+
               <h2 className="stagger-animate opacity-0 text-3xl md:text-3xl lg:text-4xl font-black text-gray-900 dark:text-white leading-tight tracking-tighter">
-                Pourquoi Nous <span className="italic text-indigo-600 dark:text-indigo-400">Choisir ?</span>
+                Pourquoi Nous{" "}
+                <span className="italic text-primary">
+                  Choisir ?
+                </span>
               </h2>
-              
+
               <p className="stagger-animate opacity-0 text-sm md:text-base text-gray-500 dark:text-gray-400 leading-relaxed font-medium max-w-lg">
-                Plongez dans un univers où le luxe rencontre l&apos;âme malgache. 
-                Une promesse d&apos;excellence et d&apos;authenticité sans compromis.
+                Plongez dans un univers où le luxe rencontre l&apos;âme
+                malgache. Une promesse d&apos;excellence et d&apos;authenticité
+                sans compromis.
               </p>
 
               <div className="stagger-animate opacity-0 flex items-center gap-5 pt-1">
@@ -181,16 +188,27 @@ export default function FeaturesSection({
                       key={i}
                       className="w-9 h-9 rounded-full border-[2px] border-white dark:border-[#0a0a0a] overflow-hidden shadow-sm transition-transform hover:scale-105 hover:z-10 cursor-pointer"
                     >
-                      <Image src={client.url} alt={client.name} width={36} height={36} className="object-cover" unoptimized />
+                      <Image
+                        src={client.url}
+                        alt={client.name}
+                        width={36}
+                        height={36}
+                        className="object-cover"
+                        unoptimized
+                      />
                     </div>
                   ))}
-                  <div className="w-9 h-9 rounded-full border-[2px] border-white dark:border-[#0a0a0a] bg-indigo-600 flex items-center justify-center text-white shadow-sm">
-                    <span className="text-[8px] font-black">{displayCount}+</span>
+                  <div className="w-9 h-9 rounded-full border-[2px] border-white dark:border-[#0a0a0a] bg-primary flex items-center justify-center text-primary-foreground shadow-sm">
+                    <span className="text-[8px] font-black">
+                      {displayCount}+
+                    </span>
                   </div>
                 </div>
                 <div className="h-6 w-px bg-gray-200 dark:bg-white/10" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-black text-gray-900 dark:text-white">4.9</span>
+                  <span className="text-lg font-black text-gray-900 dark:text-white">
+                    4.9
+                  </span>
                   <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />
                 </div>
               </div>
@@ -200,45 +218,70 @@ export default function FeaturesSection({
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 const isOpen = openIndex === index;
-                
+
                 return (
                   <div
                     key={index}
                     className={cn(
                       "group rounded-[18px] transition-all duration-300 overflow-hidden cursor-pointer",
-                      isOpen 
-                        ? "bg-white dark:bg-white/5 shadow-md shadow-indigo-500/5 border border-indigo-100/20 dark:border-indigo-500/10" 
-                        : "hover:bg-gray-50 dark:hover:bg-white/5 border border-transparent"
+                      isOpen
+                        ? "bg-white dark:bg-white/5 shadow-md shadow-primary/5 border border-primary/20 dark:border-primary/10"
+                        : "hover:bg-gray-50 dark:hover:bg-white/5 border border-transparent",
                     )}
                     onClick={() => setOpenIndex(index)}
                   >
                     <div className="flex items-center justify-between p-3 md:p-4">
                       <div className="flex items-center gap-3.5">
-                        <div className={cn(
-                          "w-9 h-9 rounded-[10px] flex items-center justify-center transition-all duration-300",
-                          isOpen ? feature.bgColor : "bg-white dark:bg-white/10 border border-gray-100 dark:border-white/10"
-                        )}>
-                          <Icon className={cn("w-4.5 h-4.5 transition-all duration-300", isOpen ? feature.color : "text-gray-400")} />
+                        <div
+                          className={cn(
+                            "w-9 h-9 rounded-[10px] flex items-center justify-center transition-all duration-300",
+                            isOpen
+                              ? feature.bgColor
+                              : "bg-white dark:bg-white/10 border border-gray-100 dark:border-white/10",
+                          )}
+                        >
+                          <Icon
+                            className={cn(
+                              "w-4.5 h-4.5 transition-all duration-300",
+                              isOpen ? feature.color : "text-gray-400",
+                            )}
+                          />
                         </div>
-                        <h3 className={cn(
-                          "font-black text-base transition-all duration-300 tracking-tight",
-                          isOpen ? "text-gray-900 dark:text-white" : "text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"
-                        )}>
+                        <h3
+                          className={cn(
+                            "font-black text-base transition-all duration-300 tracking-tight",
+                            isOpen
+                              ? "text-gray-900 dark:text-white"
+                              : "text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300",
+                          )}
+                        >
                           {feature.title}
                         </h3>
                       </div>
-                      <div className={cn(
-                        "w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300",
-                        isOpen ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 rotate-180" : "bg-gray-100 dark:bg-white/10 text-gray-400"
-                      )}>
-                        {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                      <div
+                        className={cn(
+                          "w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300",
+                          isOpen
+                            ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 rotate-180"
+                            : "bg-gray-100 dark:bg-white/10 text-gray-400",
+                        )}
+                      >
+                        {isOpen ? (
+                          <Minus className="w-3.5 h-3.5" />
+                        ) : (
+                          <Plus className="w-3.5 h-3.5" />
+                        )}
                       </div>
                     </div>
-                    
-                    <div className={cn(
-                      "grid transition-all duration-300 px-4 ml-12",
-                      isOpen ? "grid-rows-[1fr] opacity-100 pb-4" : "grid-rows-[0fr] opacity-0"
-                    )}>
+
+                    <div
+                      className={cn(
+                        "grid transition-all duration-300 px-4 ml-12",
+                        isOpen
+                          ? "grid-rows-[1fr] opacity-100 pb-4"
+                          : "grid-rows-[0fr] opacity-0",
+                      )}
+                    >
                       <div className="overflow-hidden">
                         <p className="text-gray-500 dark:text-gray-400 text-xs md:text-sm leading-relaxed font-medium pr-4">
                           {feature.content}

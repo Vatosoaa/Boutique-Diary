@@ -97,7 +97,6 @@ export default function StoreProductGrid({
                 rating={product.rating}
                 reviewCount={product.reviewCount}
                 imageColor={colors[index % colors.length]}
-                promotionRule={product.promotionRule}
               />
             ))}
           </div>
