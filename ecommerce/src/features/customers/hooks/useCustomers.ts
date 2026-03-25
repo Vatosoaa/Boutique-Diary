@@ -65,7 +65,7 @@ export function useCustomers(
         throw new Error("Erreur lors de la suppression");
       }
 
-      setCustomers((prev) => prev.filter((c) => c.id !== id));
+      setCustomers(prev => prev.filter(c => c.id !== id));
       toast.success("Client supprimé avec succès");
       return true;
     } catch (err) {

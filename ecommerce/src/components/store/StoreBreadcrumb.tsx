@@ -12,7 +12,7 @@ export default function StoreBreadcrumb({
 }) {
   const pathname = usePathname();
 
-  const paths = pathname.split("/").filter((path) => path);
+  const paths = pathname.split("/").filter(path => path);
 
   const pathNames: Record<string, string> = {
     store: "Boutique",

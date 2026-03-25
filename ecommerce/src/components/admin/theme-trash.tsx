@@ -107,7 +107,7 @@ export function ThemeTrash({ trashedThemes }: ThemeTrashProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {trashedThemes.map((theme) => (
+          {trashedThemes.map(theme => (
             <TableRow
               key={theme.id}
               className="hover:bg-gray-50/30 transition-colors"

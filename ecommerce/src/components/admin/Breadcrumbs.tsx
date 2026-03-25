@@ -29,7 +29,7 @@ const segmentLabels: Record<string, string> = {
 
 export const Breadcrumbs = () => {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter((segment) => segment !== "");
+  const segments = pathname.split("/").filter(segment => segment !== "");
 
   // Don't show on admin root (dashboard) if you prefer, or show "Admin"
   if (segments.length === 0) return null;

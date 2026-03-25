@@ -92,7 +92,7 @@ export default async function CustomerDashboard() {
 
       {}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map((stat) => (
+        {stats.map(stat => (
           <Link
             key={stat.label}
             href={stat.href}
@@ -134,7 +134,7 @@ export default async function CustomerDashboard() {
 
         <div className="space-y-3">
           {recentOrders.length > 0 ? (
-            recentOrders.map((order) => (
+            recentOrders.map(order => (
               <div
                 key={order.id}
                 className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-accent transition-colors"
@@ -159,7 +159,19 @@ export default async function CustomerDashboard() {
                         : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
                     }`}
                   >
-                    {order.status}
+                    {order.status === "PENDING"
+                      ? "En attente"
+                      : order.status === "PROCESSING"
+                        ? "En cours"
+                        : order.status === "SHIPPED"
+                          ? "Expédiée"
+                          : order.status === "DELIVERED"
+                            ? "Livrée"
+                            : order.status === "CANCELLED"
+                              ? "Annulée"
+                              : order.status === "COMPLETED"
+                                ? "Terminée"
+                                : order.status}
                   </span>
                 </div>
               </div>

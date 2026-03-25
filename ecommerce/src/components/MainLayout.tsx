@@ -27,7 +27,7 @@ export default function MainLayout({
         {!isAdminPage && !isAuthPage && <Navbar categories={categories} />}
         {children}
         {!isAdminPage && !isAuthPage && <UnifiedSupport />}
-        <Toaster />
+        <Toaster richColors />
       </ThemeProvider>
     </Auth0Provider>
   );

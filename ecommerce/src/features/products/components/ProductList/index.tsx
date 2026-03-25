@@ -61,7 +61,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts(products.filter((p) => p.id !== id));
+        setProducts(products.filter(p => p.id !== id));
         toast.success("Produit supprimé avec succès");
       } else {
         toast.error("Erreur lors de la suppression");

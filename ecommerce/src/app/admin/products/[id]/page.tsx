@@ -37,7 +37,7 @@ export default async function ProductDetailsPage({
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
     rating: Number(product.rating),
-    images: product.images.map((img) => ({
+    images: product.images.map(img => ({
       ...img,
       price: img.price ? Number(img.price) : null,
       oldPrice: img.oldPrice ? Number(img.oldPrice) : null,

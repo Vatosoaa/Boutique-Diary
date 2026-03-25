@@ -201,7 +201,7 @@ export function ImageUploader({
               <Input
                 type="url"
                 value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
+                onChange={e => setUrlInput(e.target.value)}
                 placeholder="https://example.com/image.jpg"
                 disabled={isUploading}
               />

@@ -23,7 +23,7 @@ export function DashboardStats({ products }: DashboardStatsProps) {
     0,
   );
 
-  const inStockCount = products.filter((p) => (p.stock || 0) > 0).length;
+  const inStockCount = products.filter(p => (p.stock || 0) > 0).length;
   const outOfStockCount = totalProducts - inStockCount;
 
   const stats = [

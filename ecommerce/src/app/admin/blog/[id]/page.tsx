@@ -266,7 +266,7 @@ export default function EditBlogPage({
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
                 placeholder="Titre de l'article"
                 className="text-lg font-medium"
               />
@@ -278,7 +278,7 @@ export default function EditBlogPage({
               <Textarea
                 id="excerpt"
                 value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
+                onChange={e => setExcerpt(e.target.value)}
                 placeholder="Résumé court de l'article..."
                 rows={2}
               />
@@ -299,7 +299,7 @@ export default function EditBlogPage({
               <Textarea
                 id="content"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={e => setContent(e.target.value)}
                 placeholder="<h2>Introduction</h2><p>...</p>"
                 rows={20}
                 className="font-mono text-sm"
@@ -389,7 +389,7 @@ export default function EditBlogPage({
                   <Input
                     id="metaTitle"
                     value={metaTitle}
-                    onChange={(e) => setMetaTitle(e.target.value)}
+                    onChange={e => setMetaTitle(e.target.value)}
                     placeholder="Titre SEO"
                   />
                   <p className="text-xs text-muted-foreground">
@@ -401,7 +401,7 @@ export default function EditBlogPage({
                   <Textarea
                     id="metaDescription"
                     value={metaDescription}
-                    onChange={(e) => setMetaDescription(e.target.value)}
+                    onChange={e => setMetaDescription(e.target.value)}
                     placeholder="Description SEO..."
                     rows={3}
                   />

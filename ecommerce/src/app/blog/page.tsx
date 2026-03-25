@@ -70,7 +70,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       },
     });
 
-    return posts.map((post) => ({
+    return posts.map(post => ({
       ...post,
       publishedAt: post.publishedAt?.toISOString() || new Date().toISOString(),
     })) as unknown as BlogPost[];

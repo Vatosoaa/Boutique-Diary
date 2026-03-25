@@ -214,7 +214,7 @@ export default function CheckoutForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((item) => ({
+          items: items.map(item => ({
             productId: item.productId,
             productImageId: item.productImageId,
             quantity: item.quantity,
@@ -290,7 +290,7 @@ export default function CheckoutForm({
           </div>
           <PhoneInput
             value={phoneValue}
-            onChange={(val) => setValue("phone", val, { shouldValidate: true })}
+            onChange={val => setValue("phone", val, { shouldValidate: true })}
             error={errors.phone?.message}
           />
         </div>
@@ -407,21 +407,21 @@ export default function CheckoutForm({
         </h2>
         <PaymentMethods
           selected={selectedPaymentMethod || null}
-          onChange={(val) =>
+          onChange={val =>
             setValue("paymentMethod", val, { shouldValidate: true })
           }
           mvolaPhone={mvolaPhoneValue || ""}
-          onMvolaPhoneChange={(val) => setValue("mvolaPhone", val)}
+          onMvolaPhoneChange={val => setValue("mvolaPhone", val)}
           mvolaName={mvolaNameValue || ""}
-          onMvolaNameChange={(val) => setValue("mvolaName", val)}
+          onMvolaNameChange={val => setValue("mvolaName", val)}
           orangePhone={orangePhoneValue || ""}
-          onOrangePhoneChange={(val) => setValue("orangePhone", val)}
+          onOrangePhoneChange={val => setValue("orangePhone", val)}
           orangeName={orangeNameValue || ""}
-          onOrangeNameChange={(val) => setValue("orangeName", val)}
+          onOrangeNameChange={val => setValue("orangeName", val)}
           airtelPhone={airtelPhoneValue || ""}
-          onAirtelPhoneChange={(val) => setValue("airtelPhone", val)}
+          onAirtelPhoneChange={val => setValue("airtelPhone", val)}
           airtelName={airtelNameValue || ""}
-          onAirtelNameChange={(val) => setValue("airtelName", val)}
+          onAirtelNameChange={val => setValue("airtelName", val)}
         />
         {errors.paymentMethod && (
           <p className="text-xs text-red-500 mt-2">
