@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
+import { notificationManager } from "@/lib/notification-manager";
 
 export async function GET(
   request: NextRequest,
@@ -96,7 +97,20 @@ export async function POST(
             id: true,
           },
         },
+        product: {
+          select: {
+            name: true,
+          },
+        },
       },
+    });
+
+    // Create notification for admins
+    await notificationManager.notifyAllAdmins({
+      title: "Nouvel avis client",
+      message: `${review.user.username} a noté ${review.product.name} (${review.rating}/5)`,
+      type: "INFO",
+      link: `/admin/products/${productId}`,
     });
 
     const aggregate = await prisma.review.aggregate({
