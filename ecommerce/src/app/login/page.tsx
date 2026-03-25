@@ -122,7 +122,7 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-[9px] font-black uppercase tracking-widest">
                   <span className="px-4 bg-white text-gray-400">
-                    Secured Login
+                    Connexion Sécurisée
                   </span>
                 </div>
               </div>
