@@ -20,7 +20,7 @@ export default async function ProduitsPage() {
           badge="Catalogue Complet"
           customerCount={stats.customerCount}
           recentCustomers={stats.recentCustomers}
-          variant="rose"
+          variant="emerald"
           enableTypewriter={true}
         />
 

@@ -5,7 +5,7 @@ import { Eye, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface ProductCardProps {
@@ -22,10 +22,6 @@ interface ProductCardProps {
   reviewCount?: number;
   imageColor?: string;
   initialIsWishlisted?: boolean;
-  promotionRule?: {
-    isActive: boolean;
-    actions: any;
-  } | null;
 }
 
 export default function ProductCard({
@@ -43,7 +39,6 @@ export default function ProductCard({
   reviewCount,
   imageColor,
   initialIsWishlisted = false,
-  promotionRule,
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(initialIsWishlisted);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
@@ -127,7 +122,7 @@ export default function ProductCard({
               src={image}
               alt={title}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, (max-width: 1536px) 20vw, 16vw"
               className="object-cover object-center group-hover:scale-110 transition-transform duration-500 ease-out"
             />
           ) : (
@@ -144,9 +139,11 @@ export default function ProductCard({
               Nouveau
             </span>
           )}
-          {showPromotionBadge && (
+          {isPromotion && (
             <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white rounded-full shadow-sm">
-              -{discountPercentage}%
+              {discountPercentage !== null && discountPercentage > 0
+                ? `-${discountPercentage}%`
+                : "PROMO"}
             </span>
           )}
           {isBestSeller && (
@@ -185,14 +182,14 @@ export default function ProductCard({
       </div>
 
       {/* Product Details */}
-      <div className="flex flex-col flex-1 px-1">
-        <div className="flex items-start justify-between gap-2 mb-1">
+      <div className="flex flex-col flex-1 px-1 items-center text-center">
+        <div className="flex items-center justify-center gap-3 mb-1 w-full">
           {category && (
             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
               {category}
             </span>
           )}
-          {rating && (
+          {rating !== null && rating! > 0 && (
             <div className="flex items-center gap-1">
               <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
               <span className="text-[10px] font-bold text-muted-foreground">
@@ -204,12 +201,12 @@ export default function ProductCard({
 
         <Link
           href={`/store/product/${id}`}
-          className="text-sm md:text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2 tracking-tight"
+          className="text-sm md:text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2 tracking-tight w-full"
         >
           {title}
         </Link>
 
-        <div className="mt-auto flex items-baseline gap-2">
+        <div className="mt-auto flex items-baseline justify-center gap-2 w-full">
           <span className="text-lg font-black text-foreground">
             {formatPrice(price)}
           </span>
