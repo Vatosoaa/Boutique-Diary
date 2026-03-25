@@ -16,8 +16,8 @@ export default async function PromotionsPage() {
       <div className="pt-4 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
         <StoreProductBanner
           title="Nos Promotions"
-          subtitle="Profitez de tarifs exceptionnels sur une sélection d'articles. Des offres limitées à ne pas manquer pour renouveler votre style."
-          badge="Offres Spéciales"
+          subtitle="Profitez de tarifs exceptionnels sur une sélection d'articles. Des PROMO limitées à ne pas manquer pour renouveler votre style."
+          badge="PROMOS Spéciales"
           customerCount={stats.customerCount}
           recentCustomers={stats.recentCustomers}
           variant="emerald"

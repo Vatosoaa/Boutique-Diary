@@ -1,14 +1,31 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Heart, ShoppingBag, ArrowLeft, Loader2 } from "lucide-react";
+import { Heart, ShoppingBag, Loader2 } from "lucide-react";
 import Link from "next/link";
 import ProductCard from "@/components/store/ProductCard";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/store/ScrollReveal";
 
+interface WishlistItem {
+  id: number;
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    oldPrice?: number | null;
+    isNew?: boolean;
+    isPromotion?: boolean;
+    isBestSeller?: boolean;
+    rating?: number;
+    reviewCount?: number;
+    category?: { name: string } | null;
+    images: { url: string }[];
+  };
+}
+
 export default function WishlistPage() {
-  const [wishlist, setWishlist] = useState<any[]>([]);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -57,7 +74,7 @@ export default function WishlistPage() {
           stagger={50}
           selector=".product-card-reveal"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
             {wishlist.map((item) => (
               <ProductCard
                 key={item.id}

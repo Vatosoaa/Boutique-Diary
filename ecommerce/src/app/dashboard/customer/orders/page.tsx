@@ -140,6 +140,18 @@ export default function CustomerOrders() {
     return "bg-muted text-muted-foreground";
   };
 
+  const translateStatus = (status: string) => {
+    const translations: Record<string, string> = {
+      PENDING: "EN ATTENTE",
+      PROCESSING: "EN COURS",
+      SHIPPED: "EXPÉDIÉE",
+      DELIVERED: "LIVRÉE",
+      COMPLETED: "TERMINÉE",
+      CANCELLED: "ANNULÉE",
+    };
+    return translations[status.toUpperCase()] || status;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -191,7 +203,7 @@ export default function CustomerOrders() {
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClass(order.status)}`}
                 >
-                  {order.status}
+                  {translateStatus(order.status)}
                 </span>
               </div>
 
