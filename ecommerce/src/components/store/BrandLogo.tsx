@@ -12,7 +12,8 @@ export default function BrandLogo({
   className,
   variant = "dark",
 }: BrandLogoProps) {
-  const isDark = variant === "dark";
+  // "light" variant = logo on dark background → use white text
+  const isOnDarkBg = variant === "light";
 
   return (
     <div className={cn("w-32 h-auto overflow-visible", className)}>
@@ -103,7 +104,7 @@ export default function BrandLogo({
             style={{ animationDelay: "0.5s" }}
             d="M-50,20 C-20,35 20,35 50,20"
             fill="none"
-            stroke={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+            stroke={isOnDarkBg ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
             strokeWidth="2"
             strokeLinecap="round"
           />
@@ -116,7 +117,7 @@ export default function BrandLogo({
             style={{
               fontFamily: "var(--font-heading)",
               fontSize: "52px",
-              fill: isDark ? "#ffffff" : "var(--foreground)",
+              fill: isOnDarkBg ? "#ffffff" : "var(--foreground)",
               fontStyle: "italic",
             }}
           >
@@ -131,7 +132,7 @@ export default function BrandLogo({
             style={{
               fontFamily: "var(--font-body)",
               fontSize: "12px",
-              fill: isDark
+              fill: isOnDarkBg
                 ? "rgba(255,255,255,0.4)"
                 : "var(--muted-foreground)",
               fontWeight: 400,
