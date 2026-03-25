@@ -107,7 +107,7 @@ export async function PATCH(
               : "Commande Confirmée par Client",
           message: `La commande #${updatedOrderData.reference} a été ${status === "CANCELLED" ? "annulée" : "confirmée"} par le client.`,
           type: status === "CANCELLED" ? "WARNING" : "SUCCESS",
-          link: `CMD_ACTION:${updatedOrderData.id}`,
+          link: `/admin/orders/${updatedOrderData.id}`,
         });
       }
 

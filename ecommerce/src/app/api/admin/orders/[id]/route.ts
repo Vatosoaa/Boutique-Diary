@@ -195,7 +195,7 @@ export async function PATCH(
         title: "Commande Mise à Jour",
         message: `La commande #${order.reference} est maintenant ${status}.`,
         type: "ORDER_UPDATE",
-        link: `CMD_ACTION:${order.id}`,
+        link: `/admin/orders/${order.id}`,
       });
 
       // Also send a general order update event for the admin order list to refresh
