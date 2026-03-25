@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import {
   UserPlus,
   Search,
@@ -36,31 +38,20 @@ const roleLabels: Record<string, string> = {
 };
 
 export function EmployeesListClient() {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const { hasPermission, loading: permLoading } = usePermissions();
 
   const canEdit = hasPermission("employees.edit");
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
+  const {
+    data: fetchedEmployees,
+    isLoading: dataLoading,
+    mutate,
+  } = useSWR<Employee[]>("/api/admin/employees", fetcher);
 
-  const fetchEmployees = async () => {
-    try {
-      const response = await fetch("/api/admin/employees");
-      if (!response.ok) throw new Error("Failed to fetch");
-      const data = await response.json();
-      setEmployees(data);
-    } catch (error) {
-      console.error("Error fetching employees:", error);
-      toast.error("Erreur lors du chargement des employés");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const employees = fetchedEmployees || [];
+  const loading = dataLoading || permLoading;
 
   const isOnline = (lastSeen?: string) => {
     if (!lastSeen) return false;
@@ -90,7 +81,7 @@ export function EmployeesListClient() {
 
       if (!response.ok) throw new Error("Failed to delete");
 
-      setEmployees(prev => prev.filter(e => e.id !== id));
+      mutate();
       toast.success("Employé supprimé avec succès");
     } catch (error) {
       console.error("Error deleting employee:", error);

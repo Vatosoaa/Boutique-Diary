@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import { UserNav } from "./UserNav";
 import { AdminPayload } from "@/lib/adminAuth";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,12 +24,22 @@ interface HeaderProps {
 }
 
 export function Header({ onToggleSidebar }: HeaderProps) {
-  const [user, setUser] = useState<AdminPayload | null>(null);
-  const [loading, setLoading] = useState(true);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const pathname = usePathname();
   const { colorMode, setColorMode } = useTheme();
   const router = useRouter();
+
+  const {
+    data: user,
+    error,
+    isLoading: loading,
+  } = useSWR<AdminPayload>(
+    pathname === "/admin/login" ? null : "/api/admin/auth/me",
+    fetcher,
+    {
+      revalidateOnFocus: false, // User profile doesn't change often
+    },
+  );
 
   const {
     isOpen: isNotificationOpen,
@@ -41,30 +53,10 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   const unreadCount = getUnreadCount();
 
   useEffect(() => {
-    if (pathname === "/admin/login") {
-      setLoading(false);
-      return;
+    if (error?.status === 401) {
+      router.push("/admin/login");
     }
-
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/admin/auth/me");
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        } else if (response.status === 401) {
-          router.push("/admin/login");
-          return;
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [pathname, router]);
+  }, [error, router]);
 
   useEffect(() => {
     if (user) {

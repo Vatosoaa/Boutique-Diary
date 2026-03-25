@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import Image from "next/image";
 import { Banner } from "@/types/banner";
 import { toast } from "sonner";
@@ -14,27 +16,18 @@ export default function BannerList({
   onEdit,
   refreshTrigger,
 }: BannerListProps) {
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchBanners = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("/api/banners");
-      if (!response.ok) throw new Error("Erreur de chargement");
-      const data = await response.json();
-      setBanners(data);
-    } catch (err) {
-      console.error(err);
-      toast.error("Erreur lors du chargement des bannières");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    data: fetchedBanners,
+    isLoading,
+    mutate,
+  } = useSWR<Banner[]>("/api/banners", fetcher);
+  const banners = fetchedBanners || [];
 
   useEffect(() => {
-    fetchBanners();
-  }, [refreshTrigger]);
+    if (refreshTrigger > 0) {
+      mutate();
+    }
+  }, [refreshTrigger, mutate]);
 
   const handleDelete = async (id: number) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cette bannière ?")) return;
@@ -42,7 +35,7 @@ export default function BannerList({
     try {
       const response = await fetch(`/api/banners/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Erreur de suppression");
-      setBanners(banners.filter(b => b.id !== id));
+      mutate();
       toast.success("Bannière supprimée avec succès");
     } catch (err) {
       console.error(err);
@@ -59,11 +52,7 @@ export default function BannerList({
       });
       if (!response.ok) throw new Error("Erreur de mise à jour");
 
-      setBanners(
-        banners.map(b =>
-          b.id === banner.id ? { ...b, isActive: !b.isActive } : b,
-        ),
-      );
+      mutate();
       toast.success(`Bannière ${!banner.isActive ? "activée" : "désactivée"}`);
     } catch (err) {
       console.error(err);

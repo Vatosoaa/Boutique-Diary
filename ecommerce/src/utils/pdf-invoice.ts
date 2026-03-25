@@ -6,9 +6,16 @@ import { fr } from "date-fns/locale";
 export interface InvoiceData {
   id: string;
   reference: string;
-  status: "PAID" | "PENDING" | "CANCELLED";
+  status:
+    | "PAID"
+    | "PENDING"
+    | "PROCESSING"
+    | "SHIPPED"
+    | "DELIVERED"
+    | "CANCELLED"
+    | "COMPLETED";
   total: number;
-  createdAt: string;
+  createdAt: string | Date;
   customer: {
     name: string;
     email: string;

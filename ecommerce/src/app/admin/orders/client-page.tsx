@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import { OrdersStats } from "@/components/admin/orders/OrdersStats";
 import { OrderList, Order } from "@/components/admin/orders/OrderList";
 import {
@@ -50,24 +53,67 @@ export default function OrdersClientPage({
 }: {
   initialOrderId?: string;
 }) {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [counts, setCounts] = useState({
-    total: 0,
-    completed: 0,
-    pending: 0,
-    cancelled: 0,
+  const {
+    data: response,
+    isLoading,
+    mutate,
+  } = useSWR<OrdersResponse>("/api/admin/orders?limit=200", fetcher, {
+    revalidateOnFocus: true,
   });
-  const [stats, setStats] = useState({
-    totalOrdersToday: 0,
-    completedOrders: 0,
-    pendingOrders: 0,
-    cancelledOrders: 0,
-    todayTrend: 0,
-    completedTrend: 0,
-    pendingTrend: 0,
-    cancelledTrend: 0,
-  });
-  const [loading, setLoading] = useState(true);
+
+  const orders = React.useMemo<Order[]>(() => {
+    if (!response?.orders) return [];
+    return response.orders.map(order => ({
+      id: order.id,
+      reference: order.reference,
+      customer: {
+        name: order.customer.name,
+        email: order.customer.email,
+        avatar: order.customer.avatar,
+      },
+      status: order.status,
+      total: order.total,
+      createdAt: new Date(order.createdAt),
+    }));
+  }, [response?.orders]);
+
+  const counts = React.useMemo(() => {
+    if (!response?.counts)
+      return { total: 0, completed: 0, pending: 0, cancelled: 0 };
+    return response.counts;
+  }, [response?.counts]);
+
+  const stats = React.useMemo(() => {
+    if (!response?.counts) {
+      return {
+        totalOrdersToday: 0,
+        completedOrders: 0,
+        pendingOrders: 0,
+        cancelledOrders: 0,
+        todayTrend: 0,
+        completedTrend: 0,
+        pendingTrend: 0,
+        cancelledTrend: 0,
+      };
+    }
+    const c = response.counts;
+    const maxTotal = Math.max(c.total, 1);
+    return {
+      totalOrdersToday: c.today,
+      completedOrders: c.completed,
+      pendingOrders: c.pending,
+      cancelledOrders: c.cancelled,
+      todayTrend: Math.round((c.today / maxTotal) * 100),
+      completedTrend: Math.round((c.completed / maxTotal) * 100),
+      pendingTrend: Math.round((c.pending / maxTotal) * 100),
+      cancelledTrend: -Math.round((c.cancelled / maxTotal) * 100),
+    };
+  }, [response?.counts]);
+
+  const params = useParams();
+  const router = useRouter();
+  const urlId = params?.id as string | undefined;
+  const lastTargetId = useRef<string | null>(null);
 
   const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,58 +123,8 @@ export default function OrdersClientPage({
     Order | OrderDetails | null
   >(null);
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin/orders?limit=200");
-      const data: OrdersResponse = await res.json();
-
-      const formattedOrders: Order[] = data.orders.map(order => ({
-        id: order.id,
-        reference: order.reference,
-        customer: {
-          name: order.customer.name,
-          email: order.customer.email,
-          avatar: order.customer.avatar,
-        },
-        status: order.status,
-        total: order.total,
-        createdAt: new Date(order.createdAt),
-      }));
-
-      setOrders(formattedOrders);
-      setCounts(data.counts);
-
-      setStats({
-        totalOrdersToday: data.counts.today,
-        completedOrders: data.counts.completed,
-        pendingOrders: data.counts.pending,
-        cancelledOrders: data.counts.cancelled,
-        todayTrend: Math.round(
-          (data.counts.today / Math.max(data.counts.total, 1)) * 100,
-        ),
-        completedTrend: Math.round(
-          (data.counts.completed / Math.max(data.counts.total, 1)) * 100,
-        ),
-        pendingTrend: Math.round(
-          (data.counts.pending / Math.max(data.counts.total, 1)) * 100,
-        ),
-        cancelledTrend: -Math.round(
-          (data.counts.cancelled / Math.max(data.counts.total, 1)) * 100,
-        ),
-      });
-    } catch (error) {
-      console.error("Failed to fetch orders:", error);
-      toast.error("Erreur lors du chargement des commandes");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchOrders();
-
-    // SSE Setup
+    // SSE Setup - No need to call manually fetchOrders, SWR did it natively
     const eventSource = new EventSource("/api/notifications/stream?role=admin");
 
     eventSource.onmessage = event => {
@@ -140,10 +136,10 @@ export default function OrdersClientPage({
             data.type === "ORDER_UPDATE" ||
             data.type === "TRANSACTION_BULK_UPDATE"
           ) {
-            fetchOrders();
+            mutate();
           }
         }
-      } catch (e) {
+      } catch {
         // Ignore heartbeat
       }
     };
@@ -151,56 +147,83 @@ export default function OrdersClientPage({
     return () => {
       eventSource.close();
     };
-  }, [fetchOrders]);
+  }, [mutate]);
 
-  useEffect(() => {
-    if (initialOrderId) {
-      fetch(`/api/admin/orders/${initialOrderId}`)
-        .then(res => {
-          if (!res.ok) throw new Error("Order not found");
-          return res.json();
-        })
-        .then(orderData => {
-          if (orderData && orderData.id) {
-            const parsedOrder: Order = {
-              id: orderData.id,
-              reference: orderData.reference,
-              customer: orderData.customer,
-              status: orderData.status,
-              total: orderData.total,
-              createdAt: new Date(orderData.createdAt),
-            };
-            handleViewDetails(parsedOrder);
-          }
-        })
-        .catch(err => console.error("Failed to load initial order:", err));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialOrderId]);
+  const handleViewDetails = useCallback(
+    async (order: Order | OrderDetails) => {
+      // If it's already an OrderDetails and has items, just open it
+      if ("items" in order && order.items && order.items.length > 0) {
+        setSelectedOrder(order as OrderDetails);
+        setIsModalOpen(true);
+        router.push(`/admin/orders/${order.id}`, { scroll: false });
+        return;
+      }
 
-  const handleViewDetails = useCallback((order: Order) => {
-    const panelStatus =
-      order.status === "COMPLETED" ? "DELIVERED" : order.status;
+      // Otherwise, fetch full details
+      setIsModalOpen(true);
+      setSelectedOrder(null); // Triggers loading state in Modal
 
-    const orderDetails: OrderDetails = {
-      id: order.id,
-      reference: order.reference,
-      customer: order.customer,
-      status: panelStatus as OrderDetails["status"],
-      total: order.total,
-      createdAt: order.createdAt,
-      items: [],
-    };
-    setSelectedOrder(orderDetails);
-    setIsModalOpen(true);
-    window.history.pushState(null, "", `/admin/orders/${order.id}`);
-  }, []);
+      try {
+        // Still open modal with placeholder data to show loading state if needed
+        // (Actually, better wait for fetch to avoid UI jitter with empty basket)
+        const res = await fetch(`/api/admin/orders/${order.id}`);
+        if (!res.ok) throw new Error("Could not fetch order details");
+        const orderData = await res.json();
+
+        const orderDetails: OrderDetails = {
+          ...orderData,
+          createdAt: new Date(orderData.createdAt),
+          items:
+            orderData.items?.map(
+              (item: {
+                id: string;
+                productName: string;
+                productImage: string | null;
+                quantity: number;
+                price: number;
+                color?: string;
+                size?: string;
+              }) => ({
+                id: item.id,
+                productName: item.productName,
+                productImage: item.productImage,
+                quantity: item.quantity,
+                price: item.price,
+                variant:
+                  item.color || item.size
+                    ? [item.color, item.size].filter(Boolean).join(", ")
+                    : undefined,
+              }),
+            ) || [],
+        };
+
+        setSelectedOrder(orderDetails);
+        setIsModalOpen(true);
+        router.push(`/admin/orders/${order.id}`, { scroll: false });
+      } catch (err) {
+        console.error(err);
+        toast.error("Erreur lors du chargement des détails");
+      }
+    },
+    [router],
+  );
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedOrder(null);
-    window.history.pushState(null, "", `/admin/orders`);
-  }, []);
+    router.push("/admin/orders", { scroll: false });
+  }, [router]);
+
+  useEffect(() => {
+    // If we have an ID from URL (either from prop on mount or from URL change), open details
+    const targetId = urlId || initialOrderId;
+    if (targetId && lastTargetId.current !== targetId) {
+      lastTargetId.current = targetId;
+      handleViewDetails({ id: targetId } as Order);
+    } else if (!targetId) {
+      lastTargetId.current = null;
+    }
+  }, [urlId, initialOrderId, handleViewDetails]);
 
   const handleSendInvoice = async (order: Order | OrderDetails) => {
     try {
@@ -257,7 +280,7 @@ export default function OrdersClientPage({
       setCancelDialogOpen(false);
       setOrderToCancel(null);
 
-      fetchOrders();
+      mutate();
     } catch (error) {
       console.error("Failed to cancel order:", error);
       toast.error(
@@ -288,17 +311,17 @@ export default function OrdersClientPage({
       <PageHeader
         title="Commandes"
         description="Gérer les commandes de votre boutique"
-        onRefresh={fetchOrders}
-        isLoading={loading}
+        onRefresh={() => mutate()}
+        isLoading={isLoading}
       />
 
       {}
-      <OrdersStats stats={stats} loading={loading} />
+      <OrdersStats stats={stats} loading={isLoading} />
 
       {}
       <OrderList
         orders={orders}
-        loading={loading}
+        loading={isLoading}
         counts={counts}
         onViewDetails={handleViewDetails}
         onSendInvoice={handleSendInvoice}
@@ -308,9 +331,10 @@ export default function OrdersClientPage({
 
       {}
       <OrderFloatingPanel
-        order={selectedOrder}
+        initialOrder={selectedOrder}
         open={isModalOpen}
         onClose={handleCloseModal}
+        onSendInvoice={handleSendInvoice}
       />
 
       {}

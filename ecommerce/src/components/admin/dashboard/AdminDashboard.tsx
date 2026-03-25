@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from "react";
-import DashboardHeader from "./DashboardHeader";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import StatsCard from "./StatsCard";
 import RevenueChart from "./RevenueChart";
 import ProductDistributionChart from "./ProductDistributionChart";
 import StockDistributionChart from "./StockDistributionChart";
 import RecentPages from "./RecentPages";
 import { PageHeader } from "@/components/admin/PageHeader";
-import {
-  Copy,
-  FileText,
-  CheckCircle,
-  Package,
-  AlertTriangle,
-  TrendingUp,
-  MessageSquare,
-} from "lucide-react";
+import { CheckCircle, Package, TrendingUp, MessageSquare } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 interface AdminDashboardProps {
@@ -26,7 +18,12 @@ interface AdminDashboardProps {
 }
 
 const AdminDashboard = ({ user }: AdminDashboardProps) => {
-  const [stats, setStats] = useState({
+  const { data: fetchedStats, isLoading: loading } = useSWR(
+    "/api/admin/stats",
+    fetcher,
+  );
+
+  const stats = fetchedStats || {
     totalProducts: 0,
     totalStockValue: 0,
     lowStockCount: 0,
@@ -35,26 +32,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     categoryDistribution: [],
     totalReviews: 0,
     salesPerformance: [],
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await fetch("/api/admin/stats");
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch stats", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
+  };
 
   return (
     <div className="min-h-screen font-sans">

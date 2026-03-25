@@ -115,7 +115,7 @@ export default function StockPage() {
 
     // SSE Setup
     const eventSource = new EventSource("/api/notifications/stream?role=admin");
-    eventSource.onmessage = (event) => {
+    eventSource.onmessage = event => {
       try {
         if (event.data.startsWith("{")) {
           const data = JSON.parse(event.data);
