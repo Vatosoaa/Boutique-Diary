@@ -3,7 +3,6 @@ import StoreFeaturesBar from "@/components/store/StoreFeaturesBar";
 import PromoSection from "@/components/store/PromoSection";
 import CollectionScroll from "@/components/store/CollectionScroll";
 import FeaturesSection from "@/components/store/FeaturesSection";
-import BestCollectionBanner from "@/components/store/BestCollectionBanner";
 import StoreProductGrid from "@/components/store/StoreProductGrid";
 import ClientTestimonials from "@/components/store/ClientTestimonials";
 import StoreFooter from "@/components/store/StoreFooter";
@@ -47,10 +46,6 @@ export default async function Home() {
           customerCount={customerCount}
           recentCustomers={recentCustomers}
         />
-      </ScrollReveal>
-
-      <ScrollReveal animation="fade-up">
-        <BestCollectionBanner products={featuredProducts} />
       </ScrollReveal>
 
       <ScrollReveal

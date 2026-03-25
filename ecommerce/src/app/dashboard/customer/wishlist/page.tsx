@@ -1,14 +1,31 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Heart, ShoppingBag, ArrowLeft, Loader2 } from "lucide-react";
+import { Heart, ShoppingBag, Loader2 } from "lucide-react";
 import Link from "next/link";
 import ProductCard from "@/components/store/ProductCard";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/store/ScrollReveal";
 
+interface WishlistItem {
+  id: number;
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    oldPrice?: number | null;
+    isNew?: boolean;
+    isPromotion?: boolean;
+    isBestSeller?: boolean;
+    rating?: number;
+    reviewCount?: number;
+    category?: { name: string } | null;
+    images: { url: string }[];
+  };
+}
+
 export default function WishlistPage() {
-  const [wishlist, setWishlist] = useState<any[]>([]);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

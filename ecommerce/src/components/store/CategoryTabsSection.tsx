@@ -1,10 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { formatPrice } from "@/lib/cart-store";
-import { ArrowUpRight } from "lucide-react";
 import anime from "animejs";
 import { useEffect, useRef } from "react";
 
@@ -100,7 +96,7 @@ export default function CategoryTabsSection({
         {}
         <div
           ref={containerRef}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-6 gap-y-12"
         >
           {displayProducts.length > 0 ? (
             displayProducts.map((product, index) => (

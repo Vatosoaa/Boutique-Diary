@@ -148,7 +148,7 @@ export default function RegisterForm() {
       {}
       <Link
         href="/login"
-        className="block w-full py-4 px-4 border-2 border-primary text-center text-xs font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all hover:shadow-lg rounded-xl"
+        className="block w-full py-4 px-4 border-2 border-primary text-center text-xs font-black uppercase tracking-widest text-primary hover:bg-primary hover:!text-white transition-all hover:shadow-lg rounded-xl"
       >
         Déjà un compte ? Se connecter
       </Link>
