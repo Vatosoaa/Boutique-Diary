@@ -1,148 +1,221 @@
 "use client";
 
 import Link from "next/link";
+import {
+  Instagram,
+  Facebook,
+  Twitter,
+  Youtube,
+  Send,
+  Linkedin,
+  MapPin,
+  Mail,
+  Phone,
+  ArrowRight,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function StoreFooter() {
+  const currentYear = new Date().getFullYear();
+
+  const footerLinks = {
+    "Service Client": [
+      { label: "FAQ", href: "#" },
+      { label: "Mes Commandes", href: "/dashboard/customer/orders" },
+      { label: "Mes Favoris", href: "/dashboard/customer/wishlist" },
+      { label: "Mes Adresses", href: "/dashboard/customer/addresses" },
+      { label: "Retours", href: "#" },
+      { label: "Livraison", href: "#" },
+    ],
+    Produits: [
+      { label: "Nouveautés", href: "/nouveautes" },
+      { label: "Promotions", href: "/promotions" },
+      { label: "Top Vente", href: "/top-vente" },
+      { label: "Hommes", href: "/shop?category=hommes" },
+      { label: "Femmes", href: "/shop?category=femmes" },
+    ],
+    "Notre Histoire": [
+      { label: "À Propos", href: "/store/about" },
+      { label: "Nos Magasins", href: "#" },
+      { label: "Le Blog", href: "/blog" },
+      { label: "Engagements", href: "#" },
+      { label: "Carrières", href: "#" },
+    ],
+  };
+
+  const socialLinks = [
+    { icon: Instagram, href: "#", color: "hover:text-pink-500" },
+    { icon: Facebook, href: "#", color: "hover:text-blue-600" },
+    { icon: Twitter, href: "#", color: "hover:text-sky-400" },
+    { icon: Youtube, href: "#", color: "hover:text-red-600" },
+    { icon: Linkedin, href: "#", color: "hover:text-blue-700" },
+  ];
+
   return (
-    <footer className="bg-card text-muted-foreground py-12 px-4 md:px-8 font-sans border-t border-border">
-      <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16 mb-10 text-center md:text-left">
-          {/* Brand & Address */}
-          <div className="flex flex-col items-center md:items-start">
-            <h2 className="text-3xl font-black mb-8 text-foreground tracking-tighter font-sans">
-              Diary Boutique
-            </h2>
-            <p className="text-muted-foreground text-base leading-relaxed mb-8 max-w-[280px]">
-              Nous distribuons nos collections dans des boutiques sélectionnées
-              à travers le monde.
-            </p>
-            <div className="text-sm text-muted-foreground space-y-2 font-medium">
-              <p className="hover:text-foreground transition-colors">
-                Technology Park
+    <footer className="relative bg-zinc-950 text-zinc-400 pt-24 pb-12 overflow-hidden border-t border-zinc-900 font-sans">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="container max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-20">
+          {/* Brand Column */}
+          <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-3xl font-black text-white tracking-tighter mb-6 flex items-center">
+                <span className="bg-white text-black px-2 py-0.5 rounded italic">
+                  D
+                </span>
+                iary Boutique
+              </h2>
+              <p className="text-sm leading-relaxed mb-8 max-w-sm">
+                L'excellence du prêt-à-porter de luxe, sélectionnée avec passion
+                pour définir votre allure quotidienne.
               </p>
-              <p className="hover:text-foreground transition-colors">
-                8-14 Marie Curie Street
-              </p>
-              <p className="hover:text-foreground transition-colors">
-                08042 Barcelona
-              </p>
-              <p className="mt-4 pt-4 border-t border-border text-foreground font-bold">
-                diary@boutique.com
-              </p>
-            </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start justify-center lg:justify-start gap-3 group group-hover:cursor-default">
+                  <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                  <div className="text-sm">
+                    <p className="text-white font-medium">Antananarivo</p>
+                    <p className="text-zinc-500">
+                      Ambohitrarahaba, c20bis Antsahamaina
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center lg:justify-start gap-3 group">
+                  <Mail className="w-5 h-5 text-primary" />
+                  <a
+                    href="mailto:contact@diaryboutique.com"
+                    className="text-sm hover:text-white transition-colors"
+                  >
+                    contact@diaryboutique.com
+                  </a>
+                </div>
+                <div className="flex items-center justify-center lg:justify-start gap-3 group">
+                  <Phone className="w-5 h-5 text-primary" />
+                  <a
+                    href="tel:+261340000000"
+                    className="text-sm hover:text-white transition-colors"
+                  >
+                    +261 34 00 000 00
+                  </a>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Service Client */}
-          <div className="flex flex-col items-center md:items-start">
-            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Service Client
-            </h3>
-            <ul className="space-y-4 text-sm font-medium">
-              {[
-                { label: "FAQ", href: "#" },
-                { label: "Mes Commandes", href: "/dashboard/customer/orders" },
-                { label: "Mes Favoris", href: "/dashboard/customer/wishlist" },
-                {
-                  label: "Mes Adresses",
-                  href: "/dashboard/customer/addresses",
-                },
-                { label: "Retours", href: "#" },
-                { label: "Livraison et Retours", href: "#" },
-                { label: "Conditions Générales", href: "#" },
-                { label: "Politique de Confidentialité", href: "#" },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* Links Columns */}
+          <div className="lg:col-span-4 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            {Object.entries(footerLinks).map(([title, links], idx) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="flex flex-col items-center lg:items-start"
+              >
+                <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] mb-8">
+                  {title}
+                </h3>
+                <ul className="space-y-4 text-sm">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="hover:text-white transition-all duration-300 inline-flex items-center group"
+                      >
+                        <span className="w-0 overflow-hidden group-hover:w-4 transition-all duration-300 text-primary">
+                          <ArrowRight className="w-3 h-3" />
+                        </span>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
           </div>
 
-          {/* Produits */}
-          <div className="flex flex-col items-center md:items-start">
-            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Produits
-            </h3>
-            <ul className="space-y-4 text-sm font-medium">
-              {[
-                { label: "Nouveautés", href: "/nouveautes" },
-                { label: "Promotions", href: "/promotions" },
-                { label: "Top Vente", href: "/top-vente" },
-                { label: "Tous les produits", href: "/produits" },
-                { label: "Hommes", href: "/shop?category=hommes" },
-                { label: "Femmes", href: "/shop?category=femmes" },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Newsletter Column */}
+          <div className="lg:col-span-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-[32px] backdrop-blur-sm"
+            >
+              <h3 className="text-white font-bold text-lg mb-4">
+                Rejoignez le Club
+              </h3>
+              <p className="text-sm text-zinc-500 mb-6">
+                Inscrivez-vous pour recevoir nos dernières collections et offres
+                exclusives.
+              </p>
 
-          {/* Infos Entreprise */}
-          <div className="flex flex-col items-center md:items-start">
-            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Société
-            </h3>
-            <ul className="space-y-4 text-sm font-medium">
-              {[
-                { label: "Blog", href: "/blog" },
-                { label: "À Propos", href: "#" },
-                { label: "Nos Magasins", href: "#" },
-                { label: "Rejoignez-nous", href: "#" },
-                { label: "Nos Valeurs", href: "#" },
-                { label: "Support", href: "#" },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
+              <div className="relative group">
+                <input
+                  type="email"
+                  placeholder="votre@email.com"
+                  className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all pr-12"
+                />
+                <button className="absolute right-2 top-2 bottom-2 aspect-square bg-primary hover:bg-primary/90 text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-primary/20">
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="mt-8 flex items-center justify-center lg:justify-start gap-4">
+                {socialLinks.map((social, idx) => (
+                  <motion.a
+                    key={idx}
+                    href={social.href}
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.9 }}
+                    className={`p-3 bg-zinc-950 border border-zinc-800 rounded-xl transition-all ${social.color}`}
                   >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    <social.icon className="w-5 h-5" />
+                  </motion.a>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* Bottom Legal */}
-        <div className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <p className="text-muted-foreground text-xs font-sans tracking-wide">
-            &copy; 2026{" "}
-            <span className="text-foreground font-bold">DIARY BOUTIQUE</span>.
-            Conçu avec excellence.
+        {/* Bottom Bar */}
+        <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-[11px] font-bold uppercase tracking-widest">
+          <p className="text-zinc-600">
+            &copy; {currentYear}{" "}
+            <span className="text-zinc-400">DIARY BOUTIQUE</span>. CONÇU AVEC
+            PASSION.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-[10px] uppercase tracking-widest font-bold">
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
+          <div className="flex flex-wrap justify-center gap-8">
+            <Link href="#" className="hover:text-white transition-colors">
               Confidentialité
             </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Sécurité
-            </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Conditions
-            </Link>
+          </div>
+
+          <div className="flex flex-wrap justify-center md:justify-end gap-3 text-[9px] font-bold grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#fcd34d] shadow-[0_0_8px_#fcd34d]" />{" "}
+              MVOLA
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#ef4444] shadow-[0_0_8px_#ef4444]" />{" "}
+              AIRTEL
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f97316] shadow-[0_0_8px_#f97316]" />{" "}
+              ORANGE
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_#60a5fa]" />{" "}
+              BANCAIRE
+            </span>
           </div>
         </div>
       </div>

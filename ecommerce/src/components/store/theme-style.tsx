@@ -204,6 +204,11 @@ export function ThemeStyle({ theme }: { theme: StoreTheme }) {
         /* Primary buttons with gradient */
         .bg-primary, .btn-primary {
           background: var(--primary-gradient);
+          color: white !important;
+        }
+
+        .btn-primary:hover {
+          color: white !important;
         }
 
         .bg-secondary, .btn-secondary {
@@ -214,6 +219,11 @@ export function ThemeStyle({ theme }: { theme: StoreTheme }) {
         .text-primary { color: var(--store-primary); }
         .text-secondary { color: var(--store-secondary); }
         .text-accent { color: var(--store-accent); }
+
+        /* Fix for outline buttons: force white text on hover when background becomes primary */
+        .text-primary.hover\:bg-primary:hover {
+          color: white !important;
+        }
 
 
         /* ===== NEOBRUTALISM SPECIFIC ===== */
