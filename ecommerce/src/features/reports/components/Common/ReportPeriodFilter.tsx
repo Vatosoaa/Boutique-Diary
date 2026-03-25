@@ -57,7 +57,7 @@ export function ReportPeriodFilter({
       <Calendar className="w-4 h-4 text-gray-500" />
       <Select
         defaultValue={defaultPeriod}
-        onValueChange={(v) => handleValueChange(v as Period)}
+        onValueChange={v => handleValueChange(v as Period)}
       >
         <SelectTrigger className="w-[180px] bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
           <SelectValue placeholder="Sélectionner une période" />

@@ -67,7 +67,7 @@ export async function PATCH(
       `[CustomerOrderPATCH] Updating order ${id} to status: ${status}`,
     );
 
-    const updatedOrder = await prisma.$transaction(async (tx) => {
+    const updatedOrder = await prisma.$transaction(async tx => {
       const updatedOrderData = await tx.order.update({
         where: { id },
         data: { status },
@@ -75,6 +75,41 @@ export async function PATCH(
       console.log(
         `[CustomerOrderPATCH] Order updated, stockReduced: ${updatedOrderData.stockReduced}`,
       );
+
+      // Map Order status to PaymentTransaction status
+      let transactionStatus: string | null = null;
+      if (status === "COMPLETED") {
+        transactionStatus = "SUCCESS";
+      } else if (status === "CANCELLED") {
+        transactionStatus = "CANCELLED";
+      }
+
+      if (transactionStatus) {
+        await tx.paymentTransaction.updateMany({
+          where: { orderId: id },
+          data: { status: transactionStatus },
+        });
+
+        // Notify admins via SSE
+        const { notificationManager } =
+          await import("@/lib/notification-manager");
+        notificationManager.notifyAdmins({
+          type: "TRANSACTION_UPDATE",
+          orderId: id,
+          status: transactionStatus,
+        });
+
+        // Send a notification to admins
+        await notificationManager.notifyAllAdmins({
+          title:
+            status === "CANCELLED"
+              ? "Commande Annulée par Client"
+              : "Commande Confirmée par Client",
+          message: `La commande #${updatedOrderData.reference} a été ${status === "CANCELLED" ? "annulée" : "confirmée"} par le client.`,
+          type: status === "CANCELLED" ? "WARNING" : "SUCCESS",
+          link: `CMD_ACTION:${updatedOrderData.id}`,
+        });
+      }
 
       if (status === "COMPLETED") {
         console.log(`[CustomerOrderPATCH] Calling reduceOrderStock for ${id}`);

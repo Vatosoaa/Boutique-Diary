@@ -24,9 +24,9 @@ export function ReportExportButton({
     // Créer les lignes CSV
     const csvRows = [
       headers.join(","), // En-tête
-      ...data.map((row) =>
+      ...data.map(row =>
         headers
-          .map((header) => {
+          .map(header => {
             const val = row[header];
             // Gérer les virgules et les guillemets dans les valeurs
             const stringVal =

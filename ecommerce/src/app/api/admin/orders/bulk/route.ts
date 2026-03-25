@@ -34,6 +34,35 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    // Update associated transactions
+    let transactionStatus: string | null = null;
+    if (status === "DELIVERED" || status === "COMPLETED") {
+      transactionStatus = "SUCCESS";
+    } else if (status === "CANCELLED") {
+      transactionStatus = "CANCELLED";
+    }
+
+    if (transactionStatus) {
+      await prisma.paymentTransaction.updateMany({
+        where: { orderId: { in: ids } },
+        data: { status: transactionStatus },
+      });
+
+      // Notify admins via SSE
+      const { notificationManager } = await import("@/lib/notification-manager");
+      notificationManager.notifyAdmins({
+        type: "TRANSACTION_BULK_UPDATE",
+      });
+
+      // Send a single notification for the bulk update
+      await notificationManager.notifyAllAdmins({
+        title: "Mise à jour groupée",
+        message: `${ids.length} commandes ont été mises à jour avec le statut ${status}.`,
+        type: "INFO",
+        link: "/admin/orders",
+      });
+      }
+
     return NextResponse.json({
       success: true,
       count: ids.length,
