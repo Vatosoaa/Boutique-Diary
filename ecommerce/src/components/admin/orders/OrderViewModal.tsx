@@ -18,7 +18,12 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -152,7 +157,7 @@ export function OrderFloatingPanel({
 }) {
   const [order, setOrder] = useState<OrderDetails | null>(initialOrder);
   useEffect(() => {
-    if (open && initialOrder?.id) {
+    if (open && initialOrder?.id && (!initialOrder.items || initialOrder.items.length === 0)) {
       fetch(`/api/admin/orders/${initialOrder.id}`)
         .then(res => res.json())
         .then(data => {
@@ -176,8 +181,10 @@ export function OrderFloatingPanel({
           }
         })
         .catch(console.error);
+    } else if (open && initialOrder) {
+      setOrder(initialOrder);
     }
-  }, [open, initialOrder?.id]);
+  }, [open, initialOrder]);
 
   const handleStatusChange = async (newStatus: string) => {
     if (!order) return;
@@ -214,39 +221,29 @@ export function OrderFloatingPanel({
     }).format(amount);
 
   return (
-    <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent
-        side="right"
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent
         className="
-          w-full h-full 
-          sm:w-[480px] sm:h-[calc(100vh-2rem)]
-          sm:mt-4 sm:mb-4 sm:mr-4 sm:rounded-3xl 
-          border-l sm:border border-border/40 shadow-2xl 
+          max-w-[480px] max-h-[85vh] p-0 flex flex-col overflow-hidden
+          sm:rounded-3xl border border-border/40 shadow-2xl
           bg-gray-100/95 dark:bg-gray-800/95 backdrop-blur-xl
-          p-0 flex flex-col overflow-hidden
-          data-[state=closed]:slide-out-to-right
-          data-[state=open]:slide-in-from-right
         "
       >
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border/40 bg-secondary/10">
-          <SheetTitle className="sr-only">
+        <DialogHeader className="p-4 sm:p-6 border-b border-border/40 bg-secondary/10 shrink-0 text-left">
+          <DialogTitle className="sr-only">
             Commande #{order.reference}
-          </SheetTitle>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight">
-                Commande
-              </h2>
-              <span className="text-muted-foreground font-mono text-sm">
-                #{order.reference}
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Passée le{" "}
-              {format(orderDate, "dd MMM yyyy à HH:mm", { locale: fr })}
-            </p>
+          </DialogTitle>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight">
+              Commande
+            </h2>
+            <span className="text-muted-foreground font-mono text-sm">
+              #{order.reference}
+            </span>
           </div>
-        </div>
+            Passée le {format(orderDate, "dd MMM yyyy à HH:mm", { locale: fr })}
+          </p>
+        </DialogHeader>
 
         <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6">
           <div className="space-y-6 sm:space-y-8">
@@ -434,7 +431,7 @@ export function OrderFloatingPanel({
             </span>
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
