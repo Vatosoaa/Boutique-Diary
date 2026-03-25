@@ -3,6 +3,7 @@ import {
   Tool,
   SchemaType,
   Content,
+  Part,
 } from "@google/generative-ai";
 import { prisma } from "@/lib/prisma";
 
@@ -14,13 +15,15 @@ const clientTools: Tool[] = [
     functionDeclarations: [
       {
         name: "search_products",
-        description: "Rechercher des produits par nom, catégorie ou description.",
+        description:
+          "Rechercher des produits par nom, catégorie ou description.",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {
             query: {
               type: SchemaType.STRING,
-              description: "Le terme de recherche (ex: 'robe', 'homme', 'nouveautés').",
+              description:
+                "Le terme de recherche (ex: 'robe', 'homme', 'nouveautés').",
             },
             category: {
               type: SchemaType.STRING,
@@ -76,7 +79,8 @@ const clientTools: Tool[] = [
       },
       {
         name: "search_blog_posts",
-        description: "Rechercher des articles de blog sur la mode ou des conseils.",
+        description:
+          "Rechercher des articles de blog sur la mode ou des conseils.",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {
@@ -90,7 +94,8 @@ const clientTools: Tool[] = [
       },
       {
         name: "get_shop_info",
-        description: "Obtenir des informations sur la boutique (contact, livraison, horaires).",
+        description:
+          "Obtenir des informations sur la boutique (contact, livraison, horaires).",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {},
@@ -116,15 +121,18 @@ export class ClientAssistantService {
       Répondez en français.`,
     });
 
-    const cleanedHistory: any[] = (history || []).map((h) => {
+    const cleanedHistory: Content[] = (history || []).map(h => {
       const isFunctionRole = h.role === "function";
       return {
-        role: h.role === "system" ? "user" : (h.role as any),
-        parts: h.parts.map((p: any) => {
-          if (p.functionCall) return { functionCall: p.functionCall };
-          if (p.functionResponse)
-            return { functionResponse: p.functionResponse };
-          return { text: p.text || (isFunctionRole ? "" : " ") };
+        role: (h.role === "system" ? "user" : h.role) as "user" | "model",
+        parts: h.parts.map((p: Part) => {
+          if ("functionCall" in p)
+            return { functionCall: p.functionCall } as unknown as Part;
+          if ("functionResponse" in p)
+            return { functionResponse: p.functionResponse } as unknown as Part;
+          return {
+            text: ("text" in p ? p.text : isFunctionRole ? "" : " ") as string,
+          };
         }),
       };
     });
@@ -142,11 +150,16 @@ export class ClientAssistantService {
     });
 
     // Helper for retry
-    const withRetry = async (fn: () => Promise<any>, retries = 3, delay = 2000): Promise<any> => {
+    const withRetry = async <T>(
+      fn: () => Promise<T>,
+      retries = 3,
+      delay = 2000,
+    ): Promise<T> => {
       try {
         return await fn();
-      } catch (error: any) {
-        if (error.status === 429 && retries > 0) {
+      } catch (error: unknown) {
+        const err = error as { status?: number };
+        if (err.status === 429 && retries > 0) {
           console.warn(`[ClientAI] Rate limited. Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
           return withRetry(fn, retries - 1, delay * 2);
@@ -156,38 +169,47 @@ export class ClientAssistantService {
     };
 
     try {
-      let result = await withRetry(() => chat.sendMessage(message));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let result: any = await withRetry(() => chat.sendMessage(message));
       let response = result.response;
 
       const calls = response.functionCalls();
       if (calls && calls.length > 0) {
-        const toolResponses = [];
+        const toolResponses: {
+          functionResponse: { name: string; response: unknown };
+        }[] = [];
 
         for (const call of calls) {
           const { name, args } = call;
-          const toolArgs = args as Record<string, any>;
+          const toolArgs = args as Record<string, unknown>;
           console.log(`[ClientAI] Calling tool: ${name}`, toolArgs);
 
           let toolResult;
           switch (name) {
             case "search_products":
               toolResult = await this.searchProducts(
-                toolArgs.query,
-                toolArgs.category,
-                toolArgs.limit || 5
+                toolArgs.query as string,
+                toolArgs.category as string,
+                (toolArgs.limit as number) || 5,
               );
               break;
             case "get_product_details":
-              toolResult = await this.getProductDetails(Number(toolArgs.productId));
+              toolResult = await this.getProductDetails(
+                Number(toolArgs.productId),
+              );
               break;
             case "get_new_arrivals":
-              toolResult = await this.getNewArrivals(toolArgs.limit || 4);
+              toolResult = await this.getNewArrivals(
+                (toolArgs.limit as number) || 4,
+              );
               break;
             case "get_promotions":
-              toolResult = await this.getPromotions(toolArgs.limit || 4);
+              toolResult = await this.getPromotions(
+                (toolArgs.limit as number) || 4,
+              );
               break;
             case "search_blog_posts":
-              toolResult = await this.searchBlogPosts(toolArgs.query);
+              toolResult = await this.searchBlogPosts(toolArgs.query as string);
               break;
             case "get_shop_info":
               toolResult = await this.getShopInfo();
@@ -204,7 +226,8 @@ export class ClientAssistantService {
           });
         }
 
-        result = await withRetry(() => chat.sendMessage(toolResponses));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        result = await withRetry(() => chat.sendMessage(toolResponses as any));
         response = result.response;
       }
 
@@ -221,8 +244,12 @@ export class ClientAssistantService {
 
   // --- Tool Implementations ---
 
-  private static async searchProducts(query: string, categoryName?: string, limit: number = 5) {
-    const where: any = {
+  private static async searchProducts(
+    query: string,
+    categoryName?: string,
+    limit: number = 5,
+  ) {
+    const where: import("@prisma/client").Prisma.ProductWhereInput = {
       status: "PUBLISHED",
       deletedAt: null,
       OR: [
@@ -303,14 +330,15 @@ export class ClientAssistantService {
   private static async getShopInfo() {
     const settings = await prisma.siteSettings.findMany();
     const info: Record<string, string> = {};
-    settings.forEach((s) => {
+    settings.forEach(s => {
       info[s.key] = s.value;
     });
     return {
       name: "Boutique Diary",
       location: "Antananarivo, Madagascar",
       contact: info,
-      delivery: "Livraison partout à Madagascar via colissimo ou transporteurs locaux.",
+      delivery:
+        "Livraison partout à Madagascar via colissimo ou transporteurs locaux.",
     };
   }
 }
