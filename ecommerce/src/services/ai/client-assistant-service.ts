@@ -3,9 +3,9 @@ import {
   Tool,
   SchemaType,
   Content,
-  Part,
 } from "@google/generative-ai";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -124,15 +124,15 @@ export class ClientAssistantService {
     const cleanedHistory: Content[] = (history || []).map(h => {
       const isFunctionRole = h.role === "function";
       return {
-        role: (h.role === "system" ? "user" : h.role) as "user" | "model",
-        parts: h.parts.map((p: Part) => {
-          if ("functionCall" in p)
-            return { functionCall: p.functionCall } as unknown as Part;
-          if ("functionResponse" in p)
-            return { functionResponse: p.functionResponse } as unknown as Part;
-          return {
-            text: ("text" in p ? p.text : isFunctionRole ? "" : " ") as string,
-          };
+        role:
+          h.role === "system"
+            ? "user"
+            : (h.role as "user" | "model" | "function"),
+        parts: h.parts.map(p => {
+          if (p.functionCall) return { functionCall: p.functionCall };
+          if (p.functionResponse)
+            return { functionResponse: p.functionResponse };
+          return { text: p.text || (isFunctionRole ? "" : " ") };
         }),
       };
     });
@@ -169,15 +169,14 @@ export class ClientAssistantService {
     };
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let result: any = await withRetry(() => chat.sendMessage(message));
+      let result = await withRetry(() => chat.sendMessage(message));
       let response = result.response;
 
       const calls = response.functionCalls();
       if (calls && calls.length > 0) {
-        const toolResponses: {
-          functionResponse: { name: string; response: unknown };
-        }[] = [];
+        const toolResponses: Array<{
+          functionResponse: { name: string; response: object };
+        }> = [];
 
         for (const call of calls) {
           const { name, args } = call;
@@ -189,7 +188,7 @@ export class ClientAssistantService {
             case "search_products":
               toolResult = await this.searchProducts(
                 toolArgs.query as string,
-                toolArgs.category as string,
+                toolArgs.category as string | undefined,
                 (toolArgs.limit as number) || 5,
               );
               break;
@@ -221,13 +220,12 @@ export class ClientAssistantService {
           toolResponses.push({
             functionResponse: {
               name,
-              response: toolResult,
+              response: toolResult as object,
             },
           });
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        result = await withRetry(() => chat.sendMessage(toolResponses as any));
+        result = await withRetry(() => chat.sendMessage(toolResponses));
         response = result.response;
       }
 
@@ -249,7 +247,7 @@ export class ClientAssistantService {
     categoryName?: string,
     limit: number = 5,
   ) {
-    const where: import("@prisma/client").Prisma.ProductWhereInput = {
+    const where: Prisma.ProductWhereInput = {
       status: "PUBLISHED",
       deletedAt: null,
       OR: [
