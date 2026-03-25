@@ -22,10 +22,7 @@ class NotificationManager {
   private subscribers = new Map<string | null, Set<SubscriberCallback>>();
 
   /** Subscribe to real-time events. Returns an unsubscribe function. */
-  subscribe(
-    userId: string | null,
-    callback: SubscriberCallback,
-  ): () => void {
+  subscribe(userId: string | null, callback: SubscriberCallback): () => void {
     if (!this.subscribers.has(userId)) {
       this.subscribers.set(userId, new Set());
     }
@@ -41,7 +38,7 @@ class NotificationManager {
 
   /** Broadcast data to all subscribers of a given userId (or null for admins). */
   private broadcast(userId: string | null, data: unknown): void {
-    this.subscribers.get(userId)?.forEach((cb) => cb(data));
+    this.subscribers.get(userId)?.forEach(cb => cb(data));
   }
 
   /** Notify all admin SSE subscribers (lightweight, no DB write). */
@@ -56,8 +53,8 @@ class NotificationManager {
 
   /** Notify ALL subscribers – admins + every connected user. */
   notifyAll(data: unknown): void {
-    this.subscribers.forEach((callbacks) => {
-      callbacks.forEach((cb) => cb(data));
+    this.subscribers.forEach(callbacks => {
+      callbacks.forEach(cb => cb(data));
     });
   }
 
@@ -72,7 +69,7 @@ class NotificationManager {
       });
 
       const notifications = await Promise.all(
-        admins.map((admin) =>
+        admins.map(admin =>
           prisma.notification.create({
             data: {
               title: payload.title,
@@ -86,7 +83,7 @@ class NotificationManager {
       );
 
       // Push each created notification to admin SSE subscribers
-      notifications.forEach((n) => this.broadcast(null, n));
+      notifications.forEach(n => this.broadcast(null, n));
     } catch (error) {
       console.error("NotificationManager.notifyAllAdmins failed:", error);
     }
@@ -99,8 +96,7 @@ const globalForNotifications = globalThis as unknown as {
 };
 
 export const notificationManager =
-  globalForNotifications.notificationManager ??
-  new NotificationManager();
+  globalForNotifications.notificationManager ?? new NotificationManager();
 
 if (process.env.NODE_ENV !== "production") {
   globalForNotifications.notificationManager = notificationManager;

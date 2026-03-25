@@ -176,13 +176,18 @@ export default function NotificationSidebar({
                           {notification.title}
                         </h3>
                         <span className="text-[10px] text-muted-foreground font-medium whitespace-nowrap pt-1">
-                          {formatDistanceToNow(
-                            new Date(notification.createdAt),
-                            {
-                              addSuffix: true,
-                              locale: fr,
-                            },
-                          )}
+                          {(() => {
+                            const d = notification.createdAt
+                              ? new Date(notification.createdAt)
+                              : new Date();
+                            return formatDistanceToNow(
+                              isNaN(d.getTime()) ? new Date() : d,
+                              {
+                                addSuffix: true,
+                                locale: fr,
+                              },
+                            );
+                          })()}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
