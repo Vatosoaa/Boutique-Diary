@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Validation Schema
 const createPromoSchema = {
   codeName: (name: string) =>
@@ -26,6 +29,16 @@ export async function GET() {
         ownerId: null, // Only show general shop codes
         OR: [{ endDate: null }, { endDate: { gte: new Date() } }],
       },
+      select: {
+        id: true,
+        code: true,
+        type: true,
+        value: true,
+        minOrderAmount: true,
+        endDate: true,
+        costPoints: true,
+        costMoney: true,
+      },
       orderBy: { costPoints: "asc" },
     });
 
@@ -44,22 +57,25 @@ export async function GET() {
       select: { points: true },
     });
 
+    const available = shopCodes.map(promo => ({
+      id: promo.id,
+      code: promo.code,
+      type: promo.type,
+      value: promo.value,
+      minOrderAmount: promo.minOrderAmount,
+      expiresAt: promo.endDate,
+      purchasePrice: promo.costPoints || 0,
+      moneyPrice: promo.costMoney || 15000,
+      description:
+        promo.type === "PERCENTAGE"
+          ? `${promo.value}% de réduction sur votre commande`
+          : `${promo.value.toLocaleString("fr-FR")} Ar de réduction`,
+    }));
+
     return NextResponse.json({
       points: dbUser?.points || 0,
-      available: shopCodes.map((promo) => ({
-        id: promo.id,
-        code: promo.code,
-        type: promo.type,
-        value: promo.value,
-        minOrderAmount: promo.minOrderAmount,
-        expiresAt: promo.endDate,
-        purchasePrice: promo.costPoints || 0,
-        description:
-          promo.type === "PERCENTAGE"
-            ? `${promo.value}% de réduction sur votre commande`
-            : `${promo.value.toLocaleString("fr-FR")} Ar de réduction`,
-      })),
-      owned: myCodes.map((promo) => ({
+      available,
+      owned: myCodes.map(promo => ({
         id: promo.id,
         code: promo.code,
         type: promo.type,
@@ -67,6 +83,7 @@ export async function GET() {
         minOrderAmount: promo.minOrderAmount,
         expiresAt: promo.endDate,
         status: promo.status,
+        moneyPrice: promo.costMoney || 15000,
         description:
           promo.type === "PERCENTAGE"
             ? `${promo.value}% de réduction`
@@ -131,6 +148,7 @@ export async function POST(request: Request) {
         endDate: endDate ? new Date(endDate) : null,
         ownerId: user.userId,
         status: "PENDING",
+        costMoney: 15000,
         isActive: false, // Inactive until payment
       },
     });

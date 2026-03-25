@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     // 3. Process Transaction
     const newCodeString = `MY-${templateCode.code}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async tx => {
       // Deduct points
       const updatedUser = await tx.user.update({
         where: { id: user.id },
