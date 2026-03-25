@@ -339,7 +339,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 {/* Color variants */}
                 {post.product.images.length > 1 && (
                   <div className="flex gap-2">
-                    {post.product.images.slice(0, 4).map((img) => (
+                    {post.product.images.slice(0, 4).map(img => (
                       <div
                         key={img.id}
                         className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-primary transition-colors cursor-pointer"

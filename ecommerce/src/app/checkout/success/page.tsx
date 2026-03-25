@@ -154,7 +154,7 @@ export default function CheckoutSuccessPage() {
               </div>
 
               <div className="space-y-6">
-                {order?.items.map((item) => (
+                {order?.items.map(item => (
                   <div key={item.id} className="flex gap-4 group">
                     <div className="w-20 h-24 bg-muted/30 rounded-2xl overflow-hidden shrink-0 border border-border group-hover:border-primary/20 transition-colors">
                       {item.productImage ? (

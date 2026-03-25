@@ -19,7 +19,7 @@ export function SectionsPreview({
 }: SectionsPreviewProps) {
   const sections = config || defaultSectionsConfig;
   const enabledSections = sections
-    .filter((s) => s.enabled)
+    .filter(s => s.enabled)
     .sort((a, b) => a.order - b.order);
 
   if (enabledSections.length === 0) {
@@ -62,7 +62,7 @@ export function SectionsPreview({
         return (
           <div className={`p-3 ${bg} overflow-hidden`}>
             <div className="flex gap-2">
-              {[1, 2, 3, 4].map((i) => (
+              {[1, 2, 3, 4].map(i => (
                 <div
                   key={i}
                   className="w-10 h-14 rounded-lg bg-gray-200 shrink-0 flex items-center justify-center"
@@ -124,7 +124,7 @@ export function SectionsPreview({
         return (
           <div className={`p-3 ${bg}`}>
             <div className="grid grid-cols-4 gap-2">
-              {[1, 2, 3, 4].map((i) => (
+              {[1, 2, 3, 4].map(i => (
                 <div key={i} className="bg-gray-100 rounded-lg p-1">
                   <div className="w-full aspect-square bg-gray-200 rounded mb-1" />
                   <div className="h-1 w-3/4 bg-gray-200 rounded mb-0.5" />
@@ -139,7 +139,7 @@ export function SectionsPreview({
         return (
           <div className={`p-3 ${bg}`}>
             <div className="flex gap-2">
-              {[1, 2, 3].map((i) => (
+              {[1, 2, 3].map(i => (
                 <div
                   key={i}
                   className="flex-1 bg-white rounded-lg p-2 shadow-sm border border-gray-100"

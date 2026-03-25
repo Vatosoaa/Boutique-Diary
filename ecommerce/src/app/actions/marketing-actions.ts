@@ -4,7 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { PromoCode, DiscountType } from "@/features/marketing/types";
 import { verifyToken } from "@/lib/auth";
-import { createCustomPromoSchema } from "@/features/marketing/promo-logic";
+import {
+  calculateActivationPrice,
+  createCustomPromoSchema,
+} from "@/features/marketing/promo-logic";
 
 export type ActionState = {
   success?: boolean;
@@ -45,7 +48,7 @@ export async function createCustomPromoAction(
 
   if (!validation.success) {
     const fieldErrors: Record<string, string> = {};
-    validation.error.issues.forEach((err) => {
+    validation.error.issues.forEach(err => {
       if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
     });
 
@@ -88,6 +91,11 @@ export async function createCustomPromoAction(
         endDate: endDate ? new Date(endDate) : null,
         ownerId: user.userId,
         status: "PENDING",
+        costMoney: calculateActivationPrice(
+          formData.get("duration") as string,
+          discountType as DiscountType,
+          discountValue,
+        ),
         isActive: false,
       },
     });

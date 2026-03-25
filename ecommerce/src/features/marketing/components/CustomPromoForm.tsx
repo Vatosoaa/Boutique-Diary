@@ -6,21 +6,17 @@ import {
   createCustomPromoAction,
   type ActionState,
 } from "../../../app/actions/marketing-actions";
-import {
-  calculateActivationPrice,
-  createCustomPromoSchema,
-} from "@/features/marketing/promo-logic";
+import { calculateActivationPrice } from "@/features/marketing/promo-logic";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
   Sparkles,
   Calendar,
   CreditCard,
-  RefreshCw,
   Percent,
   Banknote,
   Clock,
-  Edit2,
+  RotateCcw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -30,20 +26,14 @@ import PaymentMethods, {
 } from "@/components/checkout/PaymentMethods";
 
 interface CustomPromoFormProps {
-  onSuccess?: (promo: PromoCode) => void;
   renewPromo?: PromoCode | null;
 }
-
-const PROMO_PRICE = 15000; // 15,000 Ar
 
 /**
  * Form component for personalized promo codes with real payment.
  * @since 2026
  */
-export function CustomPromoForm({
-  onSuccess,
-  renewPromo,
-}: CustomPromoFormProps) {
+export function CustomPromoForm({ renewPromo }: CustomPromoFormProps) {
   const [state, action, isPending] = useActionState<
     ActionState | undefined,
     FormData
@@ -52,6 +42,20 @@ export function CustomPromoForm({
   const [createdPromo, setCreatedPromo] = useState<PromoCode | null>(
     renewPromo || null,
   );
+
+  // Sync renewPromo if it changes from parent
+  useEffect(() => {
+    if (renewPromo) {
+      setCreatedPromo(renewPromo);
+      setShowPayment(true);
+
+      // Auto-set form values to match the promo being renewed/paid
+      setDiscountType(renewPromo.type);
+      setDiscountValue(renewPromo.value);
+      // Duration is harder to map back perfectly but the price is the main thing.
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [renewPromo]);
 
   // Payment state
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
@@ -75,8 +79,6 @@ export function CustomPromoForm({
     new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState("");
-  const [isManualPrice, setIsManualPrice] = useState(false);
-  const [manualPrice, setManualPrice] = useState<number>(PROMO_PRICE);
 
   // Auto-calculate endDate
   useEffect(() => {
@@ -98,7 +100,7 @@ export function CustomPromoForm({
     return calculateActivationPrice(duration, discountType, discountValue);
   }, [duration, discountType, discountValue]);
 
-  const finalPrice = isManualPrice ? manualPrice : calculatedPrice;
+  const finalPrice = calculatedPrice;
 
   // Robust handling of server action state
   useEffect(() => {
@@ -271,7 +273,7 @@ export function CustomPromoForm({
                       min={discountType === "PERCENTAGE" ? 2 : 2000}
                       max={discountType === "PERCENTAGE" ? 20 : 100000}
                       value={discountValue}
-                      onChange={(e) => {
+                      onChange={e => {
                         const val = Number(e.target.value);
                         // Immediate senior clamping for UX
                         if (discountType === "PERCENTAGE" && val > 20) {
@@ -320,7 +322,7 @@ export function CustomPromoForm({
                   </label>
                   <select
                     value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
+                    onChange={e => setDuration(e.target.value)}
                     className="w-full px-4 py-3 bg-secondary/5 rounded-2xl border border-border focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-medium appearance-none cursor-pointer"
                   >
                     <option value="1_WEEK">1 Semaine</option>
@@ -339,7 +341,7 @@ export function CustomPromoForm({
                     name="startDate"
                     type="date"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    onChange={e => setStartDate(e.target.value)}
                     className="w-full px-4 py-3 bg-secondary/5 rounded-2xl border border-border focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-medium"
                   />
                 </div>
@@ -371,64 +373,53 @@ export function CustomPromoForm({
                       réduction.
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsManualPrice(!isManualPrice)}
-                    className={cn(
-                      "p-2 rounded-xl transition-all",
-                      isManualPrice
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-muted-foreground hover:bg-secondary/80",
-                    )}
-                    title="Modifier manuellement le prix"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
                 </div>
-
                 <div className="relative">
-                  {isManualPrice ? (
-                    <div className="animate-in slide-in-from-top-2 duration-200">
-                      <input
-                        type="number"
-                        value={manualPrice}
-                        onChange={(e) => setManualPrice(Number(e.target.value))}
-                        className="w-full px-6 py-4 bg-background rounded-2xl border-2 border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-black text-2xl text-primary"
-                      />
-                      <span className="absolute right-6 top-4.5 font-black text-2xl text-primary/40">
-                        Ar
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="w-full px-6 py-4 bg-background/50 rounded-2xl border border-primary/20 flex items-center justify-between group transition-all">
-                      <span className="text-muted-foreground font-medium capitalize">
-                        {duration.replace("_", " ").toLowerCase()}
-                      </span>
-                      <span className="font-black text-3xl text-primary">
-                        {calculatedPrice.toLocaleString("fr-FR")} Ar
-                      </span>
-                    </div>
-                  )}
+                  <div className="group flex w-full items-center justify-between rounded-2xl border border-primary/20 bg-background/50 px-6 py-4 transition-all">
+                    <span className="font-medium capitalize text-muted-foreground">
+                      {duration.replace("_", " ").toLowerCase()}
+                    </span>
+                    <span className="text-3xl font-black text-primary">
+                      {calculatedPrice.toLocaleString("fr-FR")} Ar
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="w-full mt-2 py-6 sm:py-8 rounded-[20px] sm:rounded-[24px] font-black text-lg sm:text-xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-                    Traitement...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-6 h-6 mr-3" />
-                    {renewPromo ? "Renouveler" : "Créer et payer mon code"}
-                  </>
-                )}
-              </Button>
+              <div className="flex justify-end items-center gap-4 mt-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setDiscountType("PERCENTAGE");
+                    setDiscountValue(20);
+                    setDuration("1_MONTH");
+                    setStartDate(new Date().toISOString().split("T")[0]);
+                  }}
+                  className="py-6 px-6 rounded-[20px] font-bold text-muted-foreground hover:bg-secondary/20"
+                >
+                  <RotateCcw className="w-5 h-5 mr-2" />
+                  Réinitialiser
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="py-6 px-10 rounded-[20px] font-black text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                      Traitement...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-6 h-6 mr-3" />
+                      {renewPromo ? "Renouveler" : "Créer et payer mon code"}
+                    </>
+                  )}
+                </Button>
+              </div>
             </form>
           </>
         ) : (

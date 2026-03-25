@@ -51,6 +51,24 @@ export default function CustomerOrders() {
 
   useEffect(() => {
     fetchOrders();
+
+    // SSE Setup
+    const eventSource = new EventSource("/api/notifications/stream?role=user");
+    eventSource.onmessage = (event) => {
+      try {
+        if (event.data.startsWith("{")) {
+          const data = JSON.parse(event.data);
+          // A new notification for this user implies a potential order update
+          if (data.type === "NEW_NOTIFICATION") {
+            fetchOrders();
+          }
+        }
+      } catch (e) {
+        // Ignore heartbeat
+      }
+    };
+
+    return () => eventSource.close();
   }, []);
 
   const [downloadingRef, setDownloadingRef] = useState<string | null>(null);
@@ -119,6 +137,17 @@ export default function CustomerOrders() {
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    const s = status.toUpperCase();
+    if (s === "PENDING") return "En attente";
+    if (s === "PROCESSING") return "En cours";
+    if (s === "SHIPPED") return "Expédiée";
+    if (s === "DELIVERED") return "Livrée";
+    if (s === "CANCELLED") return "Annulée";
+    if (s === "COMPLETED") return "Terminée";
+    return status;
+  };
+
   const getStatusIcon = (status: string) => {
     const s = status.toUpperCase();
     if (s === "DELIVERED" || s === "COMPLETED")
@@ -168,7 +197,7 @@ export default function CustomerOrders() {
             <Loader2 className="w-8 h-8 animate-spin" />
           </div>
         ) : orders.length > 0 ? (
-          orders.map((order) => (
+          orders.map(order => (
             <div
               key={order.id}
               className="dark:border-gray-700/50 border border-border rounded-xl overflow-hidden"
@@ -191,7 +220,7 @@ export default function CustomerOrders() {
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClass(order.status)}`}
                 >
-                  {order.status}
+                  {getStatusLabel(order.status)}
                 </span>
               </div>
 
@@ -298,7 +327,7 @@ export default function CustomerOrders() {
 
       <AlertDialog
         open={!!actionOrder}
-        onOpenChange={(open) => !open && setActionOrder(null)}
+        onOpenChange={open => !open && setActionOrder(null)}
       >
         <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-border">
           <AlertDialogHeader>

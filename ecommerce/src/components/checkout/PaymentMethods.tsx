@@ -128,7 +128,7 @@ function MobilePaymentForm({
           <input
             type="text"
             value={name}
-            onChange={(e) => onNameChange(e.target.value)}
+            onChange={e => onNameChange(e.target.value)}
             placeholder="Ex: RAKOTO Jean"
             className="w-full px-4 py-3 rounded-xl border border-border bg-card focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/50 text-foreground"
           />
@@ -141,7 +141,7 @@ function MobilePaymentForm({
           <input
             type="tel"
             value={phone}
-            onChange={(e) => onPhoneChange(e.target.value)}
+            onChange={e => onPhoneChange(e.target.value)}
             placeholder={phonePlaceholder}
             className="w-full px-4 py-3 rounded-xl border border-border bg-card focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/50 text-foreground"
           />

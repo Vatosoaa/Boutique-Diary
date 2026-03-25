@@ -26,6 +26,23 @@ export function usePromoCodes() {
 
   useEffect(() => {
     fetchPromoCodes();
+
+    // SSE Setup
+    const eventSource = new EventSource("/api/notifications/stream?role=admin");
+    eventSource.onmessage = (event) => {
+      try {
+        if (event.data.startsWith("{")) {
+          const data = JSON.parse(event.data);
+          if (data.type === "PROMO_UPDATE") {
+            fetchPromoCodes();
+          }
+        }
+      } catch (e) {
+        // Ignore heartbeat
+      }
+    };
+
+    return () => eventSource.close();
   }, [fetchPromoCodes]);
 
   const createPromoCode = async (data: Partial<PromoCode>) => {
@@ -84,7 +101,7 @@ export function usePromoCodes() {
 
       if (!res.ok) throw new Error("Erreur de suppression");
 
-      setPromoCodes((prev) => prev.filter((code) => code.id !== id));
+      setPromoCodes(prev => prev.filter(code => code.id !== id));
       toast.success("Code promo supprimé");
       return true;
     } catch (err: unknown) {

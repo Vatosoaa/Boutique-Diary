@@ -154,8 +154,8 @@ export function OrderFloatingPanel({
   useEffect(() => {
     if (open && initialOrder?.id) {
       fetch(`/api/admin/orders/${initialOrder.id}`)
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           if (data.id) {
             setOrder({
               ...data,
@@ -316,7 +316,7 @@ export function OrderFloatingPanel({
                       <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary text-sm font-bold">
                         {order.customer.name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map(n => n[0])
                           .join("")
                           .toUpperCase()
                           .slice(0, 2)}
@@ -364,7 +364,7 @@ export function OrderFloatingPanel({
                 Panier ({order.items.length})
               </h3>
               <div className="space-y-3">
-                {order.items.map((item) => (
+                {order.items.map(item => (
                   <div
                     key={item.id}
                     className="flex gap-4 p-3 rounded-2xl hover:bg-secondary/30 transition-colors border border-transparent hover:border-border/40"

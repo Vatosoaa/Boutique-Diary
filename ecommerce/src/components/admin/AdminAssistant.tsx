@@ -47,8 +47,11 @@ export function AdminAssistant() {
     const handleClickOutside = (event: MouseEvent) => {
       if (!isOpen) return;
 
-      const isOutsideChat = chatRef.current && !chatRef.current.contains(event.target as Node);
-      const isOutsideToggle = !toggleButtonRef.current || !toggleButtonRef.current.contains(event.target as Node);
+      const isOutsideChat =
+        chatRef.current && !chatRef.current.contains(event.target as Node);
+      const isOutsideToggle =
+        !toggleButtonRef.current ||
+        !toggleButtonRef.current.contains(event.target as Node);
 
       if (isOutsideChat && isOutsideToggle) {
         setIsOpen(false);
@@ -104,7 +107,7 @@ export function AdminAssistant() {
       parts: [{ text: messageToSend }],
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
@@ -127,7 +130,7 @@ export function AdminAssistant() {
       if (data.history) {
         setMessages(data.history);
       } else {
-        setMessages((prev) => [
+        setMessages(prev => [
           ...prev,
           {
             role: "model",
@@ -148,25 +151,29 @@ export function AdminAssistant() {
       label: "Ventes 7j",
       icon: TrendingUp,
       prompt: "Donne-moi un rapport des ventes des 7 derniers jours.",
-      color: "bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-900/50 dark:text-blue-400",
+      color:
+        "bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-900/50 dark:text-blue-400",
     },
     {
       label: "Stock Faible",
       icon: AlertTriangle,
       prompt: "Quels sont les produits en stock faible ?",
-      color: "bg-amber-500/10 text-amber-600 border-amber-200 dark:border-amber-900/50 dark:text-amber-400",
+      color:
+        "bg-amber-500/10 text-amber-600 border-amber-200 dark:border-amber-900/50 dark:text-amber-400",
     },
     {
       label: "Top Ventes",
       icon: Package,
       prompt: "Quels sont mes meilleurs produits ?",
-      color: "bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:border-emerald-900/50 dark:text-emerald-400",
+      color:
+        "bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:border-emerald-900/50 dark:text-emerald-400",
     },
     {
       label: "Commandes",
       icon: History,
       prompt: "Montre-moi les dernières commandes.",
-      color: "bg-purple-500/10 text-purple-600 border-purple-200 dark:border-purple-900/50 dark:text-purple-400",
+      color:
+        "bg-purple-500/10 text-purple-600 border-purple-200 dark:border-purple-900/50 dark:text-purple-400",
     },
   ];
 
@@ -227,19 +234,18 @@ export function AdminAssistant() {
 
           {/* Messages Area */}
           <CardContent className="flex-1 p-0 flex flex-col min-h-0 bg-muted/30 relative">
-            <ScrollArea
-              className="h-full w-full"
-              type="always"
-            >
+            <ScrollArea className="h-full w-full" type="always">
               <div className="px-5 py-6 space-y-6">
                 {messages
-                  .filter((msg) => msg.parts.some((p) => p.text))
+                  .filter(msg => msg.parts.some(p => p.text))
                   .map((msg, i) => (
                     <div
                       key={i}
                       className={cn(
                         "flex flex-col gap-1.5 max-w-[88%] group animate-in fade-in slide-in-from-bottom-3 duration-500",
-                        msg.role === "user" ? "ml-auto items-end" : "items-start",
+                        msg.role === "user"
+                          ? "ml-auto items-end"
+                          : "items-start",
                       )}
                     >
                       <div
@@ -254,11 +260,13 @@ export function AdminAssistant() {
                           <ReactMarkdown
                             components={{
                               code: ({ children }) => (
-                                <code className="bg-muted px-1.5 py-0.5 rounded text-[13px] font-mono border border-border/50">{children}</code>
+                                <code className="bg-muted px-1.5 py-0.5 rounded text-[13px] font-mono border border-border/50">
+                                  {children}
+                                </code>
                               ),
                             }}
                           >
-                            {msg.parts.map((part) => part.text).join("")}
+                            {msg.parts.map(part => part.text).join("")}
                           </ReactMarkdown>
                         </div>
                       </div>
@@ -304,8 +312,8 @@ export function AdminAssistant() {
             <div className="relative group">
               <input
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleSend()}
                 placeholder="Posez votre question..."
                 className="w-full bg-muted border-none rounded-2xl pl-5 pr-14 py-4 text-sm focus:ring-2 focus:ring-primary/10 focus:bg-card transition-all shadow-inner placeholder:text-muted-foreground font-medium"
               />

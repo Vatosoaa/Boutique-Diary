@@ -29,7 +29,7 @@ export default function BestCollectionBanner({
     if (!products || products.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % products.length);
+      setCurrentIndex(prev => (prev + 1) % products.length);
     }, 5000); // 5 seconds for a more relaxed feel
 
     return () => clearInterval(interval);
@@ -121,7 +121,7 @@ export default function BestCollectionBanner({
                     </Button>
 
                     <div className="flex -space-x-4">
-                      {[1, 2, 3].map((i) => (
+                      {[1, 2, 3].map(i => (
                         <div
                           key={i}
                           className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 bg-gray-200 overflow-hidden"

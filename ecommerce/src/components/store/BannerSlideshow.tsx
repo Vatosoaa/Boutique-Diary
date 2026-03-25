@@ -31,12 +31,12 @@ export default function BannerSlideshow() {
 
   const goToNext = useCallback(() => {
     if (banners.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % banners.length);
+    setCurrentIndex(prev => (prev + 1) % banners.length);
   }, [banners.length]);
 
   const goToPrev = useCallback(() => {
     if (banners.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
+    setCurrentIndex(prev => (prev - 1 + banners.length) % banners.length);
   }, [banners.length]);
 
   // Auto-slide every 5 seconds

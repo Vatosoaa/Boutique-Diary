@@ -50,7 +50,7 @@ export function HeaderEditor({ value, onChange }: HeaderEditorProps) {
           Style du Header
         </Label>
         <div className="grid grid-cols-3 gap-3">
-          {HEADER_STYLES.map((style) => {
+          {HEADER_STYLES.map(style => {
             const isActive = config.style === style.value;
             return (
               <button
@@ -97,7 +97,7 @@ export function HeaderEditor({ value, onChange }: HeaderEditorProps) {
               <Switch
                 id="sticky"
                 checked={config.sticky}
-                onCheckedChange={(checked) => update({ sticky: checked })}
+                onCheckedChange={checked => update({ sticky: checked })}
               />
             </div>
             <div className="flex items-center justify-between">
@@ -107,7 +107,7 @@ export function HeaderEditor({ value, onChange }: HeaderEditorProps) {
               <Switch
                 id="transparent"
                 checked={config.transparent}
-                onCheckedChange={(checked) => update({ transparent: checked })}
+                onCheckedChange={checked => update({ transparent: checked })}
               />
             </div>
           </CardContent>
@@ -126,12 +126,12 @@ export function HeaderEditor({ value, onChange }: HeaderEditorProps) {
                 <input
                   type="color"
                   value={config.bgColor || "#ffffff"}
-                  onChange={(e) => update({ bgColor: e.target.value })}
+                  onChange={e => update({ bgColor: e.target.value })}
                   className="w-10 h-10 rounded-lg border-2 border-gray-100 cursor-pointer"
                 />
                 <Input
                   value={config.bgColor || ""}
-                  onChange={(e) => update({ bgColor: e.target.value })}
+                  onChange={e => update({ bgColor: e.target.value })}
                   placeholder="Auto (transparent)"
                   className="flex-1 h-10"
                 />
@@ -141,7 +141,7 @@ export function HeaderEditor({ value, onChange }: HeaderEditorProps) {
               <Label className="text-sm font-medium">Position du logo</Label>
               <Select
                 value={config.logoPosition}
-                onValueChange={(val) =>
+                onValueChange={val =>
                   update({ logoPosition: val as HeaderConfig["logoPosition"] })
                 }
               >

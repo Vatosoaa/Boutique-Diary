@@ -16,13 +16,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import StarRating from "./StarRating";
 import { toast } from "sonner";
-import {
-  Search,
-  Star,
-  Package,
-  ChevronRight,
-  X,
-} from "lucide-react";
+import { Search, Star, Package, ChevronRight, X } from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/cart-store";
 
@@ -70,7 +64,7 @@ export function ReviewFormContent({ onSuccess }: { onSuccess?: () => void }) {
   const filteredProducts = useMemo(() => {
     if (!searchTerm) return products;
     return products.filter(
-      (p) =>
+      p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.category?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
@@ -150,7 +144,7 @@ export function ReviewFormContent({ onSuccess }: { onSuccess?: () => void }) {
                         placeholder="Rechercher un produit..."
                         className="w-full pl-9 pr-3 py-2.5 bg-gray-50/50 border border-gray-100 rounded-[14px] focus:outline-none focus:ring-2 focus:ring-black/5 focus:bg-background transition-all font-medium text-xs font-[family-name:var(--font-montserrat)]"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={e => setSearchTerm(e.target.value)}
                       />
                     </div>
 
@@ -160,7 +154,7 @@ export function ReviewFormContent({ onSuccess }: { onSuccess?: () => void }) {
                           Aucun produit trouvé
                         </div>
                       ) : (
-                        filteredProducts.map((product) => (
+                        filteredProducts.map(product => (
                           <button
                             key={product.id}
                             type="button"

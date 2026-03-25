@@ -71,7 +71,7 @@ const RecentPages: React.FC = () => {
               Aucune activité récente.
             </div>
           ) : (
-            pages.map((page) => (
+            pages.map(page => (
               <Link
                 key={page.id}
                 href={page.url}

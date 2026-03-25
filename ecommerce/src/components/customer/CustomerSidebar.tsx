@@ -107,67 +107,72 @@ export default function CustomerSidebar({
       {}
       <aside
         className={cn(
-          "fixed md:sticky top-0 left-0 h-screen w-64 bg-background dark:border-gray-700/50 border-r border-border p-4 z-50 transition-transform duration-300 md:translate-x-0 overflow-y-auto",
+          "fixed md:sticky top-0 left-0 h-screen w-64 bg-background dark:border-gray-700/50 border-r border-border p-4 z-50 transition-transform duration-300 md:translate-x-0 overflow-y-auto flex flex-col",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between md:hidden mb-4">
-          <span className="font-bold text-lg">Menu</span>
-          <button onClick={onClose} className="p-2 hover:bg-accent rounded-md">
-            <ChevronRight className="rotate-180" size={20} />
-          </button>
-        </div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between md:hidden mb-4">
+            <span className="font-bold text-lg">Menu</span>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-accent rounded-md"
+            >
+              <ChevronRight className="rotate-180" size={20} />
+            </button>
+          </div>
 
-        {}
-        <div className="mb-6 p-4 bg-muted rounded-xl">
-          <div className="flex items-center gap-3">
-            <Avatar className="w-12 h-12 border-2 border-background">
-              <AvatarImage src={user?.photo} />
-              <AvatarFallback className="bg-primary text-primary-foreground font-bold">
-                {user?.username?.substring(0, 2).toUpperCase() || "??"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 overflow-hidden">
-              <p className="font-semibold text-foreground truncate">
-                {user?.username || "Chargement..."}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {user?.email}
-              </p>
+          {}
+          <div className="mb-6 p-4 bg-muted rounded-xl">
+            <div className="flex items-center gap-3">
+              <Avatar className="w-12 h-12 border-2 border-background">
+                <AvatarImage src={user?.photo} />
+                <AvatarFallback className="bg-primary text-primary-foreground font-bold">
+                  {user?.username?.substring(0, 2).toUpperCase() || "??"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 overflow-hidden">
+                <p className="font-semibold text-foreground truncate">
+                  {user?.username || "Chargement..."}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.email}
+                </p>
+              </div>
             </div>
           </div>
+
+          {}
+          <nav className="space-y-1">
+            {navItems.map(item => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onClick={onClose}
+                  className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all group ${
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <item.icon size={18} />
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </div>
+                  <ChevronRight
+                    size={16}
+                    className={`opacity-0 group-hover:opacity-100 transition-opacity ${isActive ? "opacity-100" : ""}`}
+                  />
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
         {}
-        <nav className="space-y-1">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                onClick={onClose}
-                className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all group ${
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <item.icon size={18} />
-                  <span className="text-sm font-medium">{item.label}</span>
-                </div>
-                <ChevronRight
-                  size={16}
-                  className={`opacity-0 group-hover:opacity-100 transition-opacity ${isActive ? "opacity-100" : ""}`}
-                />
-              </Link>
-            );
-          })}
-        </nav>
-
-        {}
-        <div className="mt-8 pt-6 border-t border-border">
+        <div className="mt-auto pt-6 border-t border-border">
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors text-sm font-medium"

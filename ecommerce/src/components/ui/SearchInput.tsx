@@ -35,7 +35,7 @@ export function SearchInput({
       <Input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         className={cn("pl-9 pr-9", className)}
         {...props}

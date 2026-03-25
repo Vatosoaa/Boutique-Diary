@@ -93,7 +93,7 @@ export default function MessagesPage() {
   const handleDelete = async (id: number) => {
     try {
       await fetch(`/api/admin/messages?id=${id}`, { method: "DELETE" });
-      setMessages(messages.filter((m) => m.id !== id));
+      setMessages(messages.filter(m => m.id !== id));
       if (selectedMessage?.id === id) setSelectedMessage(null);
     } catch (error) {
       console.error("Error deleting message:", error);
@@ -108,7 +108,7 @@ export default function MessagesPage() {
         body: JSON.stringify({ id, status: "READ" }),
       });
       setMessages(
-        messages.map((m) => (m.id === id ? { ...m, status: "READ" } : m)),
+        messages.map(m => (m.id === id ? { ...m, status: "READ" } : m)),
       );
     } catch (error) {
       console.error("Error updating message:", error);
@@ -139,7 +139,7 @@ export default function MessagesPage() {
     );
   }
 
-  const unreadCount = messages.filter((m) => m.status === "UNREAD").length;
+  const unreadCount = messages.filter(m => m.status === "UNREAD").length;
 
   return (
     <div className="flex h-full flex-1 flex-col space-y-6 p-6">
@@ -195,7 +195,7 @@ export default function MessagesPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                messages.map((message) => (
+                messages.map(message => (
                   <TableRow
                     key={message.id}
                     onClick={() => openMessage(message)}
@@ -253,7 +253,7 @@ export default function MessagesPage() {
                     </TableCell>
                     <TableCell
                       className="text-right pr-4"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={e => e.stopPropagation()}
                     >
                       <div className="flex items-center justify-end gap-1">
                         <Button

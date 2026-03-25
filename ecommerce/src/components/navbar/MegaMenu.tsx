@@ -63,7 +63,7 @@ const MegaMenu = ({ onClose }: MegaMenuProps) => {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 min-h-[400px]">
-              {categories.map((category) => (
+              {categories.map(category => (
                 <Link
                   key={category.name}
                   href={category.href}

@@ -190,7 +190,7 @@ export function CommandPalette({
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Pages">
-              {navItems.map((item) => (
+              {navItems.map(item => (
                 <CommandItem
                   key={item.id}
                   onSelect={() => {

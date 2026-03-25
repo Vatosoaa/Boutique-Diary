@@ -19,7 +19,7 @@ export default function AdminLayout({
     useTheme();
 
   const toggleSidebar = () => {
-    setIsSidebarExpanded((prev) => !prev);
+    setIsSidebarExpanded(prev => !prev);
   };
 
   if (pathname === "/admin/login") {

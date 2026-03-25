@@ -105,7 +105,7 @@ export default function ProductsShowcase() {
             </svg>
           </button>
 
-          {products.map((product) => {
+          {products.map(product => {
             const badge = getBadge(product);
             const colors = getColorDots(product);
             const imageUrl = product.images?.[0]?.url || "/placeholder.png";
