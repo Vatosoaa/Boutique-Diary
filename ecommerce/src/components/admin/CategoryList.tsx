@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
+import Image from "next/image";
 import { Category } from "@/types/category";
 import { Product } from "@/types/admin";
 import { toast } from "sonner";
@@ -58,8 +61,15 @@ export default function CategoryList({
   onEdit,
   refreshTrigger,
 }: CategoryListProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: fetchedCategories,
+    isLoading: loading,
+    mutate,
+  } = useSWR<Category[]>("/api/categories", fetcher);
+  const categories = useMemo(
+    () => fetchedCategories || [],
+    [fetchedCategories],
+  );
   const [expandedCategoryId, setExpandedCategoryId] = useState<number | null>(
     null,
   );
@@ -120,22 +130,10 @@ export default function CategoryList({
   }, [searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
 
   useEffect(() => {
-    fetchCategories();
-  }, [refreshTrigger]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/categories");
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setLoading(false);
+    if (refreshTrigger > 0) {
+      mutate();
     }
-  };
+  }, [refreshTrigger, mutate]);
 
   const fetchProductsByCategory = async (categoryId: number) => {
     setLoadingProducts(true);
@@ -175,8 +173,8 @@ export default function CategoryList({
       });
 
       if (response.ok) {
-        setCategories(categories.filter(c => c.id !== id));
         toast.success("Catégorie supprimée avec succès");
+        mutate();
       } else {
         toast.error("Erreur lors de la suppression");
       }
@@ -508,13 +506,15 @@ export default function CategoryList({
                                   className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all cursor-pointer group/product"
                                 >
                                   {product.images && product.images[0] ? (
-                                    <img
+                                    <Image
                                       src={
                                         typeof product.images[0] === "string"
                                           ? product.images[0]
                                           : product.images[0].url
                                       }
                                       alt={product.name}
+                                      width={48}
+                                      height={48}
                                       className="w-12 h-12 object-cover rounded-lg group-hover/product:scale-105 transition-transform"
                                     />
                                   ) : (

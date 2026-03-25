@@ -1288,3 +1288,81 @@
     transform: scale(1);
   }
 }
+
+/* ============================================
+   PRINT STYLES — Order Modal
+   ============================================ */
+@media print {
+  /* 1. Hide EVERYTHING on the page */
+  body > * {
+    display: none !important;
+  }
+
+  /* 2. But show the Radix dialog portal (it renders outside the app root) */
+  body > [data-radix-portal] {
+    display: block !important;
+  }
+
+  /* 3. Remove the dark overlay */
+  [data-radix-portal] > [data-state] {
+    background: transparent !important;
+  }
+
+  /* 4. Reset the dialog content for print */
+  [role="dialog"] {
+    position: static !important;
+    transform: none !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+    backdrop-filter: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    animation: none !important;
+  }
+
+  /* 5. Make all inner containers flow naturally */
+  [role="dialog"] * {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  /* 6. Force single-column for print */
+  [role="dialog"] .grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  /* 7. Ensure images print */
+  [role="dialog"] img {
+    max-width: 60px !important;
+    height: auto !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* 8. Force color printing for status badges & summary */
+  [role="dialog"] [class*="bg-"] {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* 9. Page settings */
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* 10. Avoid breaking items across pages */
+  [role="dialog"] .rounded-3xl {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

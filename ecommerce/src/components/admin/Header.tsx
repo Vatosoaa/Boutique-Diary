@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import { UserNav } from "./UserNav";
 import { AdminPayload } from "@/lib/adminAuth";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,51 +16,63 @@ import { ThemeSettings } from "./ThemeSettings";
 import { useTheme } from "@/contexts/theme-context";
 import { CommandPalette } from "./CommandPalette";
 import { isAdmin } from "@/lib/auth-constants";
+import { useNotificationStore } from "@/lib/notification-store";
+import NotificationSidebar from "@/components/NotificationSidebar";
 
 interface HeaderProps {
   onToggleSidebar?: () => void;
 }
 
 export function Header({ onToggleSidebar }: HeaderProps) {
-  const [user, setUser] = useState<AdminPayload | null>(null);
-  const [loading, setLoading] = useState(true);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const pathname = usePathname();
   const { colorMode, setColorMode } = useTheme();
   const router = useRouter();
 
+  const {
+    data: user,
+    error,
+    isLoading: loading,
+  } = useSWR<AdminPayload>(
+    pathname === "/admin/login" ? null : "/api/admin/auth/me",
+    fetcher,
+    {
+      revalidateOnFocus: false, // User profile doesn't change often
+    },
+  );
+
+  const {
+    isOpen: isNotificationOpen,
+    setOpen: setNotificationOpen,
+    getUnreadCount,
+    fetchNotifications,
+    setupRealtime,
+    setRole,
+  } = useNotificationStore();
+
+  const unreadCount = getUnreadCount();
+
   useEffect(() => {
-    if (pathname === "/admin/login") {
-      setLoading(false);
-      return;
+    if (error?.status === 401) {
+      router.push("/admin/login");
     }
+  }, [error, router]);
 
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/admin/auth/me");
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        } else if (response.status === 401) {
-          router.push("/admin/login");
-          return;
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [pathname, router]);
+  useEffect(() => {
+    if (user) {
+      setRole("admin");
+      fetchNotifications();
+      const unsubscribe = setupRealtime();
+      return () => unsubscribe();
+    }
+  }, [user, fetchNotifications, setupRealtime, setRole]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         if (user && isAdmin(user.role)) {
           e.preventDefault();
-          setCommandPaletteOpen((open) => !open);
+          setCommandPaletteOpen(open => !open);
         }
       }
     };
@@ -106,9 +120,14 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               variant="ghost"
               size="icon"
               className="h-9 w-9 text-gray-400 hover:text-white hover:bg-white/5 relative"
+              onClick={() => setNotificationOpen(true)}
             >
               <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] px-1 items-center justify-center bg-red-500 text-[10px] font-bold text-white rounded-full border-2 border-gray-900 animate-in zoom-in duration-300">
+                  {unreadCount > 99 ? "+99" : unreadCount}
+                </span>
+              )}
             </Button>
             <Button
               variant="ghost"
@@ -149,6 +168,10 @@ export function Header({ onToggleSidebar }: HeaderProps) {
       <CommandPalette
         open={commandPaletteOpen}
         setOpen={setCommandPaletteOpen}
+      />
+      <NotificationSidebar
+        isOpen={isNotificationOpen}
+        onClose={() => setNotificationOpen(false)}
       />
     </>
   );

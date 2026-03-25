@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
+import Image from "next/image";
 import { Product } from "@/types/admin";
 import { formatPrice } from "@/lib/utils";
 import {
@@ -80,8 +83,26 @@ export default function ProductList({
   status,
   deleted,
 }: ProductListProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryParams = new URLSearchParams();
+  if (status) queryParams.append("status", status);
+  if (deleted) queryParams.append("deleted", "true");
+
+  const {
+    data: fetchedProducts,
+    isLoading: loading,
+    mutate,
+  } = useSWR<Product[]>(`/api/products?${queryParams.toString()}`, fetcher);
+
+  const [localProducts, setLocalProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (fetchedProducts) {
+      setLocalProducts(fetchedProducts);
+    }
+  }, [fetchedProducts]);
+
+  const products = localProducts;
+  const setProducts = setLocalProducts; // Used for optimistic UI updates in handlers
   const [expandedProductId, setExpandedProductId] = useState<number | null>(
     null,
   );
@@ -114,7 +135,7 @@ export default function ProductList({
       if (res.ok) {
         toast.success(`${selectedRows.length} produits mis à jour`);
         setSelectedRows([]);
-        fetchProducts();
+        mutate();
       } else {
         toast.error("Une erreur est survenue lors de l'action groupée");
       }
@@ -156,27 +177,11 @@ export default function ProductList({
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
 
-  const fetchProducts = React.useCallback(async () => {
-    try {
-      const params = new URLSearchParams();
-      if (status) params.append("status", status);
-      if (deleted) params.append("deleted", "true");
-
-      const response = await fetch(`/api/products?${params.toString()}`);
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [status, deleted]);
-
   useEffect(() => {
-    fetchProducts();
-  }, [refreshTrigger, status, deleted, fetchProducts]);
+    if (refreshTrigger > 0) {
+      mutate();
+    }
+  }, [refreshTrigger, mutate]);
 
   const handleDelete = async (id: number, permanent: boolean = false) => {
     try {
@@ -630,7 +635,7 @@ export default function ProductList({
                           <TableCell>
                             <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 overflow-hidden shrink-0">
-                                <img
+                                <Image
                                   src={
                                     product.images && product.images[0]
                                       ? typeof product.images[0] === "string"
@@ -639,6 +644,8 @@ export default function ProductList({
                                       : "/placeholder.png"
                                   }
                                   alt={product.name}
+                                  width={40}
+                                  height={40}
                                   className="h-full w-full object-cover"
                                 />
                               </div>
@@ -858,8 +865,10 @@ export default function ProductList({
                                     className="group relative bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
                                   >
                                     <div className="aspect-square bg-gray-50 dark:bg-gray-900 relative">
-                                      <img
+                                      <Image
                                         src={imgData.url}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         alt=""
                                       />
