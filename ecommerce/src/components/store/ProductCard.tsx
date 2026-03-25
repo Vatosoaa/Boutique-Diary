@@ -161,8 +161,8 @@ export default function ProductCard({
       </div>
 
       {/* Product Details */}
-      <div className="flex flex-col flex-1 px-1">
-        <div className="flex items-start justify-between gap-2 mb-1">
+      <div className="flex flex-col flex-1 px-1 items-center text-center">
+        <div className="flex items-center justify-center gap-3 mb-1 w-full">
           {category && (
             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
               {category}
@@ -180,12 +180,12 @@ export default function ProductCard({
 
         <Link
           href={`/store/product/${id}`}
-          className="text-sm md:text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2 tracking-tight"
+          className="text-sm md:text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2 tracking-tight w-full"
         >
           {title}
         </Link>
 
-        <div className="mt-auto flex items-baseline gap-2">
+        <div className="mt-auto flex items-baseline justify-center gap-2 w-full">
           <span className="text-lg font-black text-foreground">
             {formatPrice(price)}
           </span>

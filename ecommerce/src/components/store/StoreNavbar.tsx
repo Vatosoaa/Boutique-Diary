@@ -208,7 +208,7 @@ export default function StoreNavbar({
             href="/"
             className="nav-logo opacity-0 flex items-center justify-center transition-transform hover:scale-105"
           >
-            <BrandLogo className="w-28 md:w-36" variant="light" />
+            <BrandLogo className="w-28 md:w-36" variant="dark" />
           </Link>
 
           <div className="hidden md:block nav-menu opacity-0 absolute left-1/2 -translate-x-1/2">
