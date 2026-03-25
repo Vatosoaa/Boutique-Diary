@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function getRolePermissions(roleName: string): Promise<string[]> {
   if (roleName === "superadmin" || roleName === "SUPERADMIN") {
-    return DEFAULT_ROLES.find((r) => r.id === "superadmin")?.permissions || [];
+    return DEFAULT_ROLES.find(r => r.id === "superadmin")?.permissions || [];
   }
 
   try {
@@ -16,7 +16,7 @@ export async function getRolePermissions(roleName: string): Promise<string[]> {
     if (setting && setting.value) {
       const roles = JSON.parse(setting.value) as RoleConfig[];
       const roleConfig = roles.find(
-        (r) => r.name.toLowerCase() === roleName.toLowerCase(),
+        r => r.name.toLowerCase() === roleName.toLowerCase(),
       );
       if (roleConfig) {
         return roleConfig.permissions;
@@ -30,7 +30,7 @@ export async function getRolePermissions(roleName: string): Promise<string[]> {
   }
 
   const defaultRole = DEFAULT_ROLES.find(
-    (r) => r.name.toLowerCase() === roleName.toLowerCase(),
+    r => r.name.toLowerCase() === roleName.toLowerCase(),
   );
   return defaultRole?.permissions || [];
 }
