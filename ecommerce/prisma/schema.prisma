@@ -14,25 +14,26 @@ model Post {
 }
 
 model User {
-  id         Int              @id @default(autoincrement())
-  username   String           @unique
-  email      String           @unique
-  password   String
-  createdAt  DateTime         @default(now())
-  isActive   Boolean          @default(true)
-  role       Role             @default(CUSTOMER)
-  updatedAt  DateTime         @updatedAt
-  photo      String?
-  points     Int              @default(0)
-  addresses  Address[]
-  carts      Cart[]
-  orders     Order[]
-  products   Product[]
-  promoCodes PromoCode[]
-  reviews    Review[]
-  reactions  ReviewReaction[]
-  replies    ReviewReply[]
-  wishlist   WishlistItem[]
+  id            Int              @id @default(autoincrement())
+  username      String           @unique
+  email         String           @unique
+  password      String
+  createdAt     DateTime         @default(now())
+  isActive      Boolean          @default(true)
+  role          Role             @default(CUSTOMER)
+  updatedAt     DateTime         @updatedAt
+  photo         String?
+  points        Int              @default(0)
+  addresses     Address[]
+  carts         Cart[]
+  notifications Notification[]
+  orders        Order[]
+  products      Product[]
+  promoCodes    PromoCode[]
+  reviews       Review[]
+  reactions     ReviewReaction[]
+  replies       ReviewReply[]
+  wishlist      WishlistItem[]
 }
 
 model Product {
@@ -168,11 +169,11 @@ model Banner {
   buttonText  String?  @db.VarChar(50)
   buttonLink  String?  @db.VarChar(255)
   imageUrl    String
-  bgColor     String?  @db.VarChar(10)
   order       Int      @default(1)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  bgColor     String?  @db.VarChar(10)
 
   @@index([order])
   @@index([isActive])
@@ -190,6 +191,7 @@ model Admin {
   lastSeen        DateTime?
   isOnline        Boolean          @default(false)
   contactMessages ContactMessage[]
+  notifications   Notification[]
   reviewReactions ReviewReaction[]
   reviewReplies   ReviewReply[]
 }
@@ -291,6 +293,7 @@ model PromoCode {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   costPoints     Int?
+  costMoney      Float?
   ownerId        Int?
   status         PromoCodeStatus @default(PENDING)
   owner          User?           @relation(fields: [ownerId], references: [id])
@@ -429,6 +432,25 @@ model ContactMessage {
 
   @@index([status])
   @@index([email])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    Int?
+  adminId   Int?
+  title     String
+  message   String
+  type      String   @default("INFO")
+  status    String   @default("UNREAD")
+  link      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  admin     Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([status])
 }
 
 model StoreTheme {
