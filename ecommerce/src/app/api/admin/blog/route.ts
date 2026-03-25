@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    const existingPost = product.blogPosts.find((bp) =>
+    const existingPost = product.blogPosts.find(bp =>
       productImageId
         ? bp.productImageId === productImageId
         : !bp.productImageId,
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     if (productImageId) {
       const variantImage = product.images.find(
-        (img) => img.id === productImageId,
+        img => img.id === productImageId,
       );
       if (variantImage) {
         if (variantImage.reference) {

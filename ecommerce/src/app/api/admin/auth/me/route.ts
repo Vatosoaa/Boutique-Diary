@@ -15,7 +15,7 @@ export async function GET() {
         where: { id: user.adminId },
         data: { lastSeen: new Date() },
       })
-      .catch((err) => console.error("Failed to update lastSeen:", err));
+      .catch(err => console.error("Failed to update lastSeen:", err));
 
     return NextResponse.json(user, { status: 200 });
   } catch (error) {

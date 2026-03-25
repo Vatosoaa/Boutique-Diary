@@ -11,6 +11,7 @@ const promoCodeSchema = z.object({
   endDate: z.string().nullable().optional(),
   usageLimit: z.number().min(1).nullable().optional(),
   minOrderAmount: z.number().min(0).nullable().optional(),
+  costPoints: z.number().min(0).nullable().optional(),
   isActive: z.boolean().optional(),
 });
 
@@ -63,9 +64,13 @@ export async function POST(req: Request) {
         endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
         usageLimit: validatedData.usageLimit,
         minOrderAmount: validatedData.minOrderAmount,
+        costPoints: validatedData.costPoints,
         isActive: validatedData.isActive ?? true,
       },
     });
+
+    const { notificationManager } = await import("@/lib/notification-manager");
+    notificationManager.notifyAll({ type: "PROMO_UPDATE" });
 
     return NextResponse.json(promoCode, { status: 201 });
   } catch (error) {

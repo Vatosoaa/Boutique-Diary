@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { notificationManager } from "@/lib/notification-manager";
 
 export async function POST(request: Request) {
   try {
@@ -45,6 +46,14 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
       },
+    });
+
+    // Notify admins
+    await notificationManager.notifyAllAdmins({
+      title: "Nouveau client",
+      message: `${username} s'est inscrit sur la boutique.`,
+      type: "INFO",
+      link: `/admin/customers/${user.id}`,
     });
 
     return NextResponse.json(

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { contactFormSchema } from "@/types/contact";
 import nodemailer from "nodemailer";
 import { prisma } from "@/lib/prisma";
+import { notificationManager } from "@/lib/notification-manager";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +21,16 @@ export async function POST(request: NextRequest) {
           status: "UNREAD",
         },
       });
-      console.log("✅ Message saved to database");
+
+      // Create notification for admins
+      await notificationManager.notifyAllAdmins({
+        title: "Nouveau message de contact",
+        message: `De: ${validatedData.name} (${validatedData.email})`,
+        type: "INFO",
+        link: "/admin/contact",
+      });
+
+      console.log("✅ Message saved to database and notifications created");
     } catch (dbError) {
       console.error("❌ Database Error:", dbError);
       // We throw to trigger the main catch block and return 500
