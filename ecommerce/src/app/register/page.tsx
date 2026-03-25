@@ -113,7 +113,7 @@ export default function RegisterPage() {
                 </div>
                 <div className="relative flex justify-center text-[9px] font-black uppercase tracking-widest">
                   <span className="px-4 bg-white text-gray-400">
-                    Express Registration
+                    Inscription Rapide
                   </span>
                 </div>
               </div>
