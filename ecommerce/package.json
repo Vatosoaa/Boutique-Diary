@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun x next dev",
-    "build": "bun x next build",
-    "start": "bun x next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
     "strip-comments": "find src -type f \\( -name \"*.ts\" -o -name \"*.tsx\" \\) -print0 | xargs -0 stripcomments -w --confirm-overwrite"

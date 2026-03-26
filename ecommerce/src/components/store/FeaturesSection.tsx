@@ -170,9 +170,7 @@ export default function FeaturesSection({
 
               <h2 className="stagger-animate opacity-0 text-3xl md:text-3xl lg:text-4xl font-black text-gray-900 dark:text-white leading-tight tracking-tighter">
                 Pourquoi Nous{" "}
-                <span className="italic text-primary">
-                  Choisir ?
-                </span>
+                <span className="italic text-primary">Choisir ?</span>
               </h2>
 
               <p className="stagger-animate opacity-0 text-sm md:text-base text-gray-500 dark:text-gray-400 leading-relaxed font-medium max-w-lg">

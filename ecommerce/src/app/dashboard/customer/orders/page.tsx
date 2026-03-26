@@ -54,7 +54,7 @@ export default function CustomerOrders() {
 
     // SSE Setup
     const eventSource = new EventSource("/api/notifications/stream?role=user");
-    eventSource.onmessage = (event) => {
+    eventSource.onmessage = event => {
       try {
         if (event.data.startsWith("{")) {
           const data = JSON.parse(event.data);

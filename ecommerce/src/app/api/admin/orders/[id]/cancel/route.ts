@@ -41,7 +41,8 @@ export async function PATCH(
       });
 
       // Notify admins via SSE
-      const { notificationManager } = await import("@/lib/notification-manager");
+      const { notificationManager } =
+        await import("@/lib/notification-manager");
       notificationManager.notifyAdmins({ type: "TRANSACTION_UPDATE" });
       notificationManager.notifyAdmins({ type: "ORDER_UPDATE" });
 
