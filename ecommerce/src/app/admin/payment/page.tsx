@@ -72,14 +72,9 @@ export default function PaymentDashboardPage() {
     { revalidateOnFocus: true },
   );
 
-  const {
-    data: methodsData,
-    isLoading: methodsLoading,
-  } = useSWR<Array<{ isActive: boolean }>>(
-    "/api/admin/payments/methods",
-    fetcher,
-    { revalidateOnFocus: true },
-  );
+  const { data: methodsData, isLoading: methodsLoading } = useSWR<
+    Array<{ isActive: boolean }>
+  >("/api/admin/payments/methods", fetcher, { revalidateOnFocus: true });
 
   const loading = txLoading || methodsLoading;
   const stats = deriveStats(txData, methodsData);

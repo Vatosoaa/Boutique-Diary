@@ -256,9 +256,7 @@ export default function PaymentMethodsPage() {
                   disabled={method.isDefault || !method.isActive}
                   className="rounded-xl h-9 font-medium hover:bg-white dark:hover:bg-gray-800"
                 >
-                  {method.isDefault ? (
-                    <Check className="w-4 h-4 mr-2" />
-                  ) : null}
+                  {method.isDefault ? <Check className="w-4 h-4 mr-2" /> : null}
                   {method.isDefault ? "Principal" : "Définir principal"}
                 </Button>
 
