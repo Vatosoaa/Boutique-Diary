@@ -6,9 +6,16 @@ import { fr } from "date-fns/locale";
 export interface InvoiceData {
   id: string;
   reference: string;
-  status: "PAID" | "PENDING" | "CANCELLED";
+  status:
+    | "PAID"
+    | "PENDING"
+    | "PROCESSING"
+    | "SHIPPED"
+    | "DELIVERED"
+    | "CANCELLED"
+    | "COMPLETED";
   total: number;
-  createdAt: string;
+  createdAt: string | Date;
   customer: {
     name: string;
     email: string;
@@ -94,7 +101,7 @@ export class InvoiceGeneratorService {
     try {
       const response = await fetch(url);
       const blob = await response.blob();
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(blob);

@@ -5,6 +5,7 @@ import {
   Content,
 } from "@google/generative-ai";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -206,13 +207,17 @@ export class ClientAssistantService {
               );
               break;
             case "get_new_arrivals":
-              toolResult = await this.getNewArrivals(toolArgs.limit || 4);
+              toolResult = await this.getNewArrivals(
+                (toolArgs.limit as number) || 4,
+              );
               break;
             case "get_promotions":
-              toolResult = await this.getPromotions(toolArgs.limit || 4);
+              toolResult = await this.getPromotions(
+                (toolArgs.limit as number) || 4,
+              );
               break;
             case "search_blog_posts":
-              toolResult = await this.searchBlogPosts(toolArgs.query);
+              toolResult = await this.searchBlogPosts(toolArgs.query as string);
               break;
             case "get_shop_info":
               toolResult = await this.getShopInfo();
@@ -224,7 +229,7 @@ export class ClientAssistantService {
           toolResponses.push({
             functionResponse: {
               name,
-              response: toolResult,
+              response: toolResult as object,
             },
           });
         }

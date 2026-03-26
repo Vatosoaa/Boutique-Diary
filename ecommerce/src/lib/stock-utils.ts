@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { notificationManager } from "./notification-manager";
 
 export async function reduceOrderStock(
   orderId: string,
@@ -39,14 +40,26 @@ export async function reduceOrderStock(
 
     const previousStock = product.stock;
     const newStock = previousStock - item.quantity;
-    console.log(
-      `[reduceOrderStock] Product ${product.name}: ${previousStock} -> ${newStock}`,
-    );
-
     await tx.product.update({
       where: { id: item.productId },
       data: { stock: newStock },
     });
+
+    // Alert admins if stock is low
+    if (newStock < 5) {
+      const title = newStock <= 0 ? "Rupture de stock !" : "Stock faible";
+      const message =
+        newStock <= 0
+          ? `Le produit ${product.name} est épuisé.`
+          : `Le stock du produit ${product.name} est critique (${newStock} restants).`;
+
+      await notificationManager.notifyAllAdmins({
+        title,
+        message,
+        type: "WARNING",
+        link: `/admin/products?search=${encodeURIComponent(product.name)}`,
+      });
+    }
 
     if (item.productImageId) {
       const img = await tx.productImage.findUnique({
