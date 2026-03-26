@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import {
   Loader2,
   Search,
@@ -14,8 +16,10 @@ import {
   AlertCircle,
   CreditCard,
   Smartphone,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +39,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/admin/PageHeader";
 
+/** Single transaction from the API. */
 interface Transaction {
   id: string;
   amount: number;
@@ -53,6 +59,7 @@ interface Transaction {
   };
 }
 
+/** Pagination metadata from the API. */
 interface Pagination {
   total: number;
   pages: number;
@@ -60,129 +67,126 @@ interface Pagination {
   limit: number;
 }
 
-import { PageHeader } from "@/components/admin/PageHeader";
+/** Full response shape from `/api/admin/payments/transactions`. */
+interface TransactionsResponse {
+  transactions: Transaction[];
+  pagination: Pagination;
+}
+
+/** Status display configuration. */
+const STATUS_CONFIG = {
+  SUCCESS: {
+    label: "Succès",
+    icon: CheckCircle,
+    className: "bg-emerald-500/15 text-emerald-600 border-emerald-200",
+  },
+  PENDING: {
+    label: "En attente",
+    icon: Clock,
+    className: "bg-amber-500/15 text-amber-600 border-amber-200",
+  },
+  FAILED: {
+    label: "Échec",
+    icon: XCircle,
+    className: "bg-rose-500/15 text-rose-600 border-rose-200",
+  },
+  CANCELLED: {
+    label: "Annulé",
+    icon: AlertCircle,
+    className: "bg-gray-500/15 text-gray-600 border-gray-200",
+  },
+} as const;
+
+/** Format amount in MGA currency. */
+function formatPrice(amount: number, currency: string) {
+  return new Intl.NumberFormat("fr-MG", {
+    style: "currency",
+    currency: currency || "MGA",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+/** Render status badge with icon. */
+function StatusBadge({ status }: { status: string }) {
+  const config =
+    STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.PENDING;
+  const Icon = config.icon;
+
+  return (
+    <Badge variant="outline" className={cn("gap-1.5", config.className)}>
+      <Icon className="w-3.5 h-3.5" />
+      {config.label}
+    </Badge>
+  );
+}
 
 export default function PaymentTransactionsPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
 
-  const fetchTransactions = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: "10",
-        search,
-        status: statusFilter,
-      });
-      const res = await fetch(`/api/admin/payments/transactions?${params}`);
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      setTransactions(data.transactions);
-      setPagination(data.pagination);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  /** Debounce the search input to avoid excessive API calls. */
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchTransactions();
-    }, 300);
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timer);
-  }, [page, search, statusFilter]);
+  }, [search]);
 
-  // Real-time updates via SSE
+  /** Reset to first page when filters change. */
   useEffect(() => {
-    console.log("Setting up SSE for Transaction Page...");
-    const eventSource = new EventSource("/api/notifications/stream?role=admin");
+    setPage(1);
+  }, [debouncedSearch, statusFilter]);
 
-    eventSource.onopen = () => {
-      console.log("SSE connection established on Transaction Page");
-    };
+  /** Build SWR key from current filter state. */
+  const swrKey = useMemo(() => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: "10",
+      search: debouncedSearch,
+      status: statusFilter,
+    });
+    return `/api/admin/payments/transactions?${params}`;
+  }, [page, debouncedSearch, statusFilter]);
+
+  const {
+    data,
+    isLoading,
+    mutate,
+  } = useSWR<TransactionsResponse>(swrKey, fetcher, {
+    revalidateOnFocus: true,
+    keepPreviousData: true,
+  });
+
+  const transactions = data?.transactions ?? [];
+  const pagination = data?.pagination ?? null;
+
+  /** SSE listener for real-time transaction updates. */
+  useEffect(() => {
+    const eventSource = new EventSource("/api/notifications/stream?role=admin");
 
     eventSource.onmessage = event => {
       try {
-        // Heartbeat messages are not JSON
         if (event.data.startsWith("{")) {
-          const data = JSON.parse(event.data);
+          const parsed = JSON.parse(event.data);
           if (
-            data.type === "TRANSACTION_UPDATE" ||
-            data.type === "TRANSACTION_BULK_UPDATE" ||
-            data.type === "ORDER_UPDATE"
+            parsed.type === "TRANSACTION_UPDATE" ||
+            parsed.type === "TRANSACTION_BULK_UPDATE" ||
+            parsed.type === "ORDER_UPDATE"
           ) {
-            fetchTransactions();
+            mutate();
           }
         }
-      } catch (error) {
-        // Ignore parsing errors
+      } catch {
+        /* heartbeat — ignore */
       }
     };
 
-    eventSource.onerror = error => {
-      console.error("SSE Error on Transaction Page:", error);
-      // EventSource automatically retries on error by default,
-      // but we log it to be sure what's happening.
+    eventSource.onerror = () => {
+      /* EventSource reconnects automatically */
     };
 
-    return () => {
-      console.log("Closing SSE connection for Transaction Page");
-      eventSource.close();
-    };
-  }, []);
-
-  const formatPrice = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("fr-MG", {
-      style: "currency",
-      currency: currency || "MGA",
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  const getStatusBadge = (status: string) => {
-    const styles = {
-      SUCCESS: {
-        label: "Succès",
-        variant: "success",
-        icon: CheckCircle,
-        className: "bg-emerald-500/15 text-emerald-600 border-emerald-200",
-      },
-      PENDING: {
-        label: "En attente",
-        variant: "warning",
-        icon: Clock,
-        className: "bg-amber-500/15 text-amber-600 border-amber-200",
-      },
-      FAILED: {
-        label: "Échec",
-        variant: "destructive",
-        icon: XCircle,
-        className: "bg-rose-500/15 text-rose-600 border-rose-200",
-      },
-      CANCELLED: {
-        label: "Annulé",
-        variant: "secondary",
-        icon: AlertCircle,
-        className: "bg-gray-500/15 text-gray-600 border-gray-200",
-      },
-    };
-
-    const config = styles[status as keyof typeof styles] || styles.PENDING;
-    const Icon = config.icon;
-
-    return (
-      <Badge variant="outline" className={cn("gap-1.5", config.className)}>
-        <Icon className="w-3.5 h-3.5" />
-        {config.label}
-      </Badge>
-    );
-  };
+    return () => eventSource.close();
+  }, [mutate]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -190,8 +194,8 @@ export default function PaymentTransactionsPage() {
         title="Historique Transactions"
         description="Consultez et gérez l'ensemble des flux financiers de votre boutique."
         backHref="/admin/payment"
-        onRefresh={fetchTransactions}
-        isLoading={loading}
+        onRefresh={() => mutate()}
+        isLoading={isLoading}
       >
         <Button className="rounded-xl h-10 px-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-none shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700">
           <Download className="w-4 h-4 mr-2" />
@@ -222,6 +226,7 @@ export default function PaymentTransactionsPage() {
                   <SelectItem value="SUCCESS">Succès</SelectItem>
                   <SelectItem value="PENDING">En attente</SelectItem>
                   <SelectItem value="FAILED">Échec</SelectItem>
+                  <SelectItem value="CANCELLED">Annulé</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -256,7 +261,7 @@ export default function PaymentTransactionsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {loading ? (
+                {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={7} className="h-48 text-center">
                       <div className="flex flex-col justify-center items-center gap-3">
@@ -318,7 +323,7 @@ export default function PaymentTransactionsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-4">
-                        {getStatusBadge(tx.status)}
+                        <StatusBadge status={tx.status} />
                       </TableCell>
                       <TableCell className="px-6 py-4 text-gray-500 text-sm">
                         {format(new Date(tx.createdAt), "dd MMM, HH:mm", {
@@ -332,7 +337,42 @@ export default function PaymentTransactionsPage() {
             </Table>
           </div>
 
-          {}
+          {/* Pagination controls */}
+          {pagination && pagination.pages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 dark:border-white/5">
+              <p className="text-sm text-gray-500">
+                Page <span className="font-bold">{pagination.page}</span> sur{" "}
+                <span className="font-bold">{pagination.pages}</span>
+                {" — "}
+                <span className="font-medium">{pagination.total}</span>{" "}
+                transactions
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="rounded-xl h-9 border-gray-200 dark:border-gray-800"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Précédent
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setPage(p => Math.min(pagination.pages, p + 1))
+                  }
+                  disabled={page >= pagination.pages}
+                  className="rounded-xl h-9 border-gray-200 dark:border-gray-800"
+                >
+                  Suivant
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
