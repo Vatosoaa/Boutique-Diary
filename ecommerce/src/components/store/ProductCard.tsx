@@ -5,7 +5,7 @@ import { Eye, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 
 interface ProductCardProps {
@@ -24,7 +24,7 @@ interface ProductCardProps {
   initialIsWishlisted?: boolean;
   promotionRule?: {
     isActive: boolean;
-    actions: Record<string, unknown>;
+    actions: unknown;
   } | null;
 }
 
@@ -43,6 +43,7 @@ export default function ProductCard({
   reviewCount,
   imageColor,
   initialIsWishlisted = false,
+  promotionRule,
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(initialIsWishlisted);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
@@ -147,7 +148,7 @@ export default function ProductCard({
               Nouveau
             </span>
           )}
-          {isPromotion && (
+          {showPromotionBadge && (
             <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white rounded-full shadow-sm">
               {discountPercentage !== null && discountPercentage > 0
                 ? `-${discountPercentage}%`

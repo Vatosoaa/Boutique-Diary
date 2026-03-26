@@ -1,0 +1,43 @@
+
+> boutique-diary@0.1.0 build C:\Users\Public\Projects\e-commerce\ecommerce
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.5 (Turbopack)
+   - Environments: .env
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./src/app/admin/orders/page.tsx:3:1
+Parsing ecmascript source code failed
+[0m [90m 1 |[39m [36mimport[39m [33mOrdersClientPage[39m [36mfrom[39m [32m"./client-page"[39m[33m;[39m
+ [90m 2 |[39m
+[31m[1m>[22m[39m[90m 3 |[39m [33m<<[39m[33m<<[39m[33m<<[39m[33m<[39m [33mHEAD[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { [33mOrdersStats[39m } [36mfrom[39m [32m"@/components/admin/orders/OrdersStats"[39m[33m;[39m[0m
+
+Merge conflict marker encountered.
+
+
+./src/app/admin/orders/page.tsx:320:1
+Parsing ecmascript source code failed
+[0m [90m 318 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 319 |[39m   )[33m;[39m
+[31m[1m>[22m[39m[90m 320 |[39m [33m===[39m[33m===[39m[33m=[39m
+ [90m     |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 321 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mPage[39m() {
+ [90m 322 |[39m   [36mreturn[39m [33m<[39m[33mOrdersClientPage[39m [33m/[39m[33m>[39m[33m;[39m
+ [90m 323 |[39m [33m>>>[39m[33m>>>[39m[33m>[39m b64a8ab1e6d2dc95a8b93f44f8dc84055fdbd195[0m
+
+Merge conflict marker encountered.
+
+
+    at <unknown> (./src/app/admin/orders/page.tsx:3:1)
+    at <unknown> (./src/app/admin/orders/page.tsx:320:1)
+ ELIFECYCLE  Command failed with exit code 1.

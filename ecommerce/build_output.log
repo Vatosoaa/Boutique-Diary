@@ -1,0 +1,191 @@
+
+> boutique-diary@0.1.0 build C:\Users\Public\Projects\e-commerce\ecommerce
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.5 (Turbopack)
+   - Environments: .env
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Compiled successfully in 22.5s
+   Running TypeScript ...
+   Collecting page data using 15 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (0/106) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (26/106) 
+   Generating static pages using 15 workers (52/106) 
+   Generating static pages using 15 workers (79/106) 
+ ✓ Generating static pages using 15 workers (106/106) in 3.1s
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /admin-login
+├ ○ /admin/appearance
+├ ○ /admin/appearance/banner
+├ ○ /admin/appearance/layout
+├ ○ /admin/appearance/logo
+├ ƒ /admin/appearance/theme
+├ ○ /admin/blog
+├ ƒ /admin/blog/[id]
+├ ○ /admin/categories
+├ ○ /admin/customers
+├ ○ /admin/customers/history
+├ ○ /admin/dashboard
+├ ƒ /admin/employees
+├ ƒ /admin/employees/[id]/edit
+├ ○ /admin/employees/new
+├ ƒ /admin/employees/roles
+├ ○ /admin/login
+├ ○ /admin/marketing
+├ ○ /admin/marketing/codes-promo
+├ ○ /admin/marketing/promotions
+├ ○ /admin/messages
+├ ○ /admin/orders
+├ ƒ /admin/orders/[id]
+├ ○ /admin/orders/pending
+├ ○ /admin/orders/returns
+├ ○ /admin/payment
+├ ○ /admin/payment/methods
+├ ○ /admin/payment/transactions
+├ ○ /admin/products
+├ ƒ /admin/products/[id]
+├ ƒ /admin/products/[id]/edit
+├ ○ /admin/products/archive
+├ ○ /admin/products/new
+├ ○ /admin/products/promotions
+├ ○ /admin/products/stock
+├ ○ /admin/products/trash
+├ ○ /admin/reports
+├ ○ /admin/reports/customers
+├ ○ /admin/reports/products
+├ ○ /admin/reports/sales
+├ ○ /admin/shipping
+├ ƒ /api/admin/assistant
+├ ƒ /api/admin/auth/login
+├ ƒ /api/admin/auth/logout
+├ ƒ /api/admin/auth/me
+├ ƒ /api/admin/blog
+├ ƒ /api/admin/blog/[id]
+├ ƒ /api/admin/blog/[id]/regenerate
+├ ƒ /api/admin/employees
+├ ƒ /api/admin/employees/[id]
+├ ƒ /api/admin/marketing/promo-codes
+├ ƒ /api/admin/marketing/promo-codes/[id]
+├ ƒ /api/admin/marketing/promotions
+├ ƒ /api/admin/marketing/promotions/[id]
+├ ƒ /api/admin/marketing/promotions/[id]/apply
+├ ƒ /api/admin/marketing/promotions/[id]/revert
+├ ƒ /api/admin/messages
+├ ƒ /api/admin/orders
+├ ƒ /api/admin/orders/[id]
+├ ƒ /api/admin/orders/[id]/cancel
+├ ƒ /api/admin/orders/[id]/send-invoice
+├ ƒ /api/admin/orders/bulk
+├ ƒ /api/admin/payments/methods
+├ ƒ /api/admin/payments/transactions
+├ ƒ /api/admin/products/generate-description
+├ ƒ /api/admin/products/generate-image
+├ ƒ /api/admin/recent-pages
+├ ƒ /api/admin/reports/customers
+├ ƒ /api/admin/reports/products
+├ ƒ /api/admin/reports/sales
+├ ƒ /api/admin/reviews/[id]
+├ ƒ /api/admin/search
+├ ƒ /api/admin/stats
+├ ƒ /api/admin/stock
+├ ƒ /api/admin/stock/[id]/history
+├ ƒ /api/assistant
+├ ƒ /api/auth/login
+├ ƒ /api/auth/logout
+├ ƒ /api/auth/me
+├ ƒ /api/auth/register
+├ ƒ /api/auth/session
+├ ƒ /api/auth/social/[auth0]
+├ ƒ /api/banners
+├ ƒ /api/banners/[id]
+├ ƒ /api/blog
+├ ƒ /api/blog/[slug]
+├ ƒ /api/categories
+├ ƒ /api/categories/[id]
+├ ƒ /api/contact
+├ ƒ /api/customer/addresses
+├ ƒ /api/customer/addresses/[id]
+├ ƒ /api/customer/orders
+├ ƒ /api/customer/orders/[id]
+├ ƒ /api/customer/promo-codes
+├ ƒ /api/customer/promo-codes/purchase
+├ ƒ /api/customer/promo-codes/purchase/init
+├ ƒ /api/customer/settings
+├ ƒ /api/customer/wishlist
+├ ƒ /api/customers
+├ ƒ /api/customers/[id]
+├ ƒ /api/geocode/reverse
+├ ƒ /api/notifications
+├ ƒ /api/notifications/stream
+├ ƒ /api/orders
+├ ƒ /api/orders/[ref]/invoice
+├ ƒ /api/products
+├ ƒ /api/products/[id]
+├ ƒ /api/products/[id]/reviews
+├ ƒ /api/promo-codes/validate
+├ ƒ /api/reviews/[id]/reactions
+├ ƒ /api/reviews/[id]/replies
+├ ƒ /api/settings
+├ ƒ /api/upload
+├ ƒ /api/upload-url-image
+├ ƒ /api/webhooks/payments
+├ ○ /blog
+├ ƒ /blog/[slug]
+├ ○ /cart
+├ ○ /checkout
+├ ○ /checkout/success
+├ ○ /contact
+├ ƒ /dashboard/customer
+├ ○ /dashboard/customer/addresses
+├ ○ /dashboard/customer/auth
+├ ○ /dashboard/customer/orders
+├ ○ /dashboard/customer/promo-codes
+├ ○ /dashboard/customer/settings
+├ ○ /dashboard/customer/wishlist
+├ ○ /forgot-password
+├ ○ /login
+├ ○ /nouveautes
+├ ○ /produits
+├ ○ /promotions
+├ ○ /register
+├ ƒ /shop
+├ ○ /store/about
+├ ○ /store/blog
+├ ƒ /store/product/[id]
+└ ○ /top-vente
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

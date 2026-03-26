@@ -18,7 +18,7 @@ interface Product {
   images: { url: string }[];
   promotionRule?: {
     isActive: boolean;
-    actions: any;
+    actions: unknown;
   } | null;
 }
 
@@ -97,6 +97,7 @@ export default function StoreProductGrid({
                 rating={product.rating}
                 reviewCount={product.reviewCount}
                 imageColor={colors[index % colors.length]}
+                promotionRule={product.promotionRule}
               />
             ))}
           </div>
