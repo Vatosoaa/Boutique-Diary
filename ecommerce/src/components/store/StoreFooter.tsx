@@ -1,36 +1,81 @@
 "use client";
 
 import Link from "next/link";
+import {
+  Instagram,
+  Facebook,
+  Twitter,
+  Youtube,
+  Send,
+  Linkedin,
+  MapPin,
+  Mail,
+  Phone,
+  ArrowRight,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function StoreFooter() {
+  const currentYear = new Date().getFullYear();
+
+  const footerLinks = {
+    "Service Client": [
+      { label: "FAQ", href: "#" },
+      { label: "Mes Commandes", href: "/dashboard/customer/orders" },
+      { label: "Mes Favoris", href: "/dashboard/customer/wishlist" },
+      { label: "Mes Adresses", href: "/dashboard/customer/addresses" },
+      { label: "Retours", href: "#" },
+      { label: "Livraison", href: "#" },
+    ],
+    Produits: [
+      { label: "Nouveautés", href: "/nouveautes" },
+      { label: "Promotions", href: "/promotions" },
+      { label: "Top Vente", href: "/top-vente" },
+      { label: "Hommes", href: "/shop?category=hommes" },
+      { label: "Femmes", href: "/shop?category=femmes" },
+    ],
+    "Notre Histoire": [
+      { label: "À Propos", href: "/store/about" },
+      { label: "Nos Magasins", href: "#" },
+      { label: "Le Blog", href: "/blog" },
+      { label: "Engagements", href: "#" },
+      { label: "Carrières", href: "#" },
+    ],
+  };
+
+  const socialLinks = [
+    { icon: Instagram, href: "#", color: "hover:text-pink-500" },
+    { icon: Facebook, href: "#", color: "hover:text-blue-600" },
+    { icon: Twitter, href: "#", color: "hover:text-sky-400" },
+    { icon: Youtube, href: "#", color: "hover:text-red-600" },
+    { icon: Linkedin, href: "#", color: "hover:text-blue-700" },
+  ];
+
   return (
-    <footer className="bg-card text-muted-foreground py-12 px-4 md:px-8 font-sans border-t border-border">
-      <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16 mb-10 text-center md:text-left">
-          {/* Brand & Address */}
-          <div className="flex flex-col items-center md:items-start">
-            <h2 className="text-3xl font-black mb-8 text-foreground tracking-tighter font-sans">
-              Diary Boutique
-            </h2>
-            <p className="text-muted-foreground text-base leading-relaxed mb-8 max-w-[280px]">
-              Nous distribuons nos collections dans des boutiques sélectionnées
-              à travers le monde.
-            </p>
-            <div className="text-sm text-muted-foreground space-y-2 font-medium">
-              <p className="hover:text-foreground transition-colors">
-                Technology Park
+    <footer className="relative bg-zinc-950 text-zinc-400 pt-24 pb-12 overflow-hidden border-t border-zinc-900 font-sans">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="container max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-20">
+          {/* Brand Column */}
+          <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-3xl font-black text-white tracking-tighter mb-6 flex items-center">
+                <span className="bg-white text-black px-2 py-0.5 rounded italic">
+                  D
+                </span>
+                iary Boutique
+              </h2>
+              <p className="text-sm leading-relaxed mb-8 max-w-sm">
+                L'excellence du prêt-à-porter de luxe, sélectionnée avec passion
+                pour définir votre allure quotidienne.
               </p>
-              <p className="hover:text-foreground transition-colors">
-                8-14 Marie Curie Street
-              </p>
-              <p className="hover:text-foreground transition-colors">
-                08042 Barcelona
-              </p>
-              <p className="mt-4 pt-4 border-t border-border text-foreground font-bold">
-                diary@boutique.com
-              </p>
-            </div>
-          </div>
 
           {/* Service Client */}
           <div className="flex flex-col items-center md:items-start">
@@ -56,11 +101,20 @@ export default function StoreFooter() {
                     href={link.href}
                     className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
                   >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    contact@diaryboutique.com
+                  </a>
+                </div>
+                <div className="flex items-center justify-center lg:justify-start gap-3 group">
+                  <Phone className="w-5 h-5 text-primary" />
+                  <a
+                    href="tel:+261340000000"
+                    className="text-sm hover:text-white transition-colors"
+                  >
+                    +261 34 00 000 00
+                  </a>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
           {/* Produits */}
@@ -108,41 +162,45 @@ export default function StoreFooter() {
                     href={link.href}
                     className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
                   >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    <social.icon className="w-5 h-5" />
+                  </motion.a>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* Bottom Legal */}
-        <div className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <p className="text-muted-foreground text-xs font-sans tracking-wide">
-            &copy; 2026{" "}
-            <span className="text-foreground font-bold">DIARY BOUTIQUE</span>.
-            Conçu avec excellence.
+        {/* Bottom Bar */}
+        <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-[11px] font-bold uppercase tracking-widest">
+          <p className="text-zinc-600">
+            &copy; {currentYear}{" "}
+            <span className="text-zinc-400">DIARY BOUTIQUE</span>. CONÇU AVEC
+            PASSION.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-[10px] uppercase tracking-widest font-bold">
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
+          <div className="flex flex-wrap justify-center gap-8">
+            <Link href="#" className="hover:text-white transition-colors">
               Confidentialité
             </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Sécurité
-            </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Conditions
-            </Link>
+          </div>
+
+          <div className="flex flex-wrap justify-center md:justify-end gap-3 text-[9px] font-bold grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#fcd34d] shadow-[0_0_8px_#fcd34d]" />{" "}
+              MVOLA
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#ef4444] shadow-[0_0_8px_#ef4444]" />{" "}
+              AIRTEL
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f97316] shadow-[0_0_8px_#f97316]" />{" "}
+              ORANGE
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_#60a5fa]" />{" "}
+              BANCAIRE
+            </span>
           </div>
         </div>
       </div>

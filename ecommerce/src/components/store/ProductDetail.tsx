@@ -485,7 +485,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               )}
               {hasDiscount && (
                 <span className="bg-rose-500/90 backdrop-blur-sm text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                  -{discountPercent}%
+                  -{discountPercent}% PROMO
                 </span>
               )}
               {product.isBestSeller && (

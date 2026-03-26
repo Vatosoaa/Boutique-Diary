@@ -81,7 +81,7 @@ export default function StoreProductGrid({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-6 gap-y-10">
             {displayProducts.map((product, index) => (
               <ProductCard
                 key={product.id}
@@ -97,7 +97,6 @@ export default function StoreProductGrid({
                 rating={product.rating}
                 reviewCount={product.reviewCount}
                 imageColor={colors[index % colors.length]}
-                promotionRule={product.promotionRule}
               />
             ))}
           </div>

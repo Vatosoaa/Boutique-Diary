@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 interface BannerProduct {
   id: number | string;
@@ -52,71 +53,84 @@ export default function BestCollectionBanner({
   };
 
   return (
-    <section className="py-12 md:py-20 px-4 md:px-6 relative overflow-hidden">
-      {/* Background abstract decoration */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-primary/5 to-transparent -z-10 blur-3xl opacity-30" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/10 rounded-full -z-10 blur-3xl opacity-20" />
+    <section className="py-16 px-4 md:px-6 relative overflow-hidden bg-white dark:bg-zinc-950">
+      {/* Dynamic Background Gradients */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[100px] animate-pulse delay-1000" />
+      </div>
 
-      <div className="max-w-[1400px] mx-auto">
-        <div className="bg-white dark:bg-gray-900 rounded-[48px] overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] relative">
-          {/* Subtle background text */}
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center overflow-hidden pointer-events-none opacity-[0.03] select-none">
-            <span className="text-[20vw] font-black whitespace-nowrap uppercase tracking-tighter">
+      <div className="max-w-[1400px] mx-auto relative z-10">
+        {/* High-Impact Header */}
+        <div className="flex flex-col items-center text-center mb-16 px-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="relative"
+          >
+            <h2 className="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter text-zinc-950 dark:text-white leading-[0.8] mb-4">
+              Tendance
+              <span className="block text-primary italic font-serif lowercase tracking-normal">
+                Actuelle
+              </span>
+            </h2>
+            <div className="absolute -right-4 -top-4 w-12 h-12 border-t-2 border-right-2 border-primary/30 rounded-tr-3xl" />
+            <div className="absolute -left-4 -bottom-4 w-12 h-12 border-b-2 border-left-2 border-primary/30 rounded-bl-3xl" />
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-zinc-400 font-bold uppercase tracking-[0.3em] text-[10px] md:text-xs mt-6"
+          >
+            L&apos;excellence à travers nos collections exclusives
+          </motion.p>
+        </div>
+
+        {/* Carousel Container */}
+        <div className="relative h-[550px] md:h-[500px] rounded-[48px] overflow-hidden bg-zinc-900 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border border-white/5">
+          {/* Background Text Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none opacity-[0.03]">
+            <span className="text-[25vw] font-black text-white italic whitespace-nowrap">
               {product.name}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-center min-h-[500px] md:min-h-[600px]">
-            {/* Content Side */}
-            <div className="p-8 md:p-16 lg:p-24 z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+            {/* Left Content */}
+            <div className="flex flex-col justify-center p-12 md:p-16 lg:pl-24 z-20">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
+                  exit={{ opacity: 0, y: -30 }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-8"
-                  >
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                    </span>
-                    Tendance Actuelle
-                  </motion.div>
+                  <div className="bg-primary/20 text-primary-foreground/90 w-fit px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6 backdrop-blur-md">
+                    Incontournable
+                  </div>
 
-                  <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground mb-8 leading-[1.05] tracking-tight max-w-lg">
-                    <span
-                      className="block mb-2 font-serif"
-                      style={{ fontVariant: "small-caps" }}
-                    >
-                      {product.name.split(" ")[0]}
-                    </span>
-                    <span className="block text-transparent bg-clip-text bg-linear-to-r from-[#248197] to-[#3aabc6] leading-tight">
-                      Collection Exclusive
-                    </span>
-                    <span className="block font-serif italic font-light opacity-90">
-                      Pour Vous
-                    </span>
-                  </h2>
+                  <h3 className="text-4xl md:text-6xl font-black text-white mb-6 leading-[0.95] tracking-tighter">
+                    {product.name}
+                  </h3>
 
-                  <p className="text-muted-foreground mb-10 max-w-sm text-lg md:text-xl leading-relaxed opacity-80">
+                  <p className="text-zinc-400 text-base md:text-lg font-medium leading-relaxed max-w-sm mb-10">
                     {productDescription}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-6">
+                  <div className="flex items-center gap-8">
                     <Button
                       asChild
-                      size="xl"
-                      className="rounded-full px-12 h-16 text-lg font-black bg-[#248197] hover:bg-[#2d9db8] text-white shadow-[0_20px_40px_-12px_rgba(36,129,151,0.4)] hover:shadow-[0_25px_50px_-12px_rgba(36,129,151,0.5)] transition-all hover:-translate-y-1 duration-300"
+                      className="group bg-white hover:bg-zinc-100 text-zinc-950 h-14 px-10 rounded-2xl text-xs font-black uppercase tracking-widest shadow-2xl transition-all active:scale-95"
                     >
-                      <Link href={`/store/product/${product.id}`}>
-                        Acheter Maintenant
+                      <Link
+                        href={`/store/product/${product.id}`}
+                        className="flex items-center gap-3"
+                      >
+                        Découvrir
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-500" />
                       </Link>
                     </Button>
 
@@ -143,113 +157,57 @@ export default function BestCollectionBanner({
               </AnimatePresence>
             </div>
 
-            {/* Image Side */}
-            <div className="relative h-full min-h-[400px] flex items-center justify-center p-8 lg:p-16">
-              {/* Complex background aura */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                <div className="w-[80%] h-[80%] bg-linear-to-tr from-[#248197]/40 to-transparent rounded-full blur-[100px] animate-pulse" />
-                <div className="absolute w-[60%] h-[60%] bg-blue-100/30 rounded-full blur-[80px] animate-pulse delay-700" />
-              </div>
-
+            {/* Right Image */}
+            <div className="relative h-full flex items-center justify-center overflow-hidden lg:p-12">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, scale: 0.8, rotate: -5, y: 30 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
-                  exit={{ opacity: 0, scale: 1.1, rotate: 5, y: -30 }}
-                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative group w-full max-w-[450px]"
+                  initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 1.2, rotate: -10 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative w-full max-w-[400px] aspect-square lg:aspect-[4/5] z-10 p-4"
                 >
-                  {/* Floating animation for the image container */}
-                  <motion.div
-                    animate={{
-                      y: [0, -15, 0],
-                      rotate: [0, 1, 0],
-                    }}
-                    transition={{
-                      duration: 6,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                    className="relative z-10"
-                  >
-                    {/* Polaroid Styled Frame */}
-                    <div className="relative aspect-3/4 w-full bg-white dark:bg-gray-800 p-4 md:p-6 rounded-[32px] shadow-[0_32px_80px_-16px_rgba(0,0,0,0.15)] rotate-[-4deg] border border-gray-100 dark:border-gray-800">
-                      <div className="relative w-full h-full rounded-[20px] overflow-hidden">
-                        <Image
-                          src={productImage}
-                          alt={product.name}
-                          fill
-                          className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                          unoptimized
-                          priority
-                        />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      </div>
-                    </div>
-
-                    {/* Secondary decorative frame */}
-                    <div className="absolute inset-0 bg-primary/5 rounded-[32px] rotate-3 -z-10 blur-sm scale-105" />
-                  </motion.div>
-
-                  {/* Premium Price Tag */}
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 }}
-                    className="absolute bottom-4 -right-2 md:-right-6 lg:-right-10 z-20"
-                  >
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl px-8 py-5 rounded-3xl shadow-[0_20px_40px_-8px_rgba(0,0,0,0.1)] border border-white/20 dark:border-gray-800/50 transform -rotate-2">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">
-                          Prix Exclusif
+                  <div className="relative w-full h-full rounded-[40px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] bg-zinc-800">
+                    <Image
+                      src={productImage}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                      priority
+                    />
+                    {/* Glass Overlay on Bottom */}
+                    <div className="absolute inset-x-4 bottom-4 bg-black/40 backdrop-blur-xl border border-white/10 p-6 rounded-[32px] flex items-center justify-between">
+                      <div>
+                        <div className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-1">
+                          Prix Direct
                         </div>
-                        {product.isPromotion &&
-                          product.oldPrice &&
-                          product.oldPrice > product.price && (
-                            <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
-                              -
-                              {Math.round(
-                                ((product.oldPrice - product.price) /
-                                  product.oldPrice) *
-                                  100,
-                              )}
-                              %
-                            </span>
-                          )}
-                      </div>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-3xl md:text-4xl font-black text-[#248197] tracking-tight">
+                        <div className="text-xl md:text-2xl font-black text-white">
                           {formatPrice(product.price)}
-                        </span>
-                        {product.isPromotion && product.oldPrice && (
-                          <span className="text-sm text-muted-foreground line-through decoration-rose-400/30">
-                            {formatPrice(product.oldPrice)}
-                          </span>
-                        )}
+                        </div>
+                      </div>
+                      <div className="w-12 h-12 bg-white text-black rounded-2xl flex items-center justify-center">
+                        <ArrowRight className="w-5 h-5" />
                       </div>
                     </div>
-                  </motion.div>
-
-                  {/* Floating interaction hints */}
-                  <div className="absolute -top-10 -left-10 w-24 h-24 bg-[#248197]/10 rounded-full blur-2xl mix-blend-multiply animate-bounce duration-3000" />
-                  <div className="absolute top-1/2 -right-12 w-16 h-16 bg-amber-100/30 rounded-full blur-[30px] animate-pulse" />
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
           </div>
         </div>
 
-        {/* Indicator dots */}
-        <div className="flex justify-center gap-3 mt-10">
+        {/* Minimal Controls */}
+        <div className="flex justify-center gap-4 mt-8">
           {products.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-2.5 rounded-full transition-all duration-500 ${
+              className={`h-1.5 rounded-full transition-all duration-500 ${
                 idx === currentIndex
-                  ? "w-10 bg-[#248197] shadow-lg shadow-[#248197]/20"
-                  : "w-2.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700"
+                  ? "w-12 bg-primary"
+                  : "w-3 bg-zinc-200 dark:bg-zinc-800"
               }`}
             />
           ))}

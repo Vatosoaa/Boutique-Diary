@@ -10,8 +10,6 @@ import {
   Minus,
   Plus,
   Star,
-  Heart,
-  Share2,
   ShoppingCart,
   Zap,
   Truck,
@@ -256,7 +254,7 @@ export default function ProductDetailClient({
                 />
                 {product.isPromotion && discountPercent > 0 && (
                   <Badge className="absolute top-4 left-4 bg-destructive text-destructive-foreground">
-                    -{discountPercent}% OFF
+                    -{discountPercent}% PROMO
                   </Badge>
                 )}
                 {product.isNew && (
@@ -454,10 +452,10 @@ export default function ProductDetailClient({
               {product.isPromotion && discountPercent > 0 && (
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center">
                   <span className="text-sm font-bold text-primary">
-                    {discountPercent}% OFF
+                    {discountPercent}% PROMO
                   </span>
                   <span className="text-xs text-muted-foreground ml-2">
-                    Offre limitée
+                    PROMO limitée
                   </span>
                 </div>
               )}

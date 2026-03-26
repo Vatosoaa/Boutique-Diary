@@ -169,8 +169,14 @@ export class ClientAssistantService {
     };
 
     try {
-      let result = await withRetry(() => chat.sendMessage(message));
-      let response = result.response;
+      let result = (await withRetry(() => chat.sendMessage(message))) as Record<
+        string,
+        unknown
+      >;
+      let response = result.response as Record<string, unknown> & {
+        functionCalls: () => unknown[];
+        text: () => string;
+      };
 
       const calls = response.functionCalls();
       if (calls && calls.length > 0) {
@@ -225,8 +231,13 @@ export class ClientAssistantService {
           });
         }
 
-        result = await withRetry(() => chat.sendMessage(toolResponses));
-        response = result.response;
+        result = (await withRetry(() =>
+          chat.sendMessage(toolResponses),
+        )) as Record<string, unknown>;
+        response = result.response as Record<string, unknown> & {
+          functionCalls: () => unknown[];
+          text: () => string;
+        };
       }
 
       const responseText = response.text();
