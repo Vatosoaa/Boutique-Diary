@@ -109,7 +109,8 @@ function formatPrice(amount: number, currency: string) {
 /** Render status badge with icon. */
 function StatusBadge({ status }: { status: string }) {
   const config =
-    STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.PENDING;
+    STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ??
+    STATUS_CONFIG.PENDING;
   const Icon = config.icon;
 
   return (
@@ -126,17 +127,25 @@ export default function PaymentTransactionsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
 
+  /** Update search filter and reset to first page. */
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+  };
+
+  /** Update status filter and reset to first page. */
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    setPage(1);
+  };
+
   /** Debounce the search input to avoid excessive API calls. */
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 300);
     return () => clearTimeout(timer);
   }, [search]);
-
-  /** Reset to first page when filters change. */
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, statusFilter]);
-
   /** Build SWR key from current filter state. */
   const swrKey = useMemo(() => {
     const params = new URLSearchParams({
@@ -148,14 +157,14 @@ export default function PaymentTransactionsPage() {
     return `/api/admin/payments/transactions?${params}`;
   }, [page, debouncedSearch, statusFilter]);
 
-  const {
-    data,
-    isLoading,
-    mutate,
-  } = useSWR<TransactionsResponse>(swrKey, fetcher, {
-    revalidateOnFocus: true,
-    keepPreviousData: true,
-  });
+  const { data, isLoading, mutate } = useSWR<TransactionsResponse>(
+    swrKey,
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      keepPreviousData: true,
+    },
+  );
 
   const transactions = data?.transactions ?? [];
   const pagination = data?.pagination ?? null;
@@ -212,11 +221,11 @@ export default function PaymentTransactionsPage() {
                 placeholder="Réf. commande, transaction..."
                 className="pl-11 h-11 rounded-xl border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 focus-visible:ring-indigo-500"
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={e => handleSearchChange(e.target.value)}
               />
             </div>
             <div className="flex gap-3 w-full sm:w-auto">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={statusFilter} onValueChange={handleStatusChange}>
                 <SelectTrigger className="h-11 rounded-xl border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2 text-gray-400" />
                   <SelectValue placeholder="Tous les statuts" />
