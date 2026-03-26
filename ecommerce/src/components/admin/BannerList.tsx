@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Banner } from "@/types/banner";
+import { toast } from "sonner";
 
 interface BannerListProps {
   onEdit: (banner: Banner) => void;
@@ -15,7 +16,6 @@ export default function BannerList({
 }: BannerListProps) {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const fetchBanners = async () => {
     try {
@@ -26,7 +26,7 @@ export default function BannerList({
       setBanners(data);
     } catch (err) {
       console.error(err);
-      setError("Erreur lors du chargement des bannières");
+      toast.error("Erreur lors du chargement des bannières");
     } finally {
       setIsLoading(false);
     }
@@ -43,9 +43,10 @@ export default function BannerList({
       const response = await fetch(`/api/banners/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Erreur de suppression");
       setBanners(banners.filter((b) => b.id !== id));
+      toast.success("Bannière supprimée avec succès");
     } catch (err) {
       console.error(err);
-      setError("Erreur lors de la suppression");
+      toast.error("Erreur lors de la suppression");
     }
   };
 
@@ -63,9 +64,10 @@ export default function BannerList({
           b.id === banner.id ? { ...b, isActive: !b.isActive } : b,
         ),
       );
+      toast.success(`Bannière ${!banner.isActive ? "activée" : "désactivée"}`);
     } catch (err) {
       console.error(err);
-      setError("Erreur lors de la mise à jour");
+      toast.error("Erreur lors de la mise à jour");
     }
   };
 
@@ -74,12 +76,6 @@ export default function BannerList({
       <div className="flex justify-center items-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 bg-red-100 text-red-700 rounded-lg">{error}</div>
     );
   }
 

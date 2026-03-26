@@ -4,22 +4,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { toast } from "sonner";
+
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas");
+      toast.error("Les mots de passe ne correspondent pas");
       setLoading(false);
       return;
     }
@@ -36,13 +36,14 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
+        toast.success("Inscription réussie ! Vous pouvez maintenant vous connecter.");
         router.push("/login");
       } else {
-        setError(data.message || "Échec de l'inscription");
+        toast.error(data.message || "Échec de l'inscription");
       }
     } catch (err) {
       console.error(err);
-      setError("Une erreur inattendue s'est produite");
+      toast.error("Une erreur inattendue s'est produite");
     } finally {
       setLoading(false);
     }
@@ -51,12 +52,6 @@ export default function RegisterForm() {
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-5">
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
-            {error}
-          </div>
-        )}
-
         <div className="space-y-2">
           <label
             htmlFor="username"
