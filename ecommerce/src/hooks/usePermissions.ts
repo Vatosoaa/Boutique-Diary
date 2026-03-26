@@ -14,6 +14,7 @@ export function usePermissions() {
   const [permissions, setPermissions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     fetchPermissions();
@@ -26,12 +27,19 @@ export function usePermissions() {
         setLoading(false);
         return;
       }
-      const user = await authRes.json();
-      setUserRole(user.role);
+      const userData = await authRes.json();
+      // Le backend retourne { admin: { ... } } ou directement l'objet user ?
+      // Vérifions src/app/admin/page.tsx qui fait const data = await response.json(); setAdmin(data.admin);
+      // Donc l'endpoint retourne { admin: ... }
 
-      if (user.role === "superadmin" || user.role === "SUPERADMIN") {
+      const admin = userData.admin || userData; // Fallback
+
+      setUserRole(admin.role);
+      setUser(admin);
+
+      if (admin.role === "superadmin" || admin.role === "SUPERADMIN") {
         const superAdminPerms = DEFAULT_ROLES.find(
-          (r) => r.id === "superadmin",
+          r => r.id === "superadmin",
         )?.permissions;
         setPermissions(superAdminPerms || []);
         setLoading(false);
@@ -47,7 +55,7 @@ export function usePermissions() {
           try {
             const roles = JSON.parse(data.value) as RoleConfig[];
             const myRole = roles.find(
-              (r) => r.name.toLowerCase() === user.role.toLowerCase(),
+              r => r.name.toLowerCase() === user?.role.toLowerCase(),
             );
             if (myRole) {
               rolePermissions = myRole.permissions;
@@ -60,7 +68,7 @@ export function usePermissions() {
 
       if (rolePermissions.length === 0) {
         const defaultRole = DEFAULT_ROLES.find(
-          (r) => r.name.toLowerCase() === user.role.toLowerCase(),
+          r => r.name.toLowerCase() === user?.role.toLowerCase(),
         );
         if (defaultRole) {
           rolePermissions = defaultRole.permissions;
@@ -80,5 +88,5 @@ export function usePermissions() {
     return permissions.includes(permissionId);
   };
 
-  return { permissions, loading, hasPermission, userRole };
+  return { permissions, loading, hasPermission, userRole, user };
 }

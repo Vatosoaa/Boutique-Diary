@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     });
 
     const customersWithMultipleOrders = customerOrderCounts.filter(
-      (c) => c._count.id > 1,
+      c => c._count.id > 1,
     ).length;
     const customersWithAtLeastOneOrder = customerOrderCounts.length;
     const repeatPurchaseRate =
@@ -86,7 +86,7 @@ export async function GET(request: Request) {
     });
 
     const topCustomers = await Promise.all(
-      topSpenders.map(async (item) => {
+      topSpenders.map(async item => {
         if (!item.customerId) return null;
         const customer = await prisma.user.findUnique({
           where: { id: item.customerId },
@@ -128,7 +128,7 @@ export async function GET(request: Request) {
       signupsByDate[dayStr] = 0;
     }
 
-    recentUsers.forEach((u) => {
+    recentUsers.forEach(u => {
       const d = new Date(u.createdAt);
       const dayStr = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
       if (signupsByDate[dayStr] !== undefined) {

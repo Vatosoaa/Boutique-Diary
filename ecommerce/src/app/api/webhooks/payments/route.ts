@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { MarketingService } from "@/services/marketing-service";
+import { notificationManager } from "@/lib/notification-manager";
 
 /**
  * Webhook handler to activate promo codes after payment.
@@ -43,6 +44,29 @@ export async function POST(request: Request) {
       // 2. Trigger global price recalculation for the customer
       if (updatedPromo.ownerId) {
         await MarketingService.recalculateAccountPrices(updatedPromo.ownerId);
+
+        // Notify user
+        const userNotification = await prisma.notification.create({
+          data: {
+            userId: updatedPromo.ownerId,
+            title: "Code Promo Activé !",
+            message: `Votre code promo ${updatedPromo.code} est maintenant actif. Vos prix ont été mis à jour.`,
+            type: "SUCCESS",
+            link: "/dashboard/customer/promo-codes",
+          },
+        });
+        notificationManager.notifyUser(
+          String(updatedPromo.ownerId),
+          userNotification,
+        );
+
+        // Notify admins
+        await notificationManager.notifyAllAdmins({
+          title: "Code Promo Acheté & Activé",
+          message: `Le code ${updatedPromo.code} a été activé pour l'utilisateur ID: ${updatedPromo.ownerId}.`,
+          type: "SUCCESS",
+          link: `/admin/marketing/codes-promo`,
+        });
       }
 
       console.log(

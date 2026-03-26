@@ -57,7 +57,7 @@ export async function GET() {
       where: {
         id: {
           in: categoryStats
-            .map((s) => s.categoryId)
+            .map(s => s.categoryId)
             .filter((id): id is number => id !== null),
         },
       },
@@ -70,10 +70,10 @@ export async function GET() {
       },
     });
 
-    const categoryDistribution = categoryStats.map((stat) => {
-      const cat = categories.find((c) => c.id === stat.categoryId);
+    const categoryDistribution = categoryStats.map(stat => {
+      const cat = categories.find(c => c.id === stat.categoryId);
       const stockStat = categoryStock.find(
-        (s) => s.categoryId === stat.categoryId,
+        s => s.categoryId === stat.categoryId,
       );
       return {
         name: cat ? cat.name : "Sans catégorie",
@@ -91,7 +91,7 @@ export async function GET() {
     }, 0);
 
     const outOfStockCount = allProducts.filter(
-      (p) => !p.stock || p.stock === 0,
+      p => !p.stock || p.stock === 0,
     ).length;
 
     // Process orders for sales performance
@@ -112,7 +112,7 @@ export async function GET() {
 
     const salesPerformance = monthNames.map((name, index) => {
       const monthOrders = orders.filter(
-        (o) => new Date(o.createdAt).getMonth() === index,
+        o => new Date(o.createdAt).getMonth() === index,
       );
       const value = monthOrders.reduce((sum, o) => sum + o.total, 0);
       return { name, value };

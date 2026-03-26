@@ -68,6 +68,15 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   }, [user, fetchNotifications, setupRealtime, setRole]);
 
   useEffect(() => {
+    if (user) {
+      setRole("admin");
+      fetchNotifications();
+      const unsubscribe = setupRealtime();
+      return () => unsubscribe();
+    }
+  }, [user, fetchNotifications, setupRealtime, setRole]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         if (user && isAdmin(user.role)) {

@@ -157,11 +157,11 @@ export class AdminAssistantService {
     // Clean history: Gemini is strict about roles
     // 1. Must start with 'user'
     // 2. Roles must alternate
-    const cleanedHistory: Content[] = (history || []).map((h) => {
+    const cleanedHistory: Content[] = (history || []).map(h => {
       const isFunctionRole = h.role === "function";
       return {
         role: h.role === "system" ? "user" : h.role,
-        parts: h.parts.map((p) => {
+        parts: h.parts.map(p => {
           if (p.functionCall) return { functionCall: p.functionCall };
           if (p.functionResponse)
             return { functionResponse: p.functionResponse };
@@ -461,7 +461,7 @@ export class AdminAssistantService {
     });
 
     const products = await Promise.all(
-      topProducts.map(async (item) => {
+      topProducts.map(async item => {
         const product = await prisma.product.findUnique({
           where: { id: item.productId },
           select: { id: true, name: true, price: true, reference: true },

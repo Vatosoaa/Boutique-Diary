@@ -80,7 +80,9 @@ export async function PUT(
 
     let globalPrice = 0;
     if (validVariations.length > 0) {
-      const prices = validVariations.map((v: any) => parseFloat(v.price) || 0);
+      const prices = validVariations.map(
+        (v: { price: string }) => parseFloat(v.price) || 0,
+      );
       globalPrice = Math.min(...prices);
     }
 
@@ -91,21 +93,23 @@ export async function PUT(
 
     let globalCategoryId: number | null = null;
     if (validImages.length > 0) {
-      const firstCatImg = validImages.find((img: any) => img.categoryId);
+      const firstCatImg = validImages.find(
+        (img: { categoryId?: string }) => img.categoryId,
+      );
       if (firstCatImg) {
-        globalCategoryId = parseInt(firstCatImg.categoryId);
+        globalCategoryId = parseInt(firstCatImg.categoryId!);
       }
     }
 
     const globalColors = new Set<string>();
     const globalSizes = new Set<string>();
 
-    validVariations.forEach((v: any) => {
+    validVariations.forEach((v: { color?: string; size?: string }) => {
       if (v.color) globalColors.add(v.color);
       if (v.size) globalSizes.add(v.size);
     });
 
-    validImages.forEach((img: any) => {
+    validImages.forEach((img: { color?: string; sizes?: string[] }) => {
       if (img.color) globalColors.add(img.color);
       if (Array.isArray(img.sizes)) {
         img.sizes.forEach((s: string) => globalSizes.add(s));
@@ -159,59 +163,109 @@ export async function PUT(
         ...(images !== undefined && {
           images: {
             deleteMany: {},
-            create: (images || []).map((img: string | any, index: number) => {
-              const imgColor = typeof img === "string" ? null : img.color;
-              const colorAbbrev = imgColor
-                ? imgColor.toLowerCase().slice(0, 3)
-                : `img${index + 1}`;
-              const autoReference = `${productRef}-${colorAbbrev}`;
+            create: (images || []).map(
+              (
+                img: {
+                  url: string;
+                  reference?: string;
+                  color?: string;
+                  sizes?: string[];
+                  isNew?: boolean;
+                  isBestSeller?: boolean;
+                  isPromotion?: boolean;
+                  promotionRuleId?: number | string;
+                  categoryId?: number | string;
+                },
+                index: number,
+              ) => {
+                const imgColor = typeof img === "string" ? null : img.color;
+                const colorAbbrev = imgColor
+                  ? imgColor.toLowerCase().slice(0, 3)
+                  : `img${index + 1}`;
+                const autoReference = `${productRef}-${colorAbbrev}`;
 
-              return {
-                url: typeof img === "string" ? img : img.url,
-                reference:
-                  typeof img === "string"
-                    ? autoReference
-                    : img.reference || autoReference,
-                color: imgColor ?? null,
-                sizes: typeof img === "string" ? [] : (img.sizes ?? []),
+                return {
+                  url: typeof img === "string" ? img : img.url,
+                  reference:
+                    typeof img === "string"
+                      ? autoReference
+                      : (img as { reference?: string }).reference ||
+                        autoReference,
+                  color: imgColor ?? null,
+                  sizes:
+                    typeof img === "string"
+                      ? []
+                      : ((img as { sizes?: string[] }).sizes ?? []),
 
-                isNew: typeof img === "string" ? false : (img.isNew ?? false),
-                isBestSeller:
-                  typeof img === "string" ? false : (img.isBestSeller ?? false),
-                isPromotion:
-                  typeof img === "string" ? false : (img.isPromotion ?? false),
-                promotionRuleId:
-                  typeof img === "string"
-                    ? null
-                    : img.promotionRuleId
-                      ? parseInt(String(img.promotionRuleId))
-                      : null,
-                categoryId:
-                  typeof img === "string"
-                    ? null
-                    : img.categoryId
-                      ? parseInt(img.categoryId)
-                      : null,
-              };
-            }),
+                  isNew:
+                    typeof img === "string"
+                      ? false
+                      : ((img as { isNew?: boolean }).isNew ?? false),
+                  isBestSeller:
+                    typeof img === "string"
+                      ? false
+                      : ((img as { isBestSeller?: boolean }).isBestSeller ??
+                        false),
+                  isPromotion:
+                    typeof img === "string"
+                      ? false
+                      : ((img as { isPromotion?: boolean }).isPromotion ??
+                        false),
+                  promotionRuleId:
+                    typeof img === "string"
+                      ? null
+                      : (img as { promotionRuleId?: number | string })
+                            .promotionRuleId
+                        ? parseInt(
+                            String(
+                              (img as { promotionRuleId?: number | string })
+                                .promotionRuleId,
+                            ),
+                          )
+                        : null,
+                  categoryId:
+                    typeof img === "string"
+                      ? null
+                      : (img as { categoryId?: number | string }).categoryId
+                        ? parseInt(
+                            String(
+                              (img as { categoryId?: number | string })
+                                .categoryId,
+                            ),
+                          )
+                        : null,
+                };
+              },
+            ),
           },
         }),
 
         ...(variations !== undefined && {
           variations: {
             deleteMany: {},
-            create: (variations || []).map((v: any) => ({
-              sku: v.sku,
-              price: parseFloat(v.price) || 0,
-              oldPrice: v.oldPrice ? parseFloat(v.oldPrice) : null,
-              stock: parseInt(v.stock) || 0,
-              color: v.color || null,
-              size: v.size || null,
-              isActive: v.isActive ?? true,
-              promotionRuleId: v.promotionRuleId
-                ? parseInt(v.promotionRuleId)
-                : null,
-            })),
+            create: (variations || []).map(
+              (v: {
+                sku: string;
+                price: string | number;
+                oldPrice?: string | number;
+                stock: string | number;
+                color?: string;
+                size?: string;
+                isActive?: boolean;
+                promotionRuleId?: string | number;
+              }) => ({
+                sku: v.sku,
+                price: parseFloat(String(v.price)) || 0,
+                oldPrice: v.oldPrice ? parseFloat(String(v.oldPrice)) : null,
+                stock: parseInt(String(v.stock)) || 0,
+                color: v.color || null,
+                size: v.size || null,
+                isActive: v.isActive ?? true,
+                promotionRuleId: v.promotionRuleId
+                  ? parseInt(String(v.promotionRuleId))
+                  : null,
+              }),
+            ),
           },
         }),
       },
@@ -226,6 +280,9 @@ export async function PUT(
     revalidatePath(`/store/product/${id}`);
     revalidatePath("/store/shop");
     revalidatePath("/");
+    revalidatePath("/nouveautes");
+    revalidatePath("/top-vente");
+    revalidatePath("/promotions");
 
     return NextResponse.json(product);
   } catch (error: unknown) {
