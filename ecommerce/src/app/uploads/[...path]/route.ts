@@ -11,15 +11,15 @@ import { existsSync } from "fs";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } },
+  context: { params: Promise<{ path: string[] }> },
 ) {
   // Récupérer le chemin dynamique (ex: /uploads/produit.jpg -> params.path = ["produit.jpg"])
-  const resolvedParams = await params;
+  const { path: pathSegments } = await context.params;
   const filePath = path.join(
     process.cwd(),
     "public",
     "uploads",
-    ...resolvedParams.path,
+    ...pathSegments,
   );
 
   // Vérification de sécurité pour éviter les traversées de répertoire
