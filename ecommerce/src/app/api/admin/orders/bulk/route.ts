@@ -49,7 +49,8 @@ export async function PUT(request: NextRequest) {
       });
 
       // Notify admins via SSE
-      const { notificationManager } = await import("@/lib/notification-manager");
+      const { notificationManager } =
+        await import("@/lib/notification-manager");
       notificationManager.notifyAdmins({
         type: "TRANSACTION_BULK_UPDATE",
       });
@@ -61,7 +62,7 @@ export async function PUT(request: NextRequest) {
         type: "INFO",
         link: "/admin/orders",
       });
-      }
+    }
 
     return NextResponse.json({
       success: true,

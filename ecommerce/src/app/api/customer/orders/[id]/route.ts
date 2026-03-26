@@ -107,7 +107,7 @@ export async function PATCH(
               : "Commande Confirmée par Client",
           message: `La commande #${updatedOrderData.reference} a été ${status === "CANCELLED" ? "annulée" : "confirmée"} par le client.`,
           type: status === "CANCELLED" ? "WARNING" : "SUCCESS",
-          link: `CMD_ACTION:${updatedOrderData.id}`,
+          link: `/admin/orders/${updatedOrderData.id}`,
         });
       }
 
@@ -126,10 +126,11 @@ export async function PATCH(
 
     console.log(`[CustomerOrderPATCH] Transaction completed successfully`);
     return NextResponse.json(updatedOrder);
-  } catch (error: any) {
-    console.error("[CustomerOrderPATCH] Error:", error.message, error.stack);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Erreur inconnue";
+    console.error("[CustomerOrderPATCH] Error:", message);
     return NextResponse.json(
-      { error: "Erreur interne du serveur", details: error.message },
+      { error: "Erreur interne du serveur", details: message },
       { status: 500 },
     );
   }

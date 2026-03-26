@@ -54,16 +54,16 @@ export default function CustomerOrders() {
 
     // SSE Setup
     const eventSource = new EventSource("/api/notifications/stream?role=user");
-    eventSource.onmessage = (event) => {
+    eventSource.onmessage = event => {
       try {
         if (event.data.startsWith("{")) {
           const data = JSON.parse(event.data);
-          // A new notification for this user implies a potential order update
-          if (data.type === "NEW_NOTIFICATION") {
+          // Refresh on any notification for the user or explicit order update
+          if (data.type === "ORDER_UPDATE" || data.userId || data.id) {
             fetchOrders();
           }
         }
-      } catch (e) {
+      } catch {
         // Ignore heartbeat
       }
     };

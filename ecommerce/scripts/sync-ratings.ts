@@ -26,7 +26,7 @@ async function syncProductRatings() {
         reviewCount: newCount,
       },
     });
-    
+
     updatedCount++;
     if (updatedCount % 10 === 0) {
       console.log(`Processed ${updatedCount}/${products.length} products...`);
@@ -37,7 +37,7 @@ async function syncProductRatings() {
 }
 
 syncProductRatings()
-  .catch((e) => {
+  .catch(e => {
     console.error(e);
     process.exit(1);
   })
