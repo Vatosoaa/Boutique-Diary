@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { reduceOrderStock, replenishOrderStock } from "@/lib/stock-utils";
 import { rewardPointsForOrder } from "@/lib/loyalty";
+import { notificationManager } from "@/lib/notification-manager";
 
 export async function GET(
   request: NextRequest,
@@ -88,7 +89,7 @@ export async function GET(
             address: displayAddress,
           }
         : { name: "Invité", email: "", avatar: null, address: displayAddress },
-      items: order.items.map((item) => ({
+      items: order.items.map(item => ({
         id: item.id,
         productId: item.productId,
         productName: item.product.name,
@@ -133,7 +134,7 @@ export async function PATCH(
 
     console.log(`[OrderPATCH] Updating order ${id} to status: ${status}`);
 
-    const updatedOrder = await prisma.$transaction(async (tx) => {
+    const updatedOrder = await prisma.$transaction(async tx => {
       const order = await tx.order.update({
         where: { id },
         data: { status },
@@ -141,6 +142,24 @@ export async function PATCH(
       console.log(
         `[OrderPATCH] Order updated, stockReduced: ${order.stockReduced}`,
       );
+
+      // Map Order status to PaymentTransaction status
+      let transactionStatus: string | null = null;
+      if (status === "DELIVERED" || status === "COMPLETED") {
+        transactionStatus = "SUCCESS";
+      } else if (status === "CANCELLED") {
+        transactionStatus = "CANCELLED";
+      }
+
+      if (transactionStatus) {
+        await tx.paymentTransaction.updateMany({
+          where: { orderId: id },
+          data: { status: transactionStatus },
+        });
+
+        // Broadcast transaction update to admins
+        notificationManager.notifyAdmins({ type: "TRANSACTION_UPDATE" });
+      }
 
       if (status === "DELIVERED" || status === "COMPLETED") {
         console.log(`[OrderPATCH] Calling reduceOrderStock for ${id}`);
@@ -155,6 +174,32 @@ export async function PATCH(
         console.log(`[OrderPATCH] Rewarding points for order ${id}`);
         await rewardPointsForOrder(id, tx);
       }
+
+      // Create notification and notify via SSE for the customer
+      if (order.customerId) {
+        const notification = await tx.notification.create({
+          data: {
+            userId: order.customerId,
+            title: "Statut de commande mis à jour",
+            message: `Votre commande #${order.reference} est passée au statut : ${status}`,
+            type: "INFO",
+            link: "/dashboard/customer/promo-codes",
+          },
+        });
+
+        notificationManager.notifyUser(String(order.customerId), notification);
+      }
+
+      // Notify admins with a rich notification object
+      await notificationManager.notifyAllAdmins({
+        title: "Commande Mise à Jour",
+        message: `La commande #${order.reference} est maintenant ${status}.`,
+        type: "ORDER_UPDATE",
+        link: `CMD_ACTION:${order.id}`,
+      });
+
+      // Also send a general order update event for the admin order list to refresh
+      notificationManager.notifyAdmins({ type: "ORDER_UPDATE" });
 
       return order;
     });

@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     });
 
     const topProducts = await Promise.all(
-      topSelling.map(async (item) => {
+      topSelling.map(async item => {
         const product = await prisma.product.findUnique({
           where: { id: item.productId },
           select: { id: true, name: true, reference: true, stock: true },
@@ -84,7 +84,7 @@ export async function GET(request: Request) {
     let outOfStock = 0;
     let totalValue = 0;
 
-    products.forEach((p) => {
+    products.forEach(p => {
       totalValue += p.price * p.stock;
       if (p.stock === 0) outOfStock++;
       else if (p.stock < 5) lowStock++;
@@ -107,7 +107,7 @@ export async function GET(request: Request) {
       const d = new Date(endDate);
       d.setDate(d.getDate() - i);
 
-      const countAtDate = products.filter((p) => p.createdAt <= d).length;
+      const countAtDate = products.filter(p => p.createdAt <= d).length;
       productsHistory.push({ value: countAtDate });
 
       // Pour la valeur et la rupture de stock, on utilise une estimation basée sur les données actuelles

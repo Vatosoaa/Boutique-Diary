@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
+import { notificationManager } from "@/lib/notification-manager";
 
 function generateOrderReference(): string {
   const date = new Date();
@@ -123,7 +124,7 @@ export async function POST(request: NextRequest) {
       attempts++;
     }
 
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async tx => {
       const newOrder = await tx.order.create({
         data: {
           reference,
@@ -133,7 +134,7 @@ export async function POST(request: NextRequest) {
           promoCode: body.promoCode || null,
           discount: discountAmount,
           items: {
-            create: body.items.map((item) => ({
+            create: body.items.map(item => ({
               productId: item.productId,
               productImageId: item.productImageId || null,
               quantity: item.quantity,
@@ -173,6 +174,28 @@ export async function POST(request: NextRequest) {
           where: { id: promoIdToIncrement },
           data: { usageCount: { increment: 1 } },
         });
+      }
+
+      // Create notifications
+      await notificationManager.notifyAllAdmins({
+        title: "Nouvelle commande",
+        message: `Référence: ${newOrder.reference}, Total: ${newOrder.total} MGA`,
+        type: "ORDER",
+        link: `/admin/orders`,
+      });
+
+      if (customerId) {
+        const userNotification = await tx.notification.create({
+          data: {
+            userId: customerId,
+            title: "Commande confirmée",
+            message: `Votre commande ${newOrder.reference} a été enregistrée avec succès.`,
+            type: "SUCCESS",
+            link: `/dashboard/customer/orders`,
+          },
+        });
+
+        notificationManager.notifyUser(String(customerId), userNotification);
       }
 
       return newOrder;

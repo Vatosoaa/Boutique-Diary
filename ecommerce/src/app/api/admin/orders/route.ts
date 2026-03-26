@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
       prisma.order.count({ where: { createdAt: { gte: today } } }),
     ]);
 
-    const formattedOrders = orders.map((order) => {
+    const formattedOrders = orders.map(order => {
       let customerName = "Invité";
       let customerEmail = "";
       let customerAvatar = "";
