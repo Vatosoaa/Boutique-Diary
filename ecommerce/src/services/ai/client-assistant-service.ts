@@ -121,11 +121,14 @@ export class ClientAssistantService {
       Répondez en français.`,
     });
 
-    const cleanedHistory: unknown[] = (history || []).map(h => {
+    const cleanedHistory: Content[] = (history || []).map(h => {
       const isFunctionRole = h.role === "function";
       return {
-        role: h.role === "system" ? "user" : (h.role as string),
-        parts: h.parts.map((p: Record<string, unknown>) => {
+        role:
+          h.role === "system"
+            ? "user"
+            : (h.role as "user" | "model" | "function"),
+        parts: h.parts.map(p => {
           if (p.functionCall) return { functionCall: p.functionCall };
           if (p.functionResponse)
             return { functionResponse: p.functionResponse };
@@ -147,21 +150,16 @@ export class ClientAssistantService {
     });
 
     // Helper for retry
-    const withRetry = async (
-      fn: () => Promise<unknown>,
+    const withRetry = async <T>(
+      fn: () => Promise<T>,
       retries = 3,
       delay = 2000,
-    ): Promise<unknown> => {
+    ): Promise<T> => {
       try {
         return await fn();
       } catch (error: unknown) {
-        if (
-          error &&
-          typeof error === "object" &&
-          "status" in error &&
-          error.status === 429 &&
-          retries > 0
-        ) {
+        const err = error as { status?: number };
+        if (err.status === 429 && retries > 0) {
           console.warn(`[ClientAI] Rate limited. Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
           return withRetry(fn, retries - 1, delay * 2);
@@ -182,23 +180,22 @@ export class ClientAssistantService {
 
       const calls = response.functionCalls();
       if (calls && calls.length > 0) {
-        const toolResponses: Array<Record<string, unknown>> = [];
+        const toolResponses: Array<{
+          functionResponse: { name: string; response: object };
+        }> = [];
 
         for (const call of calls) {
-          const { name, args } = call as {
-            name: string;
-            args: Record<string, unknown>;
-          };
-          const toolArgs = args;
+          const { name, args } = call;
+          const toolArgs = args as Record<string, unknown>;
           console.log(`[ClientAI] Calling tool: ${name}`, toolArgs);
 
           let toolResult;
           switch (name) {
             case "search_products":
               toolResult = await this.searchProducts(
-                toolArgs.query,
-                toolArgs.category,
-                toolArgs.limit || 5,
+                toolArgs.query as string,
+                toolArgs.category as string | undefined,
+                (toolArgs.limit as number) || 5,
               );
               break;
             case "get_product_details":
@@ -261,7 +258,7 @@ export class ClientAssistantService {
     categoryName?: string,
     limit: number = 5,
   ) {
-    const where: Record<string, unknown> = {
+    const where: Prisma.ProductWhereInput = {
       status: "PUBLISHED",
       deletedAt: null,
       OR: [
