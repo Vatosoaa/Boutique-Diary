@@ -161,7 +161,7 @@ export async function POST(
 
             <div style="text-align: center; margin-top: 40px;">
               <p style="font-size: 14px; color: #6b7280;">Vous pouvez consulter le statut de votre commande en direct sur notre site.</p>
-              <a href="${process.env.NEXT_PUBLIC_URL || "https://boutique-diary.mg"}/dashboard/customer/orders" class="button">Suivre ma commande</a>
+              <a href="http://localhost:3000/dashboard/customer/orders" class="button">Suivre ma commande</a>
             </div>
           </div>
           

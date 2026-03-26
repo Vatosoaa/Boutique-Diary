@@ -84,7 +84,7 @@ export default function RegisterPage() {
 
               {}
               <div className="grid grid-cols-2 gap-4">
-                <Link
+                <a
                   href="/api/auth/social/login?connection=google-oauth2"
                   className="flex items-center justify-center gap-3 h-12 bg-white border border-gray-100 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-gray-200 hover:shadow-md transition-all font-bold text-[11px] uppercase tracking-wider text-gray-600 group"
                 >
@@ -94,8 +94,8 @@ export default function RegisterPage() {
                     className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
                   />
                   Google
-                </Link>
-                <Link
+                </a>
+                <a
                   href="/api/auth/social/login?connection=github"
                   className="flex items-center justify-center gap-3 h-12 bg-slate-950 rounded-xl shadow-lg hover:bg-black transition-all font-bold text-[11px] uppercase tracking-wider text-white group"
                 >
@@ -104,7 +104,7 @@ export default function RegisterPage() {
                     className="text-white/70 group-hover:text-white transition-colors"
                   />
                   GitHub
-                </Link>
+                </a>
               </div>
 
               <div className="relative">

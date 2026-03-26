@@ -65,12 +65,12 @@ export function UserNav({ user }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Billing</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>Profil</DropdownMenuItem>
+          <DropdownMenuItem>Facturation</DropdownMenuItem>
+          <DropdownMenuItem>Paramètres</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>Déconnexion</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
