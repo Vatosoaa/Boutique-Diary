@@ -11,37 +11,39 @@ import {
   TrendingDown,
 } from "lucide-react";
 
-interface OrderStats {
-  totalOrdersToday: number;
-  completedOrders: number;
-  pendingOrders: number;
-  cancelledOrders: number;
-  todayTrend: number;
-  completedTrend: number;
-  pendingTrend: number;
-  cancelledTrend: number;
+export interface MetricData {
+  value: number;
+  trend: number;
+  sparkline: number[];
 }
 
 interface OrdersStatsProps {
-  stats: OrderStats;
+  metrics: {
+    total: MetricData;
+    completed: MetricData;
+    pending: MetricData;
+    cancelled: MetricData;
+  } | null;
   loading?: boolean;
 }
 
-export function OrdersStats({ stats, loading }: OrdersStatsProps) {
+export function OrdersStats({ metrics, loading }: OrdersStatsProps) {
   const statCards = [
     {
-      label: "Commandes du jour",
-      value: stats.totalOrdersToday,
-      trend: stats.todayTrend,
+      label: "Commandes du mois",
+      value: metrics?.total.value ?? 0,
+      trend: metrics?.total.trend ?? 0,
+      sparklineData: metrics?.total.sparkline ?? Array(14).fill(0),
       icon: ShoppingCart,
       color: "from-blue-500 to-indigo-600",
       iconBg: "bg-blue-500/10 text-blue-500",
       chartColor: "#3b82f6",
     },
     {
-      label: "Terminées",
-      value: stats.completedOrders,
-      trend: stats.completedTrend,
+      label: "Terminées (mois)",
+      value: metrics?.completed.value ?? 0,
+      trend: metrics?.completed.trend ?? 0,
+      sparklineData: metrics?.completed.sparkline ?? Array(14).fill(0),
       icon: CheckCircle,
       color: "from-emerald-500 to-teal-600",
       iconBg: "bg-emerald-500/10 text-emerald-500",
@@ -49,8 +51,9 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
     },
     {
       label: "En attente",
-      value: stats.pendingOrders,
-      trend: stats.pendingTrend,
+      value: metrics?.pending.value ?? 0,
+      trend: metrics?.pending.trend ?? 0,
+      sparklineData: metrics?.pending.sparkline ?? Array(14).fill(0),
       icon: Clock,
       color: "from-amber-500 to-orange-600",
       iconBg: "bg-amber-500/10 text-amber-500",
@@ -58,8 +61,9 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
     },
     {
       label: "Annulées",
-      value: stats.cancelledOrders,
-      trend: stats.cancelledTrend,
+      value: metrics?.cancelled.value ?? 0,
+      trend: metrics?.cancelled.trend ?? 0,
+      sparklineData: metrics?.cancelled.sparkline ?? Array(14).fill(0),
       icon: XCircle,
       color: "from-rose-500 to-red-600",
       iconBg: "bg-rose-500/10 text-rose-500",
@@ -67,14 +71,22 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
     },
   ];
 
-  const Sparkline = ({ color, trend }: { color: string; trend: number }) => {
-    const points =
-      trend > 0
-        ? "0,20 10,18 20,15 30,17 40,12 50,14 60,8 70,10 80,5"
-        : "0,5 10,8 20,12 30,10 40,15 50,13 60,18 70,16 80,20";
+  const Sparkline = ({ color, data }: { color: string; data: number[] }) => {
+    if (!data || data.length === 0) return null;
+    const max = Math.max(...data, 1);
+    const w = 80;
+    const h = 20;
+
+    const points = data
+      .map((val, i) => {
+        const x = (i / (data.length - 1)) * w;
+        const y = 24 - (val / max) * h;
+        return `${x},${y}`;
+      })
+      .join(" ");
 
     return (
-      <svg width="80" height="24" className="overflow-visible">
+      <svg width={w} height="24" className="overflow-visible">
         <polyline
           fill="none"
           stroke={color}
@@ -90,7 +102,6 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {statCards.map((stat, index) => {
-        const Icon = stat.icon;
         const isPositiveTrend = stat.trend > 0;
 
         return (
@@ -134,7 +145,10 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                  <Sparkline color={stat.chartColor} trend={stat.trend} />
+                  <Sparkline
+                    color={stat.chartColor}
+                    data={stat.sparklineData}
+                  />
                 </div>
               </div>
             </CardContent>

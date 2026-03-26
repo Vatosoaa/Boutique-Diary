@@ -99,7 +99,10 @@ export async function GET(request: NextRequest) {
         customerEmail = order.customer.email;
         customerAvatar = order.customer.photo || "";
       } else if (order.transactions && order.transactions.length > 0) {
-        const metadata = order.transactions[0].metadata as any;
+        const metadata = order.transactions[0].metadata as Record<
+          string,
+          string
+        >;
         if (metadata) {
           // Try to get name from mvolaName or fallback to phone
           customerName =
@@ -123,6 +126,71 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    const now = new Date();
+    const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const recentOrders = await prisma.order.findMany({
+      where: {
+        createdAt: { gte: startOfLastMonth },
+      },
+      select: {
+        id: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    const allThisMonthCount = recentOrders.filter(
+      o => o.createdAt >= startOfThisMonth,
+    ).length;
+
+    const calculateMetrics = (statusMatcher: (status: string) => boolean) => {
+      const thisMonth = recentOrders.filter(
+        o => o.createdAt >= startOfThisMonth && statusMatcher(o.status),
+      );
+
+      const thisMonthCount = thisMonth.length;
+
+      let trend =
+        allThisMonthCount > 0
+          ? Math.round((thisMonthCount / allThisMonthCount) * 100)
+          : 0;
+
+      if (trend > 100) trend = 100;
+      if (trend < 0) trend = 0;
+
+      const days = 14;
+      const sparkline = Array(days).fill(0);
+      const startOfSparkline = new Date(now);
+      startOfSparkline.setDate(startOfSparkline.getDate() - days + 1);
+      startOfSparkline.setHours(0, 0, 0, 0);
+
+      const recentDaysOrders = recentOrders.filter(
+        o => o.createdAt >= startOfSparkline && statusMatcher(o.status),
+      );
+      recentDaysOrders.forEach(o => {
+        const diffTime = o.createdAt.getTime() - startOfSparkline.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays < days) {
+          sparkline[diffDays]++;
+        }
+      });
+
+      return {
+        value: thisMonthCount,
+        trend,
+        sparkline,
+      };
+    };
+
+    const metrics = {
+      total: calculateMetrics(() => true),
+      completed: calculateMetrics(s => s === "COMPLETED" || s === "DELIVERED"),
+      pending: calculateMetrics(s => s === "PENDING" || s === "PROCESSING"),
+      cancelled: calculateMetrics(s => s === "CANCELLED"),
+    };
+
     return NextResponse.json({
       orders: formattedOrders,
       counts: {
@@ -132,6 +200,7 @@ export async function GET(request: NextRequest) {
         cancelled: cancelledCount,
         today: todayCount,
       },
+      metrics,
       pagination: {
         page,
         limit,

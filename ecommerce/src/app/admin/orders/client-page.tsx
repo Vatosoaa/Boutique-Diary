@@ -46,6 +46,12 @@ interface OrdersResponse {
     cancelled: number;
     today: number;
   };
+  metrics?: {
+    total: { value: number; trend: number; sparkline: number[] };
+    completed: { value: number; trend: number; sparkline: number[] };
+    pending: { value: number; trend: number; sparkline: number[] };
+    cancelled: { value: number; trend: number; sparkline: number[] };
+  };
 }
 
 export default function OrdersClientPage({
@@ -81,33 +87,6 @@ export default function OrdersClientPage({
     if (!response?.counts)
       return { total: 0, completed: 0, pending: 0, cancelled: 0 };
     return response.counts;
-  }, [response?.counts]);
-
-  const stats = React.useMemo(() => {
-    if (!response?.counts) {
-      return {
-        totalOrdersToday: 0,
-        completedOrders: 0,
-        pendingOrders: 0,
-        cancelledOrders: 0,
-        todayTrend: 0,
-        completedTrend: 0,
-        pendingTrend: 0,
-        cancelledTrend: 0,
-      };
-    }
-    const c = response.counts;
-    const maxTotal = Math.max(c.total, 1);
-    return {
-      totalOrdersToday: c.today,
-      completedOrders: c.completed,
-      pendingOrders: c.pending,
-      cancelledOrders: c.cancelled,
-      todayTrend: Math.round((c.today / maxTotal) * 100),
-      completedTrend: Math.round((c.completed / maxTotal) * 100),
-      pendingTrend: Math.round((c.pending / maxTotal) * 100),
-      cancelledTrend: -Math.round((c.cancelled / maxTotal) * 100),
-    };
   }, [response?.counts]);
 
   const params = useParams();
@@ -314,9 +293,8 @@ export default function OrdersClientPage({
         onRefresh={() => mutate()}
         isLoading={isLoading}
       />
-
-      {}
-      <OrdersStats stats={stats} loading={isLoading} />
+      {/* Statistiques rapides */}
+      <OrdersStats metrics={response?.metrics || null} loading={isLoading} />
 
       {}
       <OrderList

@@ -6,8 +6,6 @@ import {
   Mail,
   Calendar,
   Loader2,
-  Eye,
-  User,
   Users,
   UserPlus,
   Clock,
@@ -368,14 +366,6 @@ export default function CustomerPage() {
                         onClick={e => e.stopPropagation()}
                       >
                         <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-full"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
