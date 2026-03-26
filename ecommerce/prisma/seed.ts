@@ -499,6 +499,50 @@ async function main() {
     });
   }
 
+  // Payment Methods
+  console.log("💳 Creating payment methods...");
+  await prisma.paymentMethod.deleteMany();
+  await prisma.paymentMethod.createMany({
+    data: [
+      {
+        code: "mvola",
+        name: "MVola",
+        description: "Paiement mobile via Telma MVola",
+        isActive: true,
+        isDefault: true,
+        config: { merchantId: "123456" },
+      },
+      {
+        code: "orange_money",
+        name: "Orange Money",
+        description: "Paiement mobile via Orange Money",
+        isActive: true,
+        isDefault: false,
+      },
+      {
+        code: "airtel_money",
+        name: "Airtel Money",
+        description: "Paiement mobile via Airtel Money Madagascar",
+        isActive: true,
+        isDefault: false,
+      },
+      {
+        code: "cash",
+        name: "Paiement à la livraison",
+        description: "Payer en espèces à la réception de votre commande",
+        isActive: true,
+        isDefault: false,
+      },
+      {
+        code: "stripe",
+        name: "Carte Bancaire",
+        description: "Paiement sécurisé par carte (Stripe)",
+        isActive: true,
+        isDefault: false,
+      },
+    ],
+  });
+
   console.log("✅ Seeding completed successfully!");
 }
 
