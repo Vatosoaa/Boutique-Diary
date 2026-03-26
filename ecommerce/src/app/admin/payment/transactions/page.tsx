@@ -107,7 +107,7 @@ export default function PaymentTransactionsPage() {
       console.log("SSE connection established on Transaction Page");
     };
 
-    eventSource.onmessage = event => {
+    eventSource.onmessage = (event) => {
       try {
         // Heartbeat messages are not JSON
         if (event.data.startsWith("{")) {

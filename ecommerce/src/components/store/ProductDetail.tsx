@@ -169,12 +169,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   // Filter variations by current color
   const colorVariations = useMemo(() => {
     if (!currentImage?.color) return [];
-    return product.variations.filter((v) => v.color === currentImage.color);
+    return product.variations.filter(v => v.color === currentImage.color);
   }, [product.variations, currentImage?.color]);
 
   const displayPrice = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant
         ? Number(variant.price)
         : (currentImage?.price ?? product?.price);
@@ -184,7 +184,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const displayOldPrice = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant
         ? variant.oldPrice
           ? Number(variant.oldPrice)
@@ -202,10 +202,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   // Derive unique colors from both images and variations to stay in sync with actual data
   const uniqueColors = useMemo(() => {
     const colors = new Set<string>();
-    images.forEach((img) => {
+    images.forEach(img => {
       if (img.color) colors.add(img.color);
     });
-    product.variations.forEach((v) => {
+    product.variations.forEach(v => {
       if (v.color) colors.add(v.color);
     });
     return Array.from(colors);
@@ -213,7 +213,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const currentRef = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant?.sku ?? currentImage?.reference ?? product?.reference;
     }
     return currentImage?.reference ?? product?.reference;
@@ -226,7 +226,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const availableSizes = useMemo(() => {
     if (colorVariations.length > 0) {
-      return colorVariations.map((v) => v.size).filter(Boolean) as string[];
+      return colorVariations.map(v => v.size).filter(Boolean) as string[];
     }
     return currentImage?.sizes && currentImage.sizes.length > 0
       ? currentImage.sizes
@@ -236,7 +236,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const displayStock = useMemo(() => {
     // 1. If we have a specific size selected, get that variant's stock
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant ? variant.stock : 0;
     }
 
@@ -281,15 +281,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     });
   }, []);
 
-  const addItem = useCartStore((state) => state.addItem);
-  const cartItems = useCartStore((state) => state.items);
+  const addItem = useCartStore(state => state.addItem);
+  const cartItems = useCartStore(state => state.items);
 
   // Optimistic stock calculation: subtract quantity already in cart
   const reactiveStock = useMemo(() => {
     const targetColor = currentImage?.color || null;
     const targetSize = selectedSize || null;
 
-    const itemsMatchingSelection = cartItems.filter((item) => {
+    const itemsMatchingSelection = cartItems.filter(item => {
       if (item.productId !== product.id) return false;
 
       const itemColor = item.color || null;
@@ -317,7 +317,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           product.stock;
 
     const inCartTotal = cartItems
-      .filter((item) => item.productId === product.id)
+      .filter(item => item.productId === product.id)
       .reduce((acc, item) => acc + item.quantity, 0);
 
     return Math.max(0, physicalTotal - inCartTotal);
@@ -413,8 +413,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const blogPosts: BlogPost[] = product.blogPosts || [];
   const currentBlogPost =
-    blogPosts.find((bp) => bp.productImageId === currentImage?.id) ||
-    blogPosts.find((bp) => !bp.productImageId);
+    blogPosts.find(bp => bp.productImageId === currentImage?.id) ||
+    blogPosts.find(bp => !bp.productImageId);
 
   return (
     <section className="py-3 md:py-5 px-3 md:px-5">
@@ -531,10 +531,22 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   {product.category?.name || "Premium Selection"}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 rounded-full">
-                <span className="flex h-1 w-1 rounded-full bg-emerald-500" />
-                <span className="text-[9px] font-bold text-emerald-600 uppercase">
-                  En Stock
+              <div
+                className={cn(
+                  "flex items-center gap-1.5 px-2 py-0.5 rounded-full",
+                  displayStock > 0
+                    ? "bg-emerald-500/10 text-emerald-600"
+                    : "bg-rose-500/10 text-rose-600",
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex h-1 w-1 rounded-full",
+                    displayStock > 0 ? "bg-emerald-500" : "bg-rose-500",
+                  )}
+                />
+                <span className="text-[9px] font-bold uppercase">
+                  {displayStock > 0 ? "En Stock" : "Rupture"}
                 </span>
               </div>
             </div>
@@ -641,7 +653,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     uniqueColors.map((color: string) => {
                       const isSelected = currentImage?.color === color;
                       const index = images.findIndex(
-                        (img) => img.color === color,
+                        img => img.color === color,
                       );
                       return (
                         <button

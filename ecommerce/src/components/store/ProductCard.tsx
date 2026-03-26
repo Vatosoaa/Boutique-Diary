@@ -22,6 +22,10 @@ interface ProductCardProps {
   reviewCount?: number;
   imageColor?: string;
   initialIsWishlisted?: boolean;
+  promotionRule?: {
+    isActive: boolean;
+    actions: Record<string, unknown>;
+  } | null;
 }
 
 export default function ProductCard({
@@ -88,7 +92,10 @@ export default function ProductCard({
       promotionRule.actions &&
       typeof promotionRule.actions === "object"
     ) {
-      const actions = promotionRule.actions as any;
+      const actions = promotionRule.actions as Record<string, unknown>;
+      if (actions.discountPercentage) {
+        return Math.round(Number(actions.discountPercentage));
+      }
       if (actions.discountType === "PERCENTAGE" && actions.discountValue) {
         return Math.round(Number(actions.discountValue));
       }
@@ -105,7 +112,8 @@ export default function ProductCard({
 
   const showPromotionBadge =
     (promotionRule?.isActive || (isPromotion && !promotionRule)) &&
-    discountPercentage !== null;
+    discountPercentage !== null &&
+    discountPercentage > 0;
 
   return (
     <div className="group relative flex flex-col h-full product-card-reveal">
@@ -182,17 +190,17 @@ export default function ProductCard({
       </div>
 
       {/* Product Details */}
-      <div className="flex flex-col flex-1 px-1 items-center text-center">
-        <div className="flex items-center justify-center gap-3 mb-1 w-full">
+      <div className="flex flex-col flex-1 px-2 pb-2 mt-3">
+        <div className="flex items-center justify-center gap-2 mb-2 w-full">
           {category && (
-            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
+            <span className="text-[9px] uppercase font-extrabold text-muted-foreground/80 tracking-widest bg-muted/50 px-2.5 py-0.5 rounded-full">
               {category}
             </span>
           )}
-          {rating !== null && rating! > 0 && (
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-              <span className="text-[10px] font-bold text-muted-foreground">
+          {rating && rating > 0 && (
+            <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-full">
+              <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+              <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400">
                 {rating}
               </span>
             </div>
@@ -201,17 +209,17 @@ export default function ProductCard({
 
         <Link
           href={`/store/product/${id}`}
-          className="text-sm md:text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2 tracking-tight w-full"
+          className="text-[15px] md:text-base font-extrabold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2 tracking-tight text-center"
         >
           {title}
         </Link>
 
-        <div className="mt-auto flex items-baseline justify-center gap-2 w-full">
-          <span className="text-lg font-black text-foreground">
+        <div className="mt-auto flex items-baseline justify-center gap-1.5 w-full">
+          <span className="text-lg md:text-xl font-black text-foreground drop-shadow-sm">
             {formatPrice(price)}
           </span>
           {isPromotion && oldPrice && (
-            <span className="text-xs text-muted-foreground line-through decoration-rose-400/50">
+            <span className="text-xs font-semibold text-muted-foreground/60 line-through decoration-rose-400/50 decoration-2">
               {formatPrice(oldPrice)}
             </span>
           )}

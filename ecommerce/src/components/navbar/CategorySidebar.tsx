@@ -124,7 +124,7 @@ export default function CategorySidebar() {
                 Aucune catégorie
               </li>
             ) : (
-              categories.map((category) => {
+              categories.map(category => {
                 const info = getCategoryInfo(category.name);
                 return (
                   <li key={category.id || category.name}>

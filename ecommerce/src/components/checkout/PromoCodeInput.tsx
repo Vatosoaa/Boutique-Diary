@@ -107,10 +107,10 @@ export default function PromoCodeInput({
           <input
             type="text"
             value={code}
-            onChange={(e) => {
+            onChange={e => {
               setCode(e.target.value.toUpperCase());
             }}
-            onKeyDown={(e) => e.key === "Enter" && handleApply()}
+            onKeyDown={e => e.key === "Enter" && handleApply()}
             placeholder="Code promo"
             className={cn(
               "w-full pl-10 pr-4 py-3 bg-secondary/5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/5 text-foreground transition-all placeholder:text-muted-foreground/50 outline-none",

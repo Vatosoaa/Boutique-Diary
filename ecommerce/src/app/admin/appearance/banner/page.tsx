@@ -24,7 +24,7 @@ export default function BannerPage() {
   const handleSuccess = () => {
     setShowForm(false);
     setSelectedBanner(null);
-    setRefreshTrigger((prev) => prev + 1);
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleCancel = () => {

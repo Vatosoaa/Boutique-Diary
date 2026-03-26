@@ -86,7 +86,7 @@ export default function PromoCodesPage() {
 
       {loading ? (
         <div className="grid gap-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div
               key={i}
               className="h-16 bg-gray-100 dark:bg-gray-900 rounded-lg animate-pulse"
@@ -102,7 +102,7 @@ export default function PromoCodesPage() {
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {selectedCode ? "Modifier le code promo" : "Créer un code promo"}

@@ -78,7 +78,7 @@ export default function CategoryTabsSection({
 
         {}
         <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveTab(cat)}

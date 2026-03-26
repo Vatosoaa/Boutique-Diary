@@ -31,7 +31,7 @@ export default function SalesReportsPage() {
       <div className="p-6">
         <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mb-6"></div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div
               key={i}
               className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"
@@ -62,14 +62,14 @@ export default function SalesReportsPage() {
     chartData: [],
   };
 
-  const revenueChartData = (rawChartData || []).map((d) => ({
+  const revenueChartData = (rawChartData || []).map(d => ({
     value: d.amount,
   }));
-  const ordersChartData = (rawChartData || []).map((d) => ({
+  const ordersChartData = (rawChartData || []).map(d => ({
     value: d.orders,
   }));
-  const aovChartData = (rawChartData || []).map((d) => ({ value: d.aov }));
-  const conversionChartData = (rawChartData || []).map((d) => ({
+  const aovChartData = (rawChartData || []).map(d => ({ value: d.aov }));
+  const conversionChartData = (rawChartData || []).map(d => ({
     value: d.conversionRate,
   }));
 
@@ -168,11 +168,22 @@ export default function SalesReportsPage() {
                     ((count as number) / total) * 100,
                   );
 
+                  const getStatusLabel = (status: string) => {
+                    const s = status.toUpperCase();
+                    if (s === "PENDING") return "En attente";
+                    if (s === "PROCESSING") return "En cours";
+                    if (s === "SHIPPED") return "Expédiée";
+                    if (s === "DELIVERED") return "Livrée";
+                    if (s === "CANCELLED") return "Annulée";
+                    if (s === "COMPLETED") return "Terminée";
+                    return status;
+                  };
+
                   return (
                     <div key={status} className="space-y-1">
                       <div className="flex justify-between text-sm">
                         <span className="font-medium text-gray-700 dark:text-gray-300">
-                          {status}
+                          {getStatusLabel(status)}
                         </span>
                         <span className="text-gray-500">
                           {count as number} ({percentage}%)

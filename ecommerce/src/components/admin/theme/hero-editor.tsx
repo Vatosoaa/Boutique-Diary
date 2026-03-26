@@ -43,7 +43,7 @@ export function HeroEditor({ value, onChange }: HeroEditorProps) {
           Style du Hero
         </Label>
         <div className="grid grid-cols-4 gap-3">
-          {HERO_STYLES.map((style) => {
+          {HERO_STYLES.map(style => {
             const isActive = config.style === style.value;
             return (
               <button
@@ -87,7 +87,7 @@ export function HeroEditor({ value, onChange }: HeroEditorProps) {
               <Label className="text-sm font-medium">Titre Principal</Label>
               <Textarea
                 value={config.title}
-                onChange={(e) => update({ title: e.target.value })}
+                onChange={e => update({ title: e.target.value })}
                 placeholder="Accès à des produits Écologiques..."
                 className="min-h-[80px] resize-none"
               />
@@ -98,7 +98,7 @@ export function HeroEditor({ value, onChange }: HeroEditorProps) {
               </Label>
               <Input
                 value={config.subtitle || ""}
-                onChange={(e) => update({ subtitle: e.target.value })}
+                onChange={e => update({ subtitle: e.target.value })}
                 placeholder="Description courte..."
                 className="h-10"
               />
@@ -120,7 +120,7 @@ export function HeroEditor({ value, onChange }: HeroEditorProps) {
             <Label className="text-sm font-medium">Texte du bouton</Label>
             <Input
               value={config.ctaText}
-              onChange={(e) => update({ ctaText: e.target.value })}
+              onChange={e => update({ ctaText: e.target.value })}
               placeholder="Contactez-nous"
               className="h-10"
             />
@@ -129,7 +129,7 @@ export function HeroEditor({ value, onChange }: HeroEditorProps) {
             <Label className="text-sm font-medium">Lien</Label>
             <Input
               value={config.ctaLink}
-              onChange={(e) => update({ ctaLink: e.target.value })}
+              onChange={e => update({ ctaLink: e.target.value })}
               placeholder="/contact"
               className="h-10"
             />
@@ -150,7 +150,7 @@ export function HeroEditor({ value, onChange }: HeroEditorProps) {
             <Label className="text-sm font-medium">URL de l&apos;image</Label>
             <Input
               value={config.bgImage || ""}
-              onChange={(e) => update({ bgImage: e.target.value })}
+              onChange={e => update({ bgImage: e.target.value })}
               placeholder="https://... ou /images/hero.jpg"
               className="h-10"
             />
@@ -163,7 +163,7 @@ export function HeroEditor({ value, onChange }: HeroEditorProps) {
             <Switch
               id="overlay"
               checked={config.overlay}
-              onCheckedChange={(checked) => update({ overlay: checked })}
+              onCheckedChange={checked => update({ overlay: checked })}
             />
           </div>
 

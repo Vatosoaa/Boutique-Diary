@@ -36,6 +36,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import BrandLogo from "./BrandLogo";
 import CartSidebar from "./CartSidebar";
+import NotificationSidebar from "@/components/NotificationSidebar";
+import { useNotificationStore } from "@/lib/notification-store";
+import { Bell } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,6 +71,7 @@ interface StoreNavbarProps {
 }
 
 export default function StoreNavbar({
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   categories = [],
   headerConfig,
   previewMode = false,
@@ -76,6 +80,17 @@ export default function StoreNavbar({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
+  const {
+    isOpen: isNotificationOpen,
+    setOpen: setNotificationOpen,
+    getUnreadCount,
+    fetchNotifications,
+    setupRealtime,
+    setRole,
+  } = useNotificationStore();
+
+  const unreadCount = getUnreadCount();
+
   const fetchUser = useCallback(async () => {
     try {
       const res = await fetch("/api/auth/me");
@@ -83,8 +98,8 @@ export default function StoreNavbar({
       if (data.user) {
         setUser(data.user);
       }
-    } catch (_error) {
-      console.error("Auth check failed", _error);
+    } catch {
+      console.error("Auth check failed");
     }
   }, []);
 
@@ -95,20 +110,29 @@ export default function StoreNavbar({
     checkUser();
   }, [fetchUser]);
 
+  useEffect(() => {
+    if (user) {
+      setRole("user");
+      fetchNotifications();
+      const unsubscribe = setupRealtime();
+      return () => unsubscribe();
+    }
+  }, [user, fetchNotifications, setupRealtime, setRole]);
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
       useCartStore.getState().clearCart();
       window.location.href = "/api/auth/social/logout";
-    } catch (_error) {
+    } catch {
       toast.error("Erreur lors de la déconnexion");
       window.location.href = "/api/auth/social/logout";
     }
   };
 
-  const isCartOpen = useCartStore((state) => state.isOpen);
-  const setOpen = useCartStore((state) => state.setOpen);
-  const itemCount = useCartStore((state) => state.getItemCount());
+  const isCartOpen = useCartStore(state => state.isOpen);
+  const setOpen = useCartStore(state => state.setOpen);
+  const itemCount = useCartStore(state => state.getItemCount());
 
   const pathname = usePathname();
 
@@ -290,7 +314,7 @@ export default function StoreNavbar({
                           </div>
 
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 relative min-h-[220px]">
-                            {categoriesList.map((cat) => (
+                            {categoriesList.map(cat => (
                               <Link
                                 key={cat.name}
                                 href={cat.href}
@@ -317,7 +341,7 @@ export default function StoreNavbar({
                             ))}
                           </div>
 
-                          <div className="grid grid-cols-2 gap-3 lg:gap-4 mt-auto">
+                          <div className="grid grid-cols-3 gap-3 lg:gap-4 mt-auto">
                             <Link
                               href="/nouveautes"
                               className="group rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/10 p-4 transition-colors flex items-center gap-4"
@@ -331,6 +355,23 @@ export default function StoreNavbar({
                                 </h4>
                                 <p className="text-[11px] font-semibold text-muted-foreground truncate">
                                   Dernières pépites
+                                </p>
+                              </div>
+                            </Link>
+
+                            <Link
+                              href="/top-vente"
+                              className="group rounded-2xl bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 border border-amber-100 dark:border-amber-500/20 p-4 transition-colors flex items-center gap-4"
+                            >
+                              <div className="bg-background shadow-sm text-amber-500 p-2.5 rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                <Trophy className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="font-bold text-foreground leading-none mb-1.5 group-hover:text-amber-500 transition-colors truncate">
+                                  Top Vente
+                                </h4>
+                                <p className="text-[11px] font-semibold text-muted-foreground truncate">
+                                  Les incontournables
                                 </p>
                               </div>
                             </Link>
@@ -423,6 +464,21 @@ export default function StoreNavbar({
             >
               <Search className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
             </button>
+
+            {user && (
+              <button
+                onClick={() => setNotificationOpen(true)}
+                className="p-2.5 hover:bg-muted rounded-full transition-colors group cursor-pointer relative"
+                title="Notifications"
+              >
+                <Bell className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] px-1 items-center justify-center bg-primary text-[10px] font-bold text-white rounded-full border-2 border-background animate-in zoom-in duration-300">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </button>
+            )}
 
             {user ? (
               <DropdownMenu>
@@ -573,7 +629,7 @@ export default function StoreNavbar({
                 Boutique
               </Link>
               <div className="grid grid-cols-2 gap-2 pl-4">
-                {collections.map((item) => (
+                {collections.map(item => (
                   <Link
                     key={item.title}
                     href={item.href}
@@ -644,6 +700,11 @@ export default function StoreNavbar({
       </nav>
 
       <CartSidebar isOpen={isCartOpen} onClose={() => setOpen(false)} />
+
+      <NotificationSidebar
+        isOpen={isNotificationOpen}
+        onClose={() => setNotificationOpen(false)}
+      />
 
       <SearchCommand open={isSearchOpen} onOpenChange={setIsSearchOpen} />
     </>

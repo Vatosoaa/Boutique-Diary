@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
+import Image from "next/image";
 import { Category } from "@/types/category";
 import { Product } from "@/types/admin";
 import { toast } from "sonner";
@@ -48,7 +51,7 @@ const getInitialColor = (name: string) => {
 const getInitials = (name: string) => {
   return name
     .split(" ")
-    .map((word) => word[0])
+    .map(word => word[0])
     .join("")
     .toUpperCase()
     .slice(0, 2);
@@ -58,8 +61,15 @@ export default function CategoryList({
   onEdit,
   refreshTrigger,
 }: CategoryListProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: fetchedCategories,
+    isLoading: loading,
+    mutate,
+  } = useSWR<Category[]>("/api/categories", fetcher);
+  const categories = useMemo(
+    () => fetchedCategories || [],
+    [fetchedCategories],
+  );
   const [expandedCategoryId, setExpandedCategoryId] = useState<number | null>(
     null,
   );
@@ -79,7 +89,7 @@ export default function CategoryList({
 
   // Filter categories
   const filteredCategories = useMemo(() => {
-    return categories.filter((category) => {
+    return categories.filter(category => {
       // Search filter
       const matchesSearch =
         searchTerm === "" ||
@@ -120,22 +130,10 @@ export default function CategoryList({
   }, [searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
 
   useEffect(() => {
-    fetchCategories();
-  }, [refreshTrigger]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/categories");
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setLoading(false);
+    if (refreshTrigger > 0) {
+      mutate();
     }
-  };
+  }, [refreshTrigger, mutate]);
 
   const fetchProductsByCategory = async (categoryId: number) => {
     setLoadingProducts(true);
@@ -175,8 +173,8 @@ export default function CategoryList({
       });
 
       if (response.ok) {
-        setCategories(categories.filter((c) => c.id !== id));
         toast.success("Catégorie supprimée avec succès");
+        mutate();
       } else {
         toast.error("Erreur lors de la suppression");
       }
@@ -253,7 +251,7 @@ export default function CategoryList({
             <Input
               placeholder="Rechercher..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-9 h-10 w-[200px] border-gray-200 rounded-full"
             />
             {searchTerm && (
@@ -293,7 +291,7 @@ export default function CategoryList({
                     <Input
                       type="date"
                       value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value)}
+                      onChange={e => setDateFrom(e.target.value)}
                       className="h-9"
                     />
                   </div>
@@ -302,7 +300,7 @@ export default function CategoryList({
                     <Input
                       type="date"
                       value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value)}
+                      onChange={e => setDateTo(e.target.value)}
                       className="h-9"
                     />
                   </div>
@@ -352,7 +350,7 @@ export default function CategoryList({
                       type="number"
                       placeholder="0"
                       value={minProducts}
-                      onChange={(e) => setMinProducts(e.target.value)}
+                      onChange={e => setMinProducts(e.target.value)}
                       className="h-9"
                       min="0"
                     />
@@ -365,7 +363,7 @@ export default function CategoryList({
                       type="number"
                       placeholder="∞"
                       value={maxProducts}
-                      onChange={(e) => setMaxProducts(e.target.value)}
+                      onChange={e => setMaxProducts(e.target.value)}
                       className="h-9"
                       min="0"
                     />
@@ -403,7 +401,7 @@ export default function CategoryList({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {currentCategories.map((category) => (
+            {currentCategories.map(category => (
               <React.Fragment key={category.id}>
                 <tr
                   className="hover:bg-gray-50/50 cursor-pointer transition-colors group"
@@ -449,7 +447,7 @@ export default function CategoryList({
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           onEdit(category);
                         }}
@@ -459,7 +457,7 @@ export default function CategoryList({
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           if (category.id) handleDelete(category.id);
                         }}
@@ -501,20 +499,22 @@ export default function CategoryList({
                               Produits de &quot;{category.name}&quot;
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                              {categoryProducts.map((product) => (
+                              {categoryProducts.map(product => (
                                 <Link
                                   href={`/admin/products/${product.id}`}
                                   key={product.id}
                                   className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all cursor-pointer group/product"
                                 >
                                   {product.images && product.images[0] ? (
-                                    <img
+                                    <Image
                                       src={
                                         typeof product.images[0] === "string"
                                           ? product.images[0]
                                           : product.images[0].url
                                       }
                                       alt={product.name}
+                                      width={48}
+                                      height={48}
                                       className="w-12 h-12 object-cover rounded-lg group-hover/product:scale-105 transition-transform"
                                     />
                                   ) : (
@@ -556,7 +556,7 @@ export default function CategoryList({
           <div className="flex items-center gap-1">
             {}
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -584,7 +584,7 @@ export default function CategoryList({
             {}
             <button
               onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                setCurrentPage(prev => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

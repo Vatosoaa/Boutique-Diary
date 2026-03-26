@@ -11,7 +11,7 @@ import { useCartStore } from "@/lib/cart-store";
  */
 export function CartAutoCleaner() {
   const { user, isLoading } = useUser();
-  const clearCart = useCartStore((state) => state.clearCart);
+  const clearCart = useCartStore(state => state.clearCart);
 
   // Utiliser une ref pour suivre l'ID de l'utilisateur précédent
   // afin de ne vider que lors d'un CHANGEMENT réel (connexion ou déconnexion)

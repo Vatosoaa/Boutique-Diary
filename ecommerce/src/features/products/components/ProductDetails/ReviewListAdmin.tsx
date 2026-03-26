@@ -130,10 +130,10 @@ const ReviewItemBase = ({
           Répondre
         </Button>
         <div className="flex gap-2">
-          {["LIKE", "LOVE"].map((type) => {
-            const hasReacted = review.reactions?.some((r) => r.type === type);
+          {["LIKE", "LOVE"].map(type => {
+            const hasReacted = review.reactions?.some(r => r.type === type);
             const count =
-              review.reactions?.filter((r) => r.type === type).length || 0;
+              review.reactions?.filter(r => r.type === type).length || 0;
             return (
               <button
                 key={type}
@@ -159,7 +159,7 @@ const ReviewItemBase = ({
             className="w-full p-5 rounded-[24px] bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-black/5 dark:focus:border-white/5 focus:bg-white dark:focus:bg-black text-sm min-h-[120px] font-medium resize-none transition-all shadow-inner"
             placeholder="Votre réponse officielle ici..."
             value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
+            onChange={e => setReplyContent(e.target.value)}
           />
           <div className="flex justify-end gap-3">
             <Button
@@ -184,7 +184,7 @@ const ReviewItemBase = ({
 
       {review.replies && review.replies.length > 0 && (
         <div className="mt-6 space-y-4 bg-gray-50/80 dark:bg-gray-900/50 p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
-          {review.replies.map((reply) => (
+          {review.replies.map(reply => (
             <div key={reply.id} className="flex gap-4">
               <div className="w-10 h-10 rounded-2xl bg-black dark:bg-white flex items-center justify-center flex-shrink-0 text-[11px] font-black text-white dark:text-black shadow-xl shadow-black/20 dark:shadow-white/5">
                 {reply.admin?.name?.substring(0, 2).toUpperCase() || "EQ"}
@@ -209,7 +209,7 @@ const ReviewItemBase = ({
 
       {review.tags && review.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-3">
-          {(review.tags as string[]).map((tag) => (
+          {(review.tags as string[]).map(tag => (
             <span
               key={tag}
               className="text-[10px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-3 py-1 rounded-full text-gray-500 font-bold shadow-sm"
@@ -302,7 +302,7 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
 
       if (response.ok) {
         toast.success("Avis supprimé");
-        setReviews(reviews.filter((r) => r.id !== reviewId));
+        setReviews(reviews.filter(r => r.id !== reviewId));
       } else {
         toast.error("Échec de la suppression");
       }

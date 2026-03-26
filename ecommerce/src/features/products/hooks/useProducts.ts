@@ -61,7 +61,7 @@ export function useProducts(
         throw new Error("Erreur lors de la suppression");
       }
 
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setProducts(prev => prev.filter(p => p.id !== id));
       toast.success("Produit supprimé avec succès");
       return true;
     } catch (err) {
@@ -85,7 +85,7 @@ export function useProducts(
         }
 
         const newProduct = await response.json();
-        setProducts((prev) => [...prev, newProduct]);
+        setProducts(prev => [...prev, newProduct]);
         toast.success("Produit créé avec succès");
         return newProduct;
       } catch (err) {
@@ -111,9 +111,7 @@ export function useProducts(
         }
 
         const updatedProduct = await response.json();
-        setProducts((prev) =>
-          prev.map((p) => (p.id === id ? updatedProduct : p)),
-        );
+        setProducts(prev => prev.map(p => (p.id === id ? updatedProduct : p)));
         toast.success("Produit mis à jour avec succès");
         return updatedProduct;
       } catch (err) {

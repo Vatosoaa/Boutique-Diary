@@ -43,11 +43,11 @@ export default function BlogList({ initialPosts }: BlogListProps) {
 
       const nextPosts = await fetch(
         `/api/blog?limit=${limit}&offset=${currentOffset}&excludeFeatured=true`,
-      ).then((res) => res.json());
+      ).then(res => res.json());
 
       if (nextPosts.posts && nextPosts.posts.length > 0) {
-        setPosts((prev) => {
-          const existingIds = new Set(prev.map((p) => p.id));
+        setPosts(prev => {
+          const existingIds = new Set(prev.map(p => p.id));
           const uniqueNewPosts = nextPosts.posts.filter(
             (p: BlogPost) => !existingIds.has(p.id),
           );
@@ -73,7 +73,7 @@ export default function BlogList({ initialPosts }: BlogListProps) {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {posts.map((post) => (
+        {posts.map(post => (
           <Link key={post.id} href={`/blog/${post.slug}`} className="group">
             <article className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 h-full flex flex-col">
               {/* Image */}

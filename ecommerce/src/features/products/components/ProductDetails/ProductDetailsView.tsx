@@ -65,7 +65,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
   const selectedImageIndex = useMemo(() => {
     if (targetRef && product.images) {
       const index = product.images.findIndex(
-        (img) => img.reference === targetRef,
+        img => img.reference === targetRef,
       );
       if (index !== -1) return index;
     }
@@ -105,7 +105,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
 
   const uniqueColors = useMemo(() => {
     const colors = new Set<string>();
-    product.images?.forEach((img) => {
+    product.images?.forEach(img => {
       if (img.color) colors.add(img.color);
     });
     // Variations are not included in the interface but let's be safe if they are added later
@@ -252,14 +252,14 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                       Couleurs Disponibles
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {uniqueColors.map((color) => {
+                      {uniqueColors.map(color => {
                         const isActive = currentImage?.color === color;
                         return (
                           <div
                             key={color}
                             onClick={() => {
                               const imgIndex = product.images.findIndex(
-                                (img) => img.color === color,
+                                img => img.color === color,
                               );
                               if (imgIndex !== -1) setLocalImageIndex(imgIndex);
                             }}
@@ -285,7 +285,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                       Tailles Disponibles
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {product.sizes.map((size) => {
+                      {product.sizes.map(size => {
                         const isActive = currentImage?.sizes?.includes(size);
                         return (
                           <Badge

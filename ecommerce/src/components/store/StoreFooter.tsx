@@ -77,21 +77,29 @@ export default function StoreFooter() {
                 pour définir votre allure quotidienne.
               </p>
 
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start justify-center lg:justify-start gap-3 group group-hover:cursor-default">
-                  <MapPin className="w-5 h-5 text-primary mt-0.5" />
-                  <div className="text-sm">
-                    <p className="text-white font-medium">Antananarivo</p>
-                    <p className="text-zinc-500">
-                      Ambohitrarahaba, c20bis Antsahamaina
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center lg:justify-start gap-3 group">
-                  <Mail className="w-5 h-5 text-primary" />
-                  <a
-                    href="mailto:contact@diaryboutique.com"
-                    className="text-sm hover:text-white transition-colors"
+          {/* Service Client */}
+          <div className="flex flex-col items-center md:items-start">
+            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Service Client
+            </h3>
+            <ul className="space-y-4 text-sm font-medium">
+              {[
+                { label: "FAQ", href: "#" },
+                { label: "Mes Commandes", href: "/dashboard/customer/orders" },
+                { label: "Mes Favoris", href: "/dashboard/customer/wishlist" },
+                {
+                  label: "Mes Adresses",
+                  href: "/dashboard/customer/addresses",
+                },
+                { label: "Retours", href: "#" },
+                { label: "Livraison et Retours", href: "#" },
+                { label: "Conditions Générales", href: "#" },
+                { label: "Politique de Confidentialité", href: "#" },
+              ].map(link => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
                   >
                     contact@diaryboutique.com
                   </a>
@@ -109,73 +117,50 @@ export default function StoreFooter() {
             </motion.div>
           </div>
 
-          {/* Links Columns */}
-          <div className="lg:col-span-4 grid grid-cols-2 sm:grid-cols-3 gap-8">
-            {Object.entries(footerLinks).map(([title, links], idx) => (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="flex flex-col items-center lg:items-start"
-              >
-                <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] mb-8">
-                  {title}
-                </h3>
-                <ul className="space-y-4 text-sm">
-                  {links.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="hover:text-white transition-all duration-300 inline-flex items-center group"
-                      >
-                        <span className="w-0 overflow-hidden group-hover:w-4 transition-all duration-300 text-primary">
-                          <ArrowRight className="w-3 h-3" />
-                        </span>
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
+          {/* Produits */}
+          <div className="flex flex-col items-center md:items-start">
+            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Produits
+            </h3>
+            <ul className="space-y-4 text-sm font-medium">
+              {[
+                { label: "Nouveautés", href: "/nouveautes" },
+                { label: "Promotions", href: "/promotions" },
+                { label: "Top Vente", href: "/top-vente" },
+                { label: "Tous les produits", href: "/produits" },
+                { label: "Hommes", href: "/shop?category=hommes" },
+                { label: "Femmes", href: "/shop?category=femmes" },
+              ].map(link => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Newsletter Column */}
-          <div className="lg:col-span-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-[32px] backdrop-blur-sm"
-            >
-              <h3 className="text-white font-bold text-lg mb-4">
-                Rejoignez le Club
-              </h3>
-              <p className="text-sm text-zinc-500 mb-6">
-                Inscrivez-vous pour recevoir nos dernières collections et offres
-                exclusives.
-              </p>
-
-              <div className="relative group">
-                <input
-                  type="email"
-                  placeholder="votre@email.com"
-                  className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all pr-12"
-                />
-                <button className="absolute right-2 top-2 bottom-2 aspect-square bg-primary hover:bg-primary/90 text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-primary/20">
-                  <Send className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="mt-8 flex items-center justify-center lg:justify-start gap-4">
-                {socialLinks.map((social, idx) => (
-                  <motion.a
-                    key={idx}
-                    href={social.href}
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    whileTap={{ scale: 0.9 }}
-                    className={`p-3 bg-zinc-950 border border-zinc-800 rounded-xl transition-all ${social.color}`}
+          {/* Infos Entreprise */}
+          <div className="flex flex-col items-center md:items-start">
+            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Société
+            </h3>
+            <ul className="space-y-4 text-sm font-medium">
+              {[
+                { label: "Blog", href: "/blog" },
+                { label: "À Propos", href: "#" },
+                { label: "Nos Magasins", href: "#" },
+                { label: "Rejoignez-nous", href: "#" },
+                { label: "Nos Valeurs", href: "#" },
+                { label: "Support", href: "#" },
+              ].map(link => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="inline-block hover:text-foreground hover:translate-x-1 transition-all duration-300"
                   >
                     <social.icon className="w-5 h-5" />
                   </motion.a>

@@ -30,7 +30,7 @@ export default function BestCollectionBanner({
     if (!products || products.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % products.length);
+      setCurrentIndex(prev => (prev + 1) % products.length);
     }, 5000); // 5 seconds for a more relaxed feel
 
     return () => clearInterval(interval);
@@ -134,13 +134,23 @@ export default function BestCollectionBanner({
                       </Link>
                     </Button>
 
-                    <div className="hidden sm:flex flex-col">
-                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">
-                        Plus de
-                      </span>
-                      <span className="text-xl font-black text-white">
-                        1200+ Fans
-                      </span>
+                    <div className="flex -space-x-4">
+                      {[1, 2, 3].map(i => (
+                        <div
+                          key={i}
+                          className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 bg-gray-200 overflow-hidden"
+                        >
+                          <Image
+                            src={`https://i.pravatar.cc/100?u=${String(product.id) + i}`}
+                            alt="User"
+                            width={40}
+                            height={40}
+                          />
+                        </div>
+                      ))}
+                      <div className="text-xs font-bold text-muted-foreground flex items-center ml-2 pl-4">
+                        +1.2k avis clients
+                      </div>
                     </div>
                   </div>
                 </motion.div>

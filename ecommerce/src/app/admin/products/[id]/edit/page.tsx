@@ -53,7 +53,7 @@ export default async function EditProductPage({
     oldPrice: product.oldPrice,
     isBestSeller: product.isBestSeller,
 
-    images: product.images.map((img) => ({
+    images: product.images.map(img => ({
       url: img.url,
       color: img.color,
       sizes: img.sizes,
@@ -66,7 +66,7 @@ export default async function EditProductPage({
       isBestSeller: (img as any).isBestSeller,
     })),
     // Map variations
-    variations: product.variations.map((v) => ({
+    variations: product.variations.map(v => ({
       id: v.id,
       sku: v.sku,
       price: Number(v.price),
