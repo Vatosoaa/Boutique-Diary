@@ -24,7 +24,7 @@ export async function PATCH(
       );
     }
 
-    const updatedOrder = await prisma.$transaction(async (tx) => {
+    const updatedOrder = await prisma.$transaction(async tx => {
       const order = await tx.order.update({
         where: { id },
         data: {
@@ -33,6 +33,26 @@ export async function PATCH(
       });
 
       await replenishOrderStock(id, tx);
+
+      // Update associated transaction
+      await tx.paymentTransaction.updateMany({
+        where: { orderId: id },
+        data: { status: "CANCELLED" },
+      });
+
+      // Notify admins via SSE
+      const { notificationManager } = await import("@/lib/notification-manager");
+      notificationManager.notifyAdmins({ type: "TRANSACTION_UPDATE" });
+      notificationManager.notifyAdmins({ type: "ORDER_UPDATE" });
+
+      // Send a notification to admins
+      await notificationManager.notifyAllAdmins({
+        title: "Commande Annulée",
+        message: `La commande #${order.reference} a été annulée.`,
+        type: "WARNING",
+        link: `/admin/orders`,
+      });
+
       return order;
     });
 

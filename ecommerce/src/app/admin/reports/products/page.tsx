@@ -27,7 +27,7 @@ export default function ProductsReportsPage() {
       <div className="p-6">
         <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mb-6"></div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div
               key={i}
               className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"
@@ -60,7 +60,7 @@ export default function ProductsReportsPage() {
   const history = data?.history || { products: [], value: [], outOfStock: [] };
 
   const outOfStockCount =
-    stockDistribution.find((d) => d.status === "Out of Stock")?.count || 0;
+    stockDistribution.find(d => d.status === "Out of Stock")?.count || 0;
   const outOfStockPercent =
     totalProducts > 0 ? Math.round((outOfStockCount / totalProducts) * 100) : 0;
 

@@ -11,6 +11,7 @@ const promoCodeUpdateSchema = z.object({
   endDate: z.string().nullable().optional(),
   usageLimit: z.number().min(1).nullable().optional(),
   minOrderAmount: z.number().min(0).nullable().optional(),
+  costPoints: z.number().min(0).nullable().optional(),
   isActive: z.boolean().optional(),
 });
 
@@ -56,6 +57,9 @@ export async function PUT(
       },
     });
 
+    const { notificationManager } = await import("@/lib/notification-manager");
+    notificationManager.notifyAll({ type: "PROMO_UPDATE" });
+
     return NextResponse.json(promoCode);
   } catch (error) {
     console.error("Error updating promo code:", error);
@@ -89,6 +93,9 @@ export async function DELETE(
     await prisma.promoCode.delete({
       where: { id },
     });
+
+    const { notificationManager } = await import("@/lib/notification-manager");
+    notificationManager.notifyAll({ type: "PROMO_UPDATE" });
 
     return NextResponse.json({ success: true });
   } catch (error) {

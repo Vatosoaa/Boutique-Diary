@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { transporter } from "@/lib/email";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { notificationManager } from "@/lib/notification-manager";
 
 export async function POST(
   request: NextRequest,
@@ -130,7 +131,7 @@ export async function POST(
               <tbody>
                 ${order.items
                   .map(
-                    (item) => `
+                    item => `
                   <tr>
                     <td>
                       <div style="font-weight: 600;">${item.product.name}</div>
@@ -180,6 +181,21 @@ export async function POST(
       subject: `Facture #${order.reference} - Boutique Diary`,
       html: invoiceHtml,
     });
+
+    // Create notification and notify via SSE
+    if (order.customerId) {
+      const notification = await prisma.notification.create({
+        data: {
+          userId: order.customerId,
+          title: "Facture envoyée",
+          message: `La facture de votre commande #${order.reference} a été envoyée sur votre email.`,
+          type: "INFO",
+          link: "/dashboard/customer/orders",
+        },
+      });
+
+      notificationManager.notifyUser(String(order.customerId), notification);
+    }
 
     return NextResponse.json({
       success: true,

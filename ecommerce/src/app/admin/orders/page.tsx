@@ -79,7 +79,7 @@ export default function OrdersPage() {
       const res = await fetch("/api/admin/orders?limit=200");
       const data: OrdersResponse = await res.json();
 
-      const formattedOrders: Order[] = data.orders.map((order) => ({
+      const formattedOrders: Order[] = data.orders.map(order => ({
         id: order.id,
         reference: order.reference,
         customer: {
@@ -123,6 +123,39 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchOrders();
+
+    // SSE Setup
+    const eventSource = new EventSource("/api/notifications/stream?role=admin");
+
+    eventSource.onmessage = (event) => {
+      try {
+        if (event.data.startsWith("{")) {
+          const data = JSON.parse(event.data);
+          if (
+            data.type === "ORDER_UPDATE" ||
+            data.type === "TRANSACTION_BULK_UPDATE"
+          ) {
+            fetchOrders();
+            if (data.link?.startsWith("CMD_ACTION:")) {
+              const id = data.link.split(":")[1];
+              fetch(`/api/admin/orders/${id}`)
+                .then(res => res.json())
+                .then(orderData => {
+                  if (orderData.id) {
+                    handleViewDetails(orderData as Order);
+                  }
+                });
+            }
+          }
+        }
+      } catch (e) {
+        // Ignore heartbeat
+      }
+    };
+
+    return () => {
+      eventSource.close();
+    };
   }, [fetchOrders]);
 
   const handleViewDetails = (order: Order) => {

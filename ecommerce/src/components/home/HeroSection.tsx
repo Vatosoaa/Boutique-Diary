@@ -43,12 +43,12 @@ export default function HeroSection() {
 
   const goToNext = useCallback(() => {
     const totalBanners = banners.length || 1;
-    setCurrentIndex((prev) => (prev + 1) % totalBanners);
+    setCurrentIndex(prev => (prev + 1) % totalBanners);
   }, [banners.length]);
 
   const goToPrev = useCallback(() => {
     const totalBanners = banners.length || 1;
-    setCurrentIndex((prev) => (prev - 1 + totalBanners) % totalBanners);
+    setCurrentIndex(prev => (prev - 1 + totalBanners) % totalBanners);
   }, [banners.length]);
 
   useEffect(() => {

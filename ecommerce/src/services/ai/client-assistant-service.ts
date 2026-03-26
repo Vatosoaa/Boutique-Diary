@@ -5,6 +5,7 @@ import {
   Content,
 } from "@google/generative-ai";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -14,13 +15,15 @@ const clientTools: Tool[] = [
     functionDeclarations: [
       {
         name: "search_products",
-        description: "Rechercher des produits par nom, catégorie ou description.",
+        description:
+          "Rechercher des produits par nom, catégorie ou description.",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {
             query: {
               type: SchemaType.STRING,
-              description: "Le terme de recherche (ex: 'robe', 'homme', 'nouveautés').",
+              description:
+                "Le terme de recherche (ex: 'robe', 'homme', 'nouveautés').",
             },
             category: {
               type: SchemaType.STRING,
@@ -76,7 +79,8 @@ const clientTools: Tool[] = [
       },
       {
         name: "search_blog_posts",
-        description: "Rechercher des articles de blog sur la mode ou des conseils.",
+        description:
+          "Rechercher des articles de blog sur la mode ou des conseils.",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {
@@ -90,7 +94,8 @@ const clientTools: Tool[] = [
       },
       {
         name: "get_shop_info",
-        description: "Obtenir des informations sur la boutique (contact, livraison, horaires).",
+        description:
+          "Obtenir des informations sur la boutique (contact, livraison, horaires).",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {},
@@ -116,11 +121,11 @@ export class ClientAssistantService {
       Répondez en français.`,
     });
 
-    const cleanedHistory: any[] = (history || []).map((h) => {
+    const cleanedHistory: unknown[] = (history || []).map(h => {
       const isFunctionRole = h.role === "function";
       return {
-        role: h.role === "system" ? "user" : (h.role as any),
-        parts: h.parts.map((p: any) => {
+        role: h.role === "system" ? "user" : (h.role as string),
+        parts: h.parts.map((p: Record<string, unknown>) => {
           if (p.functionCall) return { functionCall: p.functionCall };
           if (p.functionResponse)
             return { functionResponse: p.functionResponse };
@@ -142,11 +147,21 @@ export class ClientAssistantService {
     });
 
     // Helper for retry
-    const withRetry = async (fn: () => Promise<any>, retries = 3, delay = 2000): Promise<any> => {
+    const withRetry = async (
+      fn: () => Promise<unknown>,
+      retries = 3,
+      delay = 2000,
+    ): Promise<unknown> => {
       try {
         return await fn();
-      } catch (error: any) {
-        if (error.status === 429 && retries > 0) {
+      } catch (error: unknown) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "status" in error &&
+          error.status === 429 &&
+          retries > 0
+        ) {
           console.warn(`[ClientAI] Rate limited. Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
           return withRetry(fn, retries - 1, delay * 2);
@@ -156,16 +171,25 @@ export class ClientAssistantService {
     };
 
     try {
-      let result = await withRetry(() => chat.sendMessage(message));
-      let response = result.response;
+      let result = (await withRetry(() => chat.sendMessage(message))) as Record<
+        string,
+        unknown
+      >;
+      let response = result.response as Record<string, unknown> & {
+        functionCalls: () => unknown[];
+        text: () => string;
+      };
 
       const calls = response.functionCalls();
       if (calls && calls.length > 0) {
-        const toolResponses = [];
+        const toolResponses: Array<Record<string, unknown>> = [];
 
         for (const call of calls) {
-          const { name, args } = call;
-          const toolArgs = args as Record<string, any>;
+          const { name, args } = call as {
+            name: string;
+            args: Record<string, unknown>;
+          };
+          const toolArgs = args;
           console.log(`[ClientAI] Calling tool: ${name}`, toolArgs);
 
           let toolResult;
@@ -174,20 +198,26 @@ export class ClientAssistantService {
               toolResult = await this.searchProducts(
                 toolArgs.query,
                 toolArgs.category,
-                toolArgs.limit || 5
+                toolArgs.limit || 5,
               );
               break;
             case "get_product_details":
-              toolResult = await this.getProductDetails(Number(toolArgs.productId));
+              toolResult = await this.getProductDetails(
+                Number(toolArgs.productId),
+              );
               break;
             case "get_new_arrivals":
-              toolResult = await this.getNewArrivals(toolArgs.limit || 4);
+              toolResult = await this.getNewArrivals(
+                (toolArgs.limit as number) || 4,
+              );
               break;
             case "get_promotions":
-              toolResult = await this.getPromotions(toolArgs.limit || 4);
+              toolResult = await this.getPromotions(
+                (toolArgs.limit as number) || 4,
+              );
               break;
             case "search_blog_posts":
-              toolResult = await this.searchBlogPosts(toolArgs.query);
+              toolResult = await this.searchBlogPosts(toolArgs.query as string);
               break;
             case "get_shop_info":
               toolResult = await this.getShopInfo();
@@ -199,13 +229,18 @@ export class ClientAssistantService {
           toolResponses.push({
             functionResponse: {
               name,
-              response: toolResult,
+              response: toolResult as object,
             },
           });
         }
 
-        result = await withRetry(() => chat.sendMessage(toolResponses));
-        response = result.response;
+        result = (await withRetry(() =>
+          chat.sendMessage(toolResponses),
+        )) as Record<string, unknown>;
+        response = result.response as Record<string, unknown> & {
+          functionCalls: () => unknown[];
+          text: () => string;
+        };
       }
 
       const responseText = response.text();
@@ -221,8 +256,12 @@ export class ClientAssistantService {
 
   // --- Tool Implementations ---
 
-  private static async searchProducts(query: string, categoryName?: string, limit: number = 5) {
-    const where: any = {
+  private static async searchProducts(
+    query: string,
+    categoryName?: string,
+    limit: number = 5,
+  ) {
+    const where: Record<string, unknown> = {
       status: "PUBLISHED",
       deletedAt: null,
       OR: [
@@ -303,14 +342,15 @@ export class ClientAssistantService {
   private static async getShopInfo() {
     const settings = await prisma.siteSettings.findMany();
     const info: Record<string, string> = {};
-    settings.forEach((s) => {
+    settings.forEach(s => {
       info[s.key] = s.value;
     });
     return {
       name: "Boutique Diary",
       location: "Antananarivo, Madagascar",
       contact: info,
-      delivery: "Livraison partout à Madagascar via colissimo ou transporteurs locaux.",
+      delivery:
+        "Livraison partout à Madagascar via colissimo ou transporteurs locaux.",
     };
   }
 }

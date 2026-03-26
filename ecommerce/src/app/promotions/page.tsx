@@ -1,8 +1,8 @@
+import ScrollReveal from "@/components/store/ScrollReveal";
+import StoreFooter from "@/components/store/StoreFooter";
 import StoreProductBanner from "@/components/store/StoreProductBanner";
 import StoreProductList from "@/components/store/StoreProductList";
-import StoreFooter from "@/components/store/StoreFooter";
-import ScrollReveal from "@/components/store/ScrollReveal";
-import { getProducts, getStoreStats, getCategories } from "@/lib/store-data";
+import { getCategories, getProducts, getStoreStats } from "@/lib/store-data";
 
 export default async function PromotionsPage() {
   const [products, stats, categories] = await Promise.all([

@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
+import Image from "next/image";
 import { Product } from "@/types/admin";
 import { formatPrice } from "@/lib/utils";
 import {
@@ -80,8 +83,26 @@ export default function ProductList({
   status,
   deleted,
 }: ProductListProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryParams = new URLSearchParams();
+  if (status) queryParams.append("status", status);
+  if (deleted) queryParams.append("deleted", "true");
+
+  const {
+    data: fetchedProducts,
+    isLoading: loading,
+    mutate,
+  } = useSWR<Product[]>(`/api/products?${queryParams.toString()}`, fetcher);
+
+  const [localProducts, setLocalProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (fetchedProducts) {
+      setLocalProducts(fetchedProducts);
+    }
+  }, [fetchedProducts]);
+
+  const products = localProducts;
+  const setProducts = setLocalProducts; // Used for optimistic UI updates in handlers
   const [expandedProductId, setExpandedProductId] = useState<number | null>(
     null,
   );
@@ -114,7 +135,7 @@ export default function ProductList({
       if (res.ok) {
         toast.success(`${selectedRows.length} produits mis à jour`);
         setSelectedRows([]);
-        fetchProducts();
+        mutate();
       } else {
         toast.error("Une erreur est survenue lors de l'action groupée");
       }
@@ -156,27 +177,11 @@ export default function ProductList({
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
 
-  const fetchProducts = React.useCallback(async () => {
-    try {
-      const params = new URLSearchParams();
-      if (status) params.append("status", status);
-      if (deleted) params.append("deleted", "true");
-
-      const response = await fetch(`/api/products?${params.toString()}`);
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [status, deleted]);
-
   useEffect(() => {
-    fetchProducts();
-  }, [refreshTrigger, status, deleted, fetchProducts]);
+    if (refreshTrigger > 0) {
+      mutate();
+    }
+  }, [refreshTrigger, mutate]);
 
   const handleDelete = async (id: number, permanent: boolean = false) => {
     try {
@@ -189,7 +194,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts(products.filter((p) => p.id !== id));
+        setProducts(products.filter(p => p.id !== id));
         toast.success(
           permanent
             ? "Produit supprimé définitivement"
@@ -213,7 +218,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts(products.filter((p) => p.id !== id));
+        setProducts(products.filter(p => p.id !== id));
         toast.success("Produit restauré avec succès");
       } else {
         toast.error("Erreur lors de la restauration");
@@ -233,7 +238,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts((p) => p.filter((product) => product.id !== id));
+        setProducts(p => p.filter(product => product.id !== id));
         toast.success("Produit publié avec succès");
       } else {
         toast.error("Erreur lors de la publication");
@@ -253,7 +258,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts((p) => p.filter((product) => product.id !== id));
+        setProducts(p => p.filter(product => product.id !== id));
         toast.success("Produit archivé avec succès");
       } else {
         toast.error("Erreur lors de l'archivage");
@@ -269,7 +274,7 @@ export default function ProductList({
       Array.from(
         new Set(
           products
-            .map((p) => p.category?.name)
+            .map(p => p.category?.name)
             .filter((c): c is string => Boolean(c)),
         ),
       ).sort(),
@@ -278,7 +283,7 @@ export default function ProductList({
 
   const filteredProducts = useMemo(
     () =>
-      products.filter((product) => {
+      products.filter(product => {
         const searchLower = searchTerm.toLowerCase();
         const matchesSearch =
           product.name.toLowerCase().includes(searchLower) ||
@@ -312,15 +317,15 @@ export default function ProductList({
     } else {
       setSelectedRows(
         currentProducts
-          .map((p) => p.id)
+          .map(p => p.id)
           .filter((id): id is number => id !== undefined),
       );
     }
   };
 
   const toggleSelectRow = (id: number) => {
-    setSelectedRows((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id],
+    setSelectedRows(prev =>
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id],
     );
   };
 
@@ -358,7 +363,7 @@ export default function ProductList({
             <Input
               placeholder="Rechercher..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-9 h-11 border-gray-100 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-full w-full focus:ring-0 focus:border-gray-200 dark:focus:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
             />
           </div>
@@ -367,7 +372,7 @@ export default function ProductList({
           <div className="w-[150px]">
             <Select
               value={availability}
-              onValueChange={(value) => setAvailability(value)}
+              onValueChange={value => setAvailability(value)}
             >
               <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
                 <div className="flex items-center gap-2">
@@ -387,7 +392,7 @@ export default function ProductList({
           <div className="w-[160px]">
             <Select
               value={selectedCategory}
-              onValueChange={(value) => setSelectedCategory(value)}
+              onValueChange={value => setSelectedCategory(value)}
             >
               <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
                 <div className="flex items-center gap-2">
@@ -401,7 +406,7 @@ export default function ProductList({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes</SelectItem>
-                {categories.map((c) => (
+                {categories.map(c => (
                   <SelectItem key={c} value={c}>
                     {c}
                   </SelectItem>
@@ -435,7 +440,7 @@ export default function ProductList({
                       type="number"
                       placeholder="Min"
                       value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
+                      onChange={e => setMinPrice(e.target.value)}
                     />
                   </div>
                   <span className="pt-6">-</span>
@@ -446,7 +451,7 @@ export default function ProductList({
                       type="number"
                       placeholder="Max"
                       value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
+                      onChange={e => setMaxPrice(e.target.value)}
                     />
                   </div>
                 </div>
@@ -469,16 +474,16 @@ export default function ProductList({
             <DropdownMenuContent align="end">
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.product}
-                onCheckedChange={(checked) =>
-                  setVisibleColumns((prev) => ({ ...prev, product: !!checked }))
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, product: !!checked }))
                 }
               >
                 Produit
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.category}
-                onCheckedChange={(checked) =>
-                  setVisibleColumns((prev) => ({
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({
                     ...prev,
                     category: !!checked,
                   }))
@@ -488,24 +493,24 @@ export default function ProductList({
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.stock}
-                onCheckedChange={(checked) =>
-                  setVisibleColumns((prev) => ({ ...prev, stock: !!checked }))
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, stock: !!checked }))
                 }
               >
                 Stock
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.status}
-                onCheckedChange={(checked) =>
-                  setVisibleColumns((prev) => ({ ...prev, status: !!checked }))
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, status: !!checked }))
                 }
               >
                 Statut
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.price}
-                onCheckedChange={(checked) =>
-                  setVisibleColumns((prev) => ({ ...prev, price: !!checked }))
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, price: !!checked }))
                 }
               >
                 Prix
@@ -571,7 +576,7 @@ export default function ProductList({
                   </TableCell>
                 </TableRow>
               ) : (
-                currentProducts.map((product) => {
+                currentProducts.map(product => {
                   const totalStock = product.stock || 0;
                   const isSelected = selectedRows.includes(
                     product.id as number,
@@ -595,7 +600,7 @@ export default function ProductList({
                       >
                         <TableCell
                           className="text-center pl-4"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           <Checkbox
                             checked={isSelected}
@@ -607,7 +612,7 @@ export default function ProductList({
                         </TableCell>
                         <TableCell
                           className="p-2"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             setExpandedProductId(
                               isExpanded ? null : (product.id as number),
@@ -630,7 +635,7 @@ export default function ProductList({
                           <TableCell>
                             <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 overflow-hidden shrink-0">
-                                <img
+                                <Image
                                   src={
                                     product.images && product.images[0]
                                       ? typeof product.images[0] === "string"
@@ -639,6 +644,8 @@ export default function ProductList({
                                       : "/placeholder.png"
                                   }
                                   alt={product.name}
+                                  width={40}
+                                  height={40}
                                   className="h-full w-full object-cover"
                                 />
                               </div>
@@ -708,7 +715,7 @@ export default function ProductList({
                         )}
                         <TableCell
                           className="text-right"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -858,8 +865,10 @@ export default function ProductList({
                                     className="group relative bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
                                   >
                                     <div className="aspect-square bg-gray-50 dark:bg-gray-900 relative">
-                                      <img
+                                      <Image
                                         src={imgData.url}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         alt=""
                                       />
@@ -948,7 +957,7 @@ export default function ProductList({
               variant="outline"
               size="sm"
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
+              onClick={() => setCurrentPage(prev => prev - 1)}
               className="h-8 text-xs"
             >
               Précédent
@@ -957,7 +966,7 @@ export default function ProductList({
               variant="outline"
               size="sm"
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
+              onClick={() => setCurrentPage(prev => prev + 1)}
               className="h-8 text-xs"
             >
               Suivant

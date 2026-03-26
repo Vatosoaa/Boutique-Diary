@@ -4,22 +4,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { toast } from "sonner";
+
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas");
+      toast.error("Les mots de passe ne correspondent pas");
       setLoading(false);
       return;
     }
@@ -36,13 +36,16 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
+        toast.success(
+          "Inscription réussie ! Vous pouvez maintenant vous connecter.",
+        );
         router.push("/login");
       } else {
-        setError(data.message || "Échec de l'inscription");
+        toast.error(data.message || "Échec de l'inscription");
       }
     } catch (err) {
       console.error(err);
-      setError("Une erreur inattendue s'est produite");
+      toast.error("Une erreur inattendue s'est produite");
     } finally {
       setLoading(false);
     }
@@ -51,12 +54,6 @@ export default function RegisterForm() {
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-5">
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
-            {error}
-          </div>
-        )}
-
         <div className="space-y-2">
           <label
             htmlFor="username"
@@ -68,7 +65,7 @@ export default function RegisterForm() {
             type="text"
             id="username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={e => setUsername(e.target.value)}
             placeholder="Jean-Eudes"
             className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required
@@ -86,7 +83,7 @@ export default function RegisterForm() {
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder="jean@exemple.mg"
             className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required
@@ -104,7 +101,7 @@ export default function RegisterForm() {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             placeholder="••••••••"
             className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required
@@ -122,7 +119,7 @@ export default function RegisterForm() {
             type="password"
             id="confirmPassword"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={e => setConfirmPassword(e.target.value)}
             placeholder="••••••••"
             className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required

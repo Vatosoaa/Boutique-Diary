@@ -50,7 +50,7 @@ export async function GET(request: Request) {
     });
 
     const statusBreakdown: Record<string, number> = {};
-    allOrdersInRange.forEach((order) => {
+    allOrdersInRange.forEach(order => {
       statusBreakdown[order.status] = (statusBreakdown[order.status] || 0) + 1;
     });
 
@@ -72,7 +72,7 @@ export async function GET(request: Request) {
       salesByDate[key] = { revenue: 0, paidOrders: 0, totalOrders: 0 };
     }
 
-    allOrdersInRange.forEach((order) => {
+    allOrdersInRange.forEach(order => {
       const date = new Date(order.createdAt);
       const key = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}`;
 
@@ -81,7 +81,7 @@ export async function GET(request: Request) {
         if (["DELIVERED", "COMPLETED"].includes(order.status)) {
           // On retrouve l'objet dans paidOrders pour avoir le montant correct (déjà filtré par statut)
           const paidOrder = paidOrders.find(
-            (po) => po.createdAt.getTime() === order.createdAt.getTime(),
+            po => po.createdAt.getTime() === order.createdAt.getTime(),
           );
           if (paidOrder) {
             salesByDate[key].revenue += paidOrder.total;

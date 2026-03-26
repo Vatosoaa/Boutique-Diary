@@ -44,10 +44,7 @@ export function ThemeSettings() {
         <label className="text-sm font-medium text-gray-600">
           Theme preset:
         </label>
-        <Select
-          value={preset}
-          onValueChange={(v) => setPreset(v as ThemePreset)}
-        >
+        <Select value={preset} onValueChange={v => setPreset(v as ThemePreset)}>
           <SelectTrigger className="w-full h-9">
             <SelectValue>
               <div className="flex items-center gap-2">
@@ -60,7 +57,7 @@ export function ThemeSettings() {
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {(Object.keys(THEME_PRESETS) as ThemePreset[]).map((key) => (
+            {(Object.keys(THEME_PRESETS) as ThemePreset[]).map(key => (
               <SelectItem key={key} value={key}>
                 <div className="flex items-center gap-2">
                   <span
@@ -79,7 +76,7 @@ export function ThemeSettings() {
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Scale:</label>
         <div className="flex gap-2">
-          {(["default", "xs", "lg"] as Scale[]).map((s) => (
+          {(["default", "xs", "lg"] as Scale[]).map(s => (
             <Button
               key={s}
               variant={scale === s ? "default" : "outline"}
@@ -97,7 +94,7 @@ export function ThemeSettings() {
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Radius:</label>
         <div className="flex gap-2">
-          {(["default", "sm", "md", "lg", "xl"] as Radius[]).map((r) => (
+          {(["default", "sm", "md", "lg", "xl"] as Radius[]).map(r => (
             <Button
               key={r}
               variant={radius === r ? "default" : "outline"}
@@ -115,7 +112,7 @@ export function ThemeSettings() {
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Color mode:</label>
         <div className="flex gap-2">
-          {(["light", "dark"] as ColorMode[]).map((m) => (
+          {(["light", "dark"] as ColorMode[]).map(m => (
             <Button
               key={m}
               variant={colorMode === m ? "default" : "outline"}
@@ -135,7 +132,7 @@ export function ThemeSettings() {
           Content layout:
         </label>
         <div className="flex gap-2">
-          {(["full", "centered"] as ContentLayout[]).map((l) => (
+          {(["full", "centered"] as ContentLayout[]).map(l => (
             <Button
               key={l}
               variant={contentLayout === l ? "default" : "outline"}
@@ -155,7 +152,7 @@ export function ThemeSettings() {
           Sidebar mode:
         </label>
         <div className="flex gap-2">
-          {(["default", "icon"] as SidebarMode[]).map((m) => (
+          {(["default", "icon"] as SidebarMode[]).map(m => (
             <Button
               key={m}
               variant={sidebarMode === m ? "default" : "outline"}

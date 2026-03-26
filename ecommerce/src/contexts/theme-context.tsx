@@ -174,13 +174,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const contextValue: ThemeContextType = {
     ...theme,
-    setPreset: (preset) => setTheme((t) => ({ ...t, preset })),
-    setColorMode: (colorMode) => setTheme((t) => ({ ...t, colorMode })),
-    setScale: (scale) => setTheme((t) => ({ ...t, scale })),
-    setRadius: (radius) => setTheme((t) => ({ ...t, radius })),
-    setContentLayout: (contentLayout) =>
-      setTheme((t) => ({ ...t, contentLayout })),
-    setSidebarMode: (sidebarMode) => setTheme((t) => ({ ...t, sidebarMode })),
+    setPreset: preset => setTheme(t => ({ ...t, preset })),
+    setColorMode: colorMode => setTheme(t => ({ ...t, colorMode })),
+    setScale: scale => setTheme(t => ({ ...t, scale })),
+    setRadius: radius => setTheme(t => ({ ...t, radius })),
+    setContentLayout: contentLayout => setTheme(t => ({ ...t, contentLayout })),
+    setSidebarMode: sidebarMode => setTheme(t => ({ ...t, sidebarMode })),
     resetTheme: () => setTheme(DEFAULT_THEME),
   };
 

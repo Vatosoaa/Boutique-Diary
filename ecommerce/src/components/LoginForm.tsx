@@ -4,16 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { useCartStore } from "@/lib/cart-store";
 
+import { toast } from "sonner";
+
 export default function LoginForm() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const clearCart = useCartStore((state) => state.clearCart);
+  const clearCart = useCartStore(state => state.clearCart);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -28,15 +28,15 @@ export default function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // Clear guest cart on login
         clearCart();
+        toast.success("Connexion réussie !");
         window.location.href = "/dashboard/customer";
       } else {
-        setError(data.message || "Échec de la connexion");
+        toast.error(data.message || "Échec de la connexion");
       }
     } catch (err) {
       console.error(err);
-      setError("Une erreur inattendue s'est produite");
+      toast.error("Une erreur inattendue s'est produite");
     } finally {
       setLoading(false);
     }
@@ -45,12 +45,6 @@ export default function LoginForm() {
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-5">
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
-            {error}
-          </div>
-        )}
-
         <div className="space-y-2">
           <label
             htmlFor="identifier"
@@ -62,7 +56,7 @@ export default function LoginForm() {
             type="text"
             id="identifier"
             value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
+            onChange={e => setIdentifier(e.target.value)}
             placeholder="votre@email.com"
             className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required
@@ -80,7 +74,7 @@ export default function LoginForm() {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             placeholder="••••••••"
             className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required

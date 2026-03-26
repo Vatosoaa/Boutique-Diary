@@ -29,7 +29,7 @@ export async function GET() {
     ]);
 
     const allPages = [
-      ...products.map((p) => ({
+      ...products.map(p => ({
         id: `product-${p.id}`,
         title: p.name,
         updatedAt: p.updatedAt,
@@ -37,7 +37,7 @@ export async function GET() {
         status: p.status === "PUBLISHED" ? "Published" : "Draft",
         type: "Produit",
       })),
-      ...blogPosts.map((b) => ({
+      ...blogPosts.map(b => ({
         id: `blog-${b.id}`,
         title: b.title,
         updatedAt: b.updatedAt,
@@ -45,7 +45,7 @@ export async function GET() {
         status: b.isPublished ? "Published" : "Draft",
         type: "Article",
       })),
-      ...categories.map((c) => ({
+      ...categories.map(c => ({
         id: `cat-${c.id}`,
         title: c.name,
         updatedAt: c.updatedAt,
@@ -53,7 +53,7 @@ export async function GET() {
         status: "Published",
         type: "Catégorie",
       })),
-      ...banners.map((bn) => ({
+      ...banners.map(bn => ({
         id: `banner-${bn.id}`,
         title: bn.title,
         updatedAt: bn.updatedAt,

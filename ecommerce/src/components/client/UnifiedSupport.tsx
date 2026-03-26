@@ -23,7 +23,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import anime from "animejs";
 import ReactMarkdown from "react-markdown";
 import { ReviewFormContent } from "@/components/store/ReviewFormContent";
 import { toast } from "sonner";
@@ -60,31 +59,19 @@ export function UnifiedSupport() {
   }, [messages, isLoading, activeTab, isOpen]);
 
   useEffect(() => {
-    if (isOpen) {
-      // Entry animation
-      anime({
-        targets: chatRef.current,
-        translateY: [40, 0],
-        opacity: [0, 1],
-        scale: [0.9, 1],
-        duration: 600,
-        easing: "easeOutElastic(1, .8)",
-      });
-
-      if (messages.length === 0) {
-        setMessages([
-          {
-            role: "model",
-            parts: [
-              {
-                text: "Bonjour ! ✨ Je suis l'assistant intelligent de **Boutique Diary**. \n\nComment puis-je vous accompagner aujourd'hui ? Je peux vous aider à trouver la tenue parfaite, vous conseiller sur les tailles ou répondre à vos questions sur la livraison.",
-              },
-            ],
-          },
-        ]);
-      }
+    if (isOpen && messages.length === 0) {
+      setMessages([
+        {
+          role: "model",
+          parts: [
+            {
+              text: "Bonjour ! ✨ Je suis l'assistant intelligent de **Boutique Diary**. \n\nComment puis-je vous accompagner aujourd'hui ? Je peux vous aider à trouver la tenue parfaite, vous conseiller sur les tailles ou répondre à vos questions sur la livraison.",
+            },
+          ],
+        },
+      ]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   const handleSend = async (customInput?: string) => {
     const messageToSend = customInput || input;
@@ -95,7 +82,7 @@ export function UnifiedSupport() {
       parts: [{ text: messageToSend }],
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
@@ -107,7 +94,7 @@ export function UnifiedSupport() {
           message: messageToSend,
           history: messages.map(m => ({
             role: m.role,
-            parts: m.parts
+            parts: m.parts,
           })),
         }),
       });
@@ -118,7 +105,7 @@ export function UnifiedSupport() {
       if (data.history) {
         setMessages(data.history);
       } else {
-        setMessages((prev) => [
+        setMessages(prev => [
           ...prev,
           { role: "model", parts: [{ text: data.text }] },
         ]);
@@ -131,20 +118,40 @@ export function UnifiedSupport() {
   };
 
   const suggestions = [
-    { label: "Nouveautés", icon: ShoppingBag, prompt: "Quelles sont les dernières nouveautés ?", color: "bg-emerald-50 text-emerald-700 border-emerald-100" },
-    { label: "Conseils mode", icon: BookOpen, prompt: "Donne-moi des conseils de mode pour cette saison.", color: "bg-indigo-50 text-indigo-700 border-indigo-100" },
-    { label: "Livraison", icon: Info, prompt: "Quelles sont les options de livraison ?", color: "bg-amber-50 text-amber-700 border-amber-100" },
+    {
+      label: "Nouveautés",
+      icon: ShoppingBag,
+      prompt: "Quelles sont les dernières nouveautés ?",
+      color: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    },
+    {
+      label: "Conseils mode",
+      icon: BookOpen,
+      prompt: "Donne-moi des conseils de mode pour cette saison.",
+      color: "bg-indigo-50 text-indigo-700 border-indigo-100",
+    },
+    {
+      label: "Livraison",
+      icon: Info,
+      prompt: "Quelles sont les options de livraison ?",
+      color: "bg-amber-50 text-amber-700 border-amber-100",
+    },
   ];
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className={cn(
         "fixed z-50 transition-all duration-500 ease-in-out",
-        isMaximized && isOpen 
-          ? "inset-0 flex items-center justify-center p-4 sm:p-8 bg-black/20 backdrop-blur-sm" 
-          : "bottom-8 right-8"
+        isMaximized && isOpen
+          ? "inset-0 flex items-center justify-center p-4 sm:p-8 bg-black/20 backdrop-blur-sm"
+          : "bottom-8 right-8",
       )}
+      onClick={e => {
+        if (isMaximized && e.target === containerRef.current) {
+          setIsOpen(false);
+        }
+      }}
     >
       {/* Toggle Button */}
       {!isOpen && (
@@ -154,10 +161,10 @@ export function UnifiedSupport() {
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="relative flex items-center justify-center">
-             <MessageCircle className="w-8 h-8 group-hover:rotate-12 transition-transform" />
-             <div className="absolute inset-0 flex items-center justify-center translate-y-[-1px] translate-x-[1px]">
-                <span className="text-white font-bold text-[10px]">+</span>
-             </div>
+            <MessageCircle className="w-8 h-8 group-hover:rotate-12 transition-transform" />
+            <div className="absolute inset-0 flex items-center justify-center translate-y-[-1px] translate-x-[1px]">
+              <span className="text-white font-bold text-[10px]">+</span>
+            </div>
           </div>
           <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-amber-400 rounded-full border-2 border-zinc-950 animate-pulse" />
         </button>
@@ -168,24 +175,34 @@ export function UnifiedSupport() {
         <Card
           ref={chatRef}
           className={cn(
-            "shadow-[0_32px_80px_rgba(0,0,0,0.2)] border-border/50 bg-background/95 backdrop-blur-xl flex flex-col overflow-hidden transition-all duration-500 ease-in-out rounded-[32px]",
-            isMaximized ? "w-full max-w-5xl h-full max-h-[90vh]" : "w-[380px] sm:w-[440px] h-[640px]"
+            "shadow-[0_32px_80px_rgba(0,0,0,0.2)] border-border/50 bg-background/95 backdrop-blur-xl flex flex-col overflow-hidden transition-all duration-300 ease-out rounded-[32px] animate-in zoom-in-95 fade-in duration-300",
+            isMaximized
+              ? "w-full max-w-5xl h-[85vh] sm:h-[90vh]"
+              : "w-[380px] sm:w-[440px] h-[min(640px,80vh)]",
           )}
         >
           {/* Header */}
           <CardHeader className="p-5 border-b bg-zinc-950 text-white flex flex-row items-center justify-between shrink-0">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
-                {activeTab === "ai" ? <Bot className="w-7 h-7 text-white" /> : <Star className="w-6 h-6 fill-amber-400 text-amber-400" />}
+                {activeTab === "ai" ? (
+                  <Bot className="w-7 h-7 text-white" />
+                ) : (
+                  <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
+                )}
               </div>
               <div className="space-y-0.5">
                 <CardTitle className="text-sm font-black uppercase tracking-widest font-[family-name:var(--font-playfair)] flex items-center gap-2">
                   {activeTab === "ai" ? "Assistant IA" : "Espace Avis"}
-                  <span className="px-1.5 py-0.5 rounded-full bg-white/10 text-[9px] font-bold border border-white/10">PREMIUM</span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-white/10 text-[9px] font-bold border border-white/10">
+                    PREMIUM
+                  </span>
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">Disponible 24h/7j</span>
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
+                    Disponible 24h/7j
+                  </span>
                 </div>
               </div>
             </div>
@@ -195,7 +212,11 @@ export function UnifiedSupport() {
                 className="p-2.5 hover:bg-white/10 rounded-xl transition-all text-zinc-400 hover:text-white hidden sm:block"
                 title={isMaximized ? "Réduire" : "Agrandir"}
               >
-                {isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                {isMaximized ? (
+                  <Minimize2 className="w-4 h-4" />
+                ) : (
+                  <Maximize2 className="w-4 h-4" />
+                )}
               </button>
               <button
                 onClick={() => setIsOpen(false)}
@@ -212,9 +233,9 @@ export function UnifiedSupport() {
               onClick={() => setActiveTab("ai")}
               className={cn(
                 "flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-2xl flex items-center justify-center gap-2",
-                activeTab === "ai" 
-                  ? "bg-white text-zinc-950 shadow-sm border border-zinc-100" 
-                  : "text-muted-foreground hover:bg-black/5"
+                activeTab === "ai"
+                  ? "bg-white text-zinc-950 shadow-sm border border-zinc-100"
+                  : "text-muted-foreground hover:bg-black/5",
               )}
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
@@ -224,9 +245,9 @@ export function UnifiedSupport() {
               onClick={() => setActiveTab("review")}
               className={cn(
                 "flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-2xl flex items-center justify-center gap-2",
-                activeTab === "review" 
-                  ? "bg-white text-zinc-950 shadow-sm border border-zinc-100" 
-                  : "text-muted-foreground hover:bg-black/5"
+                activeTab === "review"
+                  ? "bg-white text-zinc-950 shadow-sm border border-zinc-100"
+                  : "text-muted-foreground hover:bg-black/5",
               )}
             >
               <Star className="w-3.5 h-3.5" />
@@ -234,26 +255,30 @@ export function UnifiedSupport() {
             </button>
           </div>
 
-          <CardContent className="flex-1 p-0 flex flex-col overflow-hidden bg-zinc-50/50">
+          <CardContent className="flex-1 p-0 flex flex-col overflow-hidden bg-zinc-50/50 relative">
             {activeTab === "ai" ? (
               <>
-                <ScrollArea className="flex-1 px-5 py-6">
-                  <div className="space-y-8 pb-4">
+                <ScrollArea className="flex-1 h-full w-full">
+                  <div className="px-5 py-6 space-y-8 pb-4">
                     {messages
-                      .filter((msg) => msg.parts.some((p) => p.text))
+                      .filter(msg => msg.parts.some(p => p.text))
                       .map((msg, i) => (
                         <div
                           key={i}
                           className={cn(
                             "flex flex-col gap-2 max-w-[90%] group animate-in fade-in slide-in-from-bottom-4 duration-500",
-                            msg.role === "user" ? "ml-auto items-end" : "items-start",
+                            msg.role === "user"
+                              ? "ml-auto items-end"
+                              : "items-start",
                           )}
                         >
                           <div className="flex items-center gap-2 mb-1">
-                             <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
-                                {msg.role === "user" ? "Vous" : "Diary Bot"}
-                             </span>
-                             {msg.role === "model" && <Bot className="w-3 h-3 text-zinc-300" />}
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                              {msg.role === "user" ? "Vous" : "Diary Bot"}
+                            </span>
+                            {msg.role === "model" && (
+                              <Bot className="w-3 h-3 text-zinc-300" />
+                            )}
                           </div>
                           <div
                             className={cn(
@@ -263,9 +288,9 @@ export function UnifiedSupport() {
                                 : "bg-white text-zinc-800 rounded-[24px] rounded-tl-none border border-zinc-100",
                             )}
                           >
-                            <div className="prose prose-sm dark:prose-invert max-w-none font-[family-name:var(--font-montserrat)] prose-p:leading-relaxed prose-p:my-0 prose-strong:text-inherit prose-a:text-indigo-400 prose-ul:my-2 prose-li:my-0.5">
+                            <div className="prose prose-sm dark:prose-invert max-w-none font-[family-name:var(--font-montserrat)] prose-p:leading-relaxed prose-strong:font-bold prose-a:text-indigo-500 prose-ul:list-disc prose-ul:pl-4 prose-ol:list-decimal prose-ol:pl-4">
                               <ReactMarkdown>
-                                {msg.parts.map((part) => part.text).join("")}
+                                {msg.parts.map(part => part.text).join("")}
                               </ReactMarkdown>
                             </div>
                           </div>
@@ -294,7 +319,7 @@ export function UnifiedSupport() {
                           onClick={() => handleSend(s.prompt)}
                           className={cn(
                             "px-4 py-2.5 rounded-2xl border text-[11px] font-black uppercase tracking-tight transition-all flex items-center gap-2.5 hover:scale-105 active:scale-95 shadow-sm",
-                            s.color
+                            s.color,
                           )}
                         >
                           <s.icon className="w-3.5 h-3.5" />
@@ -307,17 +332,21 @@ export function UnifiedSupport() {
                   <div className="relative group">
                     <input
                       value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                      onChange={e => setInput(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && handleSend()}
                       placeholder="Comment puis-je vous aider ?"
                       className="w-full bg-zinc-50 border border-zinc-200 rounded-[22px] pl-6 pr-14 py-4 text-sm focus:outline-none focus:ring-4 focus:ring-zinc-950/5 focus:border-zinc-950 focus:bg-white transition-all font-[family-name:var(--font-montserrat)] placeholder:text-zinc-400 font-medium"
                     />
-                    <Button 
-                      onClick={() => handleSend()} 
-                      disabled={isLoading || !input.trim()} 
+                    <Button
+                      onClick={() => handleSend()}
+                      disabled={isLoading || !input.trim()}
                       className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white shadow-xl transition-all active:scale-90"
                     >
-                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                      {isLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Send className="w-4 h-4" />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -325,7 +354,7 @@ export function UnifiedSupport() {
             ) : (
               <ScrollArea className="flex-1 px-6 py-8">
                 <div className="max-w-2xl mx-auto">
-                   <ReviewFormContent onSuccess={() => setActiveTab("ai")} />
+                  <ReviewFormContent onSuccess={() => setActiveTab("ai")} />
                 </div>
               </ScrollArea>
             )}

@@ -12,7 +12,6 @@ export default function ClientLayout({
         {children}
       </main>
 
-      {}
       <footer className="dark:border-gray-700/50 border-t border-border py-8 px-4 mt-auto">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
           <div>

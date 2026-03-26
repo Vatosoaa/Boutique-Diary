@@ -21,7 +21,7 @@ const StockDistributionChart: React.FC<StockDistributionProps> = ({
   data = [],
 }) => {
   const processedData = data
-    .map((item) => ({
+    .map(item => ({
       name: item.name,
       stock: item.stock || 0,
     }))
@@ -81,7 +81,7 @@ const StockDistributionChart: React.FC<StockDistributionProps> = ({
                 color: "var(--foreground)",
                 boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
               }}
-              formatter={(value) => [value, "Unités"]}
+              formatter={value => [value, "Unités"]}
             />
             <Bar dataKey="stock" radius={[4, 4, 0, 0]}>
               {processedData.map((entry, index) => (

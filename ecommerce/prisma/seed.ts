@@ -104,8 +104,8 @@ async function getCategoriesAndImages() {
             const subDirPath = path.join(mainCatPath, subDirName);
             const files = await readdir(subDirPath);
             const images = files
-              .filter((f) => /\.(jpg|jpeg|png|webp|jfif)$/i.test(f))
-              .map((f) => `/uploads/products/${catName}/${subDirName}/${f}`);
+              .filter(f => /\.(jpg|jpeg|png|webp|jfif)$/i.test(f))
+              .map(f => `/uploads/products/${catName}/${subDirName}/${f}`);
 
             if (images.length > 0) {
               products.push({
@@ -316,7 +316,7 @@ async function main() {
 
       const pName = prod.name
         .replace(/-/g, " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase());
+        .replace(/\b\w/g, l => l.toUpperCase());
 
       const imagesData = prod.images.map((imgPath: string, idx: number) => {
         const color = productColors[idx % productColors.length];
@@ -503,7 +503,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error("❌ Seeding failed:");
     console.error(e);
     process.exit(1);

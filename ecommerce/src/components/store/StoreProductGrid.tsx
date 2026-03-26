@@ -61,7 +61,7 @@ export default function StoreProductGrid({
 
             {}
             <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <Link
                   key={cat.id}
                   href={`/shop?category=${cat.name}`}

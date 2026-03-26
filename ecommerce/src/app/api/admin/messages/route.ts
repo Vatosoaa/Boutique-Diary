@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     // Enhance messages with user avatar if the email matches a registered user
     const enhancedMessages = await Promise.all(
-      messages.map(async (msg) => {
+      messages.map(async msg => {
         const user = await prisma.user.findUnique({
           where: { email: msg.email },
           select: { photo: true },

@@ -22,7 +22,7 @@ export default async function ShopPage({
       categoryId = parsedId;
     } else {
       const found = categories.find(
-        (c) =>
+        c =>
           c.slug.toLowerCase() === categoryParam.toLowerCase() ||
           c.name.toLowerCase() === categoryParam.toLowerCase(),
       );
@@ -35,7 +35,7 @@ export default async function ShopPage({
   const products = await getProducts({ categoryId });
 
   const currentCategory = categoryId
-    ? categories.find((c) => c.id === categoryId)
+    ? categories.find(c => c.id === categoryId)
     : null;
 
   let bannerImage = "/images/banner.jpg";

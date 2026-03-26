@@ -9,15 +9,15 @@ interface OrderSummaryProps {
 }
 
 export default function OrderSummary({ appliedPromo }: OrderSummaryProps) {
-  const items = useCartStore((state) => state.items);
-  const getSubtotal = useCartStore((state) => state.getSubtotal);
+  const items = useCartStore(state => state.items);
+  const getSubtotal = useCartStore(state => state.getSubtotal);
 
   const subtotal = getSubtotal();
   const delivery = 0;
 
   // 1. Calculate Per-Item Discount and Total Discount using useMemo for performance and to avoid re-assignment issues
   const { itemDiscounts, totalDiscount } = useMemo(() => {
-    const discounts = items.map((item) => {
+    const discounts = items.map(item => {
       const itemTotal = item.price * item.quantity;
       let discount = 0;
 

@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/contexts/theme-context";
-import GlobalReviewModal from "./store/GlobalReviewForm";
+import { UnifiedSupport } from "./client/UnifiedSupport";
 import { Auth0Provider } from "@auth0/nextjs-auth0/client";
 import { CartAutoCleaner } from "./CartAutoCleaner";
 import { Category } from "@/types/category";
@@ -26,8 +26,8 @@ export default function MainLayout({
       <ThemeProvider>
         {!isAdminPage && !isAuthPage && <Navbar categories={categories} />}
         {children}
-        {!isAdminPage && !isAuthPage && <GlobalReviewModal />}
-        <Toaster />
+        {!isAdminPage && !isAuthPage && <UnifiedSupport />}
+        <Toaster richColors />
       </ThemeProvider>
     </Auth0Provider>
   );

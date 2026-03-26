@@ -61,7 +61,7 @@ export function useCategories(
         throw new Error("Erreur lors de la suppression");
       }
 
-      setCategories((prev) => prev.filter((c) => c.id !== id));
+      setCategories(prev => prev.filter(c => c.id !== id));
       toast.success("Catégorie supprimée avec succès");
       return true;
     } catch (err) {
@@ -85,7 +85,7 @@ export function useCategories(
         }
 
         const newCategory = await response.json();
-        setCategories((prev) => [...prev, newCategory]);
+        setCategories(prev => [...prev, newCategory]);
         toast.success("Catégorie créée avec succès");
         return newCategory;
       } catch (err) {
@@ -111,8 +111,8 @@ export function useCategories(
         }
 
         const updatedCategory = await response.json();
-        setCategories((prev) =>
-          prev.map((c) => (c.id === id ? updatedCategory : c)),
+        setCategories(prev =>
+          prev.map(c => (c.id === id ? updatedCategory : c)),
         );
         toast.success("Catégorie mise à jour avec succès");
         return updatedCategory;

@@ -56,7 +56,7 @@ export function useBanners(options: UseBannersOptions = {}): UseBannersReturn {
         throw new Error("Erreur lors de la suppression");
       }
 
-      setBanners((prev) => prev.filter((b) => b.id !== id));
+      setBanners(prev => prev.filter(b => b.id !== id));
       toast.success("Bannière supprimée avec succès");
       return true;
     } catch (err) {
@@ -80,7 +80,7 @@ export function useBanners(options: UseBannersOptions = {}): UseBannersReturn {
         }
 
         const newBanner = await response.json();
-        setBanners((prev) => [...prev, newBanner]);
+        setBanners(prev => [...prev, newBanner]);
         toast.success("Bannière créée avec succès");
         return newBanner;
       } catch (err) {
@@ -106,9 +106,7 @@ export function useBanners(options: UseBannersOptions = {}): UseBannersReturn {
         }
 
         const updatedBanner = await response.json();
-        setBanners((prev) =>
-          prev.map((b) => (b.id === id ? updatedBanner : b)),
-        );
+        setBanners(prev => prev.map(b => (b.id === id ? updatedBanner : b)));
         toast.success("Bannière mise à jour avec succès");
         return updatedBanner;
       } catch (err) {

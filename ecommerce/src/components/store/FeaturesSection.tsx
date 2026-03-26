@@ -33,7 +33,7 @@ export default function FeaturesSection({
 
   const displayAvatars =
     recentCustomers.length > 0
-      ? recentCustomers.slice(0, 4).map((c) => ({
+      ? recentCustomers.slice(0, 4).map(c => ({
           url: c.photo || `https://i.pravatar.cc/150?u=${c.id}`,
           name: c.username,
         }))
@@ -46,8 +46,8 @@ export default function FeaturesSection({
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelector(".visual-reveal"),

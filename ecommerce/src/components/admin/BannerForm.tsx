@@ -108,7 +108,7 @@ export default function BannerForm({
               type="text"
               required
               value={formData.title}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, title: e.target.value })
               }
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
@@ -122,7 +122,7 @@ export default function BannerForm({
             <input
               type="text"
               value={formData.subtitle}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, subtitle: e.target.value })
               }
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
@@ -138,7 +138,7 @@ export default function BannerForm({
           </label>
           <textarea
             value={formData.description}
-            onChange={(e) =>
+            onChange={e =>
               setFormData({ ...formData, description: e.target.value })
             }
             rows={3}
@@ -156,7 +156,7 @@ export default function BannerForm({
             <input
               type="text"
               value={formData.buttonText}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, buttonText: e.target.value })
               }
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
@@ -170,7 +170,7 @@ export default function BannerForm({
             <input
               type="text"
               value={formData.buttonLink}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, buttonLink: e.target.value })
               }
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
@@ -208,7 +208,7 @@ export default function BannerForm({
               <input
                 type="color"
                 value={formData.bgColor || "#ffffff"}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({ ...formData, bgColor: e.target.value })
                 }
                 className="w-10 h-10 rounded-lg border-2 border-white dark:border-gray-700 shadow-sm cursor-pointer overflow-hidden p-0"
@@ -219,7 +219,7 @@ export default function BannerForm({
               <input
                 type="text"
                 value={formData.bgColor}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({ ...formData, bgColor: e.target.value })
                 }
                 placeholder="Par défaut (Thème)"
@@ -253,7 +253,7 @@ export default function BannerForm({
               type="number"
               min="1"
               value={formData.order}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, order: parseInt(e.target.value) })
               }
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
@@ -264,7 +264,7 @@ export default function BannerForm({
               <input
                 type="checkbox"
                 checked={formData.isActive}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({ ...formData, isActive: e.target.checked })
                 }
                 className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500 border-gray-300"

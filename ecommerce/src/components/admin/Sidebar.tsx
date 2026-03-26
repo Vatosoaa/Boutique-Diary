@@ -197,6 +197,7 @@ const navSections: NavSection[] = [
           },
         ],
       },
+      /*
       {
         id: "shipping",
         label: "Livraison",
@@ -217,6 +218,7 @@ const navSections: NavSection[] = [
           },
         ],
       },
+      */
       {
         id: "appearance",
         label: "Apparence",
@@ -261,7 +263,7 @@ interface SidebarProps {
 export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
-  const { hasPermission, loading } = usePermissions();
+  const { hasPermission, loading, user } = usePermissions();
 
   const filterMenuItem = React.useCallback(
     (item: MenuItem): boolean => {
@@ -272,26 +274,26 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
   const filteredSections = React.useMemo((): NavSection[] => {
     return navSections
-      .map((section) => ({
+      .map(section => ({
         ...section,
         items: section.items
           .filter(filterMenuItem)
-          .map((item) => ({
+          .map(item => ({
             ...item,
             subItems: item.subItems?.filter(
-              (sub) => !sub.permission || hasPermission(sub.permission),
+              sub => !sub.permission || hasPermission(sub.permission),
             ),
           }))
-          .filter((item) => !item.subItems || item.subItems.length > 0),
+          .filter(item => !item.subItems || item.subItems.length > 0),
       }))
-      .filter((section) => section.items.length > 0);
+      .filter(section => section.items.length > 0);
   }, [filterMenuItem, hasPermission]);
 
   const isItemActive = React.useCallback(
     (item: MenuItem) => {
       if (item.href === pathname) return true;
       if (item.subItems) {
-        return item.subItems.some((sub) => pathname.startsWith(sub.href));
+        return item.subItems.some(sub => pathname.startsWith(sub.href));
       }
       return false;
     },
@@ -299,14 +301,14 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   );
 
   React.useEffect(() => {
-    filteredSections.forEach((section) => {
-      section.items.forEach((item) => {
+    filteredSections.forEach(section => {
+      section.items.forEach(item => {
         if (
           item.subItems &&
           isItemActive(item) &&
           !expandedSections.includes(item.id)
         ) {
-          setExpandedSections((prev) => [...prev, item.id]);
+          setExpandedSections(prev => [...prev, item.id]);
         }
       });
     });
@@ -314,7 +316,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
   const toggleSection = (sectionId: string) => {
     if (expandedSections.includes(sectionId)) {
-      setExpandedSections(expandedSections.filter((id) => id !== sectionId));
+      setExpandedSections(expandedSections.filter(id => id !== sectionId));
     } else {
       setExpandedSections([...expandedSections, sectionId]);
     }
@@ -405,7 +407,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                 <div className="h-px bg-gray-200 dark:bg-white/10 my-2 mx-2" />
               )}
 
-              {section.items.map((item) => {
+              {section.items.map(item => {
                 const isActive = isItemActive(item);
                 const isOpen = expandedSections.includes(item.id);
 
@@ -474,7 +476,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
                     {isExpanded && isOpen && (
                       <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 space-y-1 py-1">
-                        {item.subItems.map((subItem) => {
+                        {item.subItems.map(subItem => {
                           const isSubActive = pathname === subItem.href;
                           return (
                             <Link
@@ -500,78 +502,76 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         </nav>
 
         {}
-        {isExpanded && (
+        <div className="mt-auto border-t border-gray-200 dark:border-white/10">
+          {/* User Menu (Dropup) */}
           <div
-            className={`px-3 space-y-1 overflow-hidden transition-all duration-300 ${
-              isUserMenuOpen ? "max-h-48 opacity-100 mb-2" : "max-h-0 opacity-0"
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              isExpanded && isUserMenuOpen
+                ? "max-h-32 opacity-100 border-b border-gray-200 dark:border-white/5"
+                : "max-h-0 opacity-0"
             }`}
           >
-            <button
-              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transition-all px-3 py-2`}
-            >
-              <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              <span className="ml-3 text-sm font-medium whitespace-nowrap">
-                Profil
-              </span>
-            </button>
-
-            <button
-              onClick={() => setShowLogoutConfirm(true)}
-              className={`w-full flex items-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 hover:shadow-sm transition-all group px-3 py-2`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-5 h-5 shrink-0"
+            <div className="p-2 space-y-1">
+              <button className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
+                <User className="w-4 h-4 mr-3 text-gray-500" />
+                Mon Profil
+              </button>
+              <button
+                onClick={() => setShowLogoutConfirm(true)}
+                className="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
               >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" x2="9" y1="12" y2="12" />
-              </svg>
-              <span className="ml-3 text-sm font-medium whitespace-nowrap">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mr-3"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" x2="9" y1="12" y2="12" />
+                </svg>
                 Déconnexion
-              </span>
-            </button>
+              </button>
+            </div>
           </div>
-        )}
 
-        {}
-        <div className="mt-auto pt-4 px-3 border-t border-gray-200 dark:border-white/10">
-          <div className="flex items-center justify-between">
+          {/* User Profile Button */}
+          <div className="p-3">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className={`flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all ${
-                isExpanded
-                  ? "p-2 px-3 flex-1 mr-2"
-                  : "p-2 justify-center w-full"
+              className={`flex items-center w-full rounded-xl transition-all duration-200 hover:bg-gray-100 dark:hover:bg-white/5 ${
+                isExpanded ? "p-2" : "p-2 justify-center"
               }`}
             >
-              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold shrink-0">
-                AD
-              </div>
-              {isExpanded && (
-                <div className="ml-3 text-left overflow-hidden">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    Admin
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    admin@store.com
-                  </p>
+              <div className="relative shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-gray-700 to-gray-900 flex items-center justify-center text-white text-xs font-bold shadow-inner border border-white/10 uppercase">
+                  {user?.username?.substring(0, 2) || "AD"}
                 </div>
-              )}
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></div>
+              </div>
+
               {isExpanded && (
-                <ChevronDown
-                  className={`w-4 h-4 ml-auto text-gray-400 transition-transform ${
-                    isUserMenuOpen ? "rotate-180" : ""
-                  }`}
-                />
+                <>
+                  <div className="ml-3 text-left flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">
+                      {user?.username || "Chargement..."}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {user?.email || "..."}
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${
+                      isUserMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </>
               )}
             </button>
           </div>

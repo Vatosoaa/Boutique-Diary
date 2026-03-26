@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, Tag, X, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export interface AppliedPromo {
   code: string;
@@ -24,18 +25,14 @@ export default function PromoCodeInput({
 }: PromoCodeInputProps) {
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const handleApply = async () => {
     if (!code.trim()) {
-      setError("Veuillez entrer un code promo");
+      toast.error("Veuillez entrer un code promo");
       return;
     }
 
     setIsLoading(true);
-    setError(null);
-    setSuccess(null);
 
     try {
       const res = await fetch("/api/promo-codes/validate", {
@@ -47,7 +44,7 @@ export default function PromoCodeInput({
       const data = await res.json();
 
       if (data.valid) {
-        setSuccess(data.message);
+        toast.success(data.message || "Code promo appliqué !");
         onPromoApplied({
           code: data.code,
           type: data.type,
@@ -56,12 +53,12 @@ export default function PromoCodeInput({
         });
         setCode("");
       } else {
-        setError(data.message);
+        toast.error(data.message || "Code promo invalide");
         onPromoApplied(null);
       }
     } catch (err) {
       console.error("Promo validation error:", err);
-      setError("Erreur de connexion");
+      toast.error("Erreur de connexion");
     } finally {
       setIsLoading(false);
     }
@@ -69,8 +66,7 @@ export default function PromoCodeInput({
 
   const handleRemove = () => {
     onPromoApplied(null);
-    setSuccess(null);
-    setError(null);
+    toast.info("Code promo retiré");
   };
 
   // If promo is applied, show applied state
@@ -111,17 +107,13 @@ export default function PromoCodeInput({
           <input
             type="text"
             value={code}
-            onChange={(e) => {
+            onChange={e => {
               setCode(e.target.value.toUpperCase());
-              setError(null);
             }}
-            onKeyDown={(e) => e.key === "Enter" && handleApply()}
+            onKeyDown={e => e.key === "Enter" && handleApply()}
             placeholder="Code promo"
             className={cn(
-              "w-full pl-10 pr-4 py-3 bg-secondary/5 rounded-xl border text-foreground transition-all placeholder:text-muted-foreground/50 outline-none",
-              error
-                ? "border-destructive focus:ring-destructive/20"
-                : "border-border focus:border-primary focus:ring-2 focus:ring-primary/5",
+              "w-full pl-10 pr-4 py-3 bg-secondary/5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/5 text-foreground transition-all placeholder:text-muted-foreground/50 outline-none",
             )}
           />
         </div>
@@ -138,20 +130,6 @@ export default function PromoCodeInput({
           )}
         </button>
       </div>
-
-      {error && (
-        <p className="text-xs text-destructive flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
-          <X className="w-3 h-3" />
-          {error}
-        </p>
-      )}
-
-      {success && !appliedPromo && (
-        <p className="text-xs text-primary flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
-          <CheckCircle2 className="w-3 h-3" />
-          {success}
-        </p>
-      )}
     </div>
   );
 }

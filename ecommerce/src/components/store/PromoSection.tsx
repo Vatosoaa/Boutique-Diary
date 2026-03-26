@@ -27,8 +27,8 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelectorAll(".promo-card"),

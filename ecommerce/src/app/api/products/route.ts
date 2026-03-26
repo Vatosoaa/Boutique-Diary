@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status");
     const deleted = searchParams.get("deleted");
 
-    const whereClause: any = {};
+    const whereClause: Record<string, unknown> = {};
 
     // Only show deleted products if explicitly requested
     if (deleted === "true") {
@@ -91,7 +92,9 @@ export async function POST(request: NextRequest) {
 
     let globalPrice = parseFloat(initialPrice) || 0;
     if (validVariations.length > 0) {
-      const prices = validVariations.map((v: any) => parseFloat(v.price) || 0);
+      const prices = validVariations.map(
+        (v: { price: string }) => parseFloat(v.price) || 0,
+      );
       globalPrice = Math.min(...prices);
     }
 
@@ -104,21 +107,23 @@ export async function POST(request: NextRequest) {
       ? parseInt(initialCategoryId)
       : null;
     if (!globalCategoryId && validImages.length > 0) {
-      const firstCatImg = validImages.find((img: any) => img.categoryId);
+      const firstCatImg = validImages.find(
+        (img: { categoryId?: string }) => img.categoryId,
+      );
       if (firstCatImg) {
-        globalCategoryId = parseInt(firstCatImg.categoryId);
+        globalCategoryId = parseInt(firstCatImg.categoryId!);
       }
     }
 
     const globalColors = new Set<string>();
     const globalSizes = new Set<string>();
 
-    validVariations.forEach((v: any) => {
+    validVariations.forEach((v: { color?: string; size?: string }) => {
       if (v.color) globalColors.add(v.color);
       if (v.size) globalSizes.add(v.size);
     });
 
-    validImages.forEach((img: any) => {
+    validImages.forEach((img: { color?: string; sizes?: string[] }) => {
       if (img.color) globalColors.add(img.color);
       if (Array.isArray(img.sizes)) {
         img.sizes.forEach((s: string) => globalSizes.add(s));
@@ -144,36 +149,80 @@ export async function POST(request: NextRequest) {
         categoryId: globalCategoryId || null,
 
         images: {
-          create: validImages.map((img: any, index: number) => ({
-            url: typeof img === "string" ? img : img.url,
-            reference: img.reference || `${globalReference}-IMG${index + 1}`,
-            color: img.color || null,
-            sizes: Array.isArray(img.sizes) ? img.sizes : [],
+          create: validImages.map(
+            (
+              img: {
+                url: string;
+                reference?: string;
+                color?: string;
+                sizes?: string[];
+                isNew?: boolean;
+                isBestSeller?: boolean;
+                isPromotion?: boolean;
+                promotionRuleId?: number | string;
+                categoryId?: number | string;
+              },
+              index: number,
+            ) => ({
+              url: typeof img === "string" ? img : img.url,
+              reference:
+                (img as { reference?: string }).reference ||
+                `${globalReference}-IMG${index + 1}`,
+              color: (img as { color?: string }).color || null,
+              sizes: Array.isArray((img as { sizes?: string[] }).sizes)
+                ? (img as { sizes?: string[] }).sizes
+                : [],
 
-            isNew: img.isNew ?? false,
-            isBestSeller: img.isBestSeller ?? false,
+              isNew: (img as { isNew?: boolean }).isNew ?? false,
+              isBestSeller:
+                (img as { isBestSeller?: boolean }).isBestSeller ?? false,
 
-            isPromotion: img.isPromotion ?? false,
-            promotionRuleId: img.promotionRuleId
-              ? parseInt(img.promotionRuleId)
-              : null,
-            categoryId: img.categoryId ? parseInt(img.categoryId) : null,
-          })),
+              isPromotion:
+                (img as { isPromotion?: boolean }).isPromotion ?? false,
+              promotionRuleId: (img as { promotionRuleId?: number | string })
+                .promotionRuleId
+                ? parseInt(
+                    String(
+                      (img as { promotionRuleId?: number | string })
+                        .promotionRuleId,
+                    ),
+                  )
+                : null,
+              categoryId: (img as { categoryId?: number | string }).categoryId
+                ? parseInt(
+                    String(
+                      (img as { categoryId?: number | string }).categoryId,
+                    ),
+                  )
+                : null,
+            }),
+          ),
         },
 
         variations: {
-          create: validVariations.map((v: any) => ({
-            sku: v.sku,
-            price: parseFloat(v.price) || 0,
-            oldPrice: v.oldPrice ? parseFloat(v.oldPrice) : null,
-            stock: parseInt(v.stock) || 0,
-            color: v.color || null,
-            size: v.size || null,
-            isActive: v.isActive ?? true,
-            promotionRuleId: v.promotionRuleId
-              ? parseInt(v.promotionRuleId)
-              : null,
-          })),
+          create: validVariations.map(
+            (v: {
+              sku: string;
+              price: string | number;
+              oldPrice?: string | number;
+              stock: string | number;
+              color?: string;
+              size?: string;
+              isActive?: boolean;
+              promotionRuleId?: string | number;
+            }) => ({
+              sku: v.sku,
+              price: parseFloat(String(v.price)) || 0,
+              oldPrice: v.oldPrice ? parseFloat(String(v.oldPrice)) : null,
+              stock: parseInt(String(v.stock)) || 0,
+              color: v.color || null,
+              size: v.size || null,
+              isActive: v.isActive ?? true,
+              promotionRuleId: v.promotionRuleId
+                ? parseInt(String(v.promotionRuleId))
+                : null,
+            }),
+          ),
         },
       },
       include: {
@@ -182,6 +231,13 @@ export async function POST(request: NextRequest) {
         variations: true,
       },
     });
+
+    // Revalidate paths to ensure frontend is updated
+    revalidatePath("/store/shop");
+    revalidatePath("/");
+    revalidatePath("/nouveautes");
+    revalidatePath("/top-vente");
+    revalidatePath("/promotions");
 
     return NextResponse.json(product, { status: 201 });
   } catch (error: unknown) {
@@ -222,6 +278,13 @@ export async function PUT(request: NextRequest) {
       where: { id: { in: ids } },
       data,
     });
+
+    // Revalidate for bulk update
+    revalidatePath("/store/shop");
+    revalidatePath("/");
+    revalidatePath("/nouveautes");
+    revalidatePath("/top-vente");
+    revalidatePath("/promotions");
 
     return NextResponse.json({ success: true });
   } catch (error) {

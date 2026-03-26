@@ -13,8 +13,17 @@ const eslintConfig = defineConfig([
       prettier: pluginPrettier,
     },
     rules: {
-      ...pluginPrettier.configs.recommended.rules, // Apply Prettier rules
-      "prettier/prettier": "error", // Ensure Prettier runs as an ESLint rule
+      ...pluginPrettier.configs.recommended.rules,
+      "prettier/prettier": ["error", { arrowParens: "avoid" }],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "react/no-unescaped-entities": "off",
+    },
+  },
+  {
+    files: ["**/*.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
   // Override default ignores of eslint-config-next.

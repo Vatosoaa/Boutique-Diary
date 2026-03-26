@@ -30,10 +30,10 @@ export async function GET() {
     });
 
     // On formate les données pour qu'elles correspondent à l'interface InvoiceData attendue par le front
-    const formattedOrders = orders.map((order) => ({
+    const formattedOrders = orders.map(order => ({
       ...order,
       createdAt: order.createdAt.toISOString(),
-      items: order.items.map((item) => ({
+      items: order.items.map(item => ({
         id: item.id,
         productName: item.product.name,
         productImage: item.product.images[0]?.url || null,

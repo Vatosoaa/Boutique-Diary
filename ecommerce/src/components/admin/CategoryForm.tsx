@@ -23,7 +23,6 @@ export default function CategoryForm({
     slug: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     if (category) {
@@ -38,12 +37,10 @@ export default function CategoryForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
-      // Validation basique
       if (!formData.name) {
-        setError("Veuillez remplir le nom de la catégorie.");
+        toast.error("Veuillez remplir le nom de la catégorie.");
         setLoading(false);
         return;
       }
@@ -91,12 +88,6 @@ export default function CategoryForm({
         {category?.id ? "Modifier la catégorie" : "Nouvelle catégorie"}
       </h3>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
-      )}
-
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Nom *
@@ -105,7 +96,7 @@ export default function CategoryForm({
           type="text"
           required
           value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onChange={e => setFormData({ ...formData, name: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         />
       </div>
